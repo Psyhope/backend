@@ -1,0 +1,47 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  ATTACK_HELICOPTER
+}
+
+enum Role {
+  COUNSELOR
+  CLIENT
+}
+
+enum Channel {
+  INSTAGRAM
+  LINE
+}
+
+model User {
+  id               String   @id
+  namaRole         String   @map("nama_role")
+  username         String   @unique
+  fullname         String
+  organizationCode String   @map("organization_code")
+  token            String?
+  account          Account?
+}
+
+model Account {
+  id      Int      @id @default(autoincrement())
+  user    User     @relation(fields: [userId], references: [id])
+  userId  String   @unique
+  gender  Gender
+  faculty String
+  major   String
+  channel Channel?
+}
