@@ -1,6 +1,7 @@
-import { Injectable } from "@nestjs/common";
-import { FACULTY_MAP } from "src/auth/constants/faculty.constant";
-import { MAJOR_MAP } from "src/auth/constants/major.contant";
+import { BadRequestException, Injectable, InternalServerErrorException } from "@nestjs/common";
+import { Gender, Prisma } from "@prisma/client";
+import { FACULTY_MAP, Faculties } from "src/auth/constants/faculty.constant";
+import { FacultiesKey, MAJOR_MAP, Majors } from "src/auth/constants/major.contant";
 import { SSOAuthService } from "src/auth/providers/sso.service";
 import { DbService } from "src/providers/database/db";
 
@@ -15,12 +16,69 @@ export class UserRepositories {
         const user = await this.sso.validate(username, password);
         const { kode_org } = user;
         const split = kode_org.split('.');
-        const faculty: typeof FACULTY_MAP[keyof typeof FACULTY_MAP] = FACULTY_MAP[`#.#.${split[2]}.${split[3]}`];
-        // const major =
-        // this.db.user.create({
-        //     data: {
+        const faculty: Faculties = FACULTY_MAP[`#.#.${split[2]}.${split[3].split(':')[0]}`];
+        const majorList: Majors[FacultiesKey] = MAJOR_MAP[faculty];
+        const userMajor = majorList.find(major => major.kd_org === kode_org.split(':')[0]);
+        const { educational_program, study_program } = userMajor;
 
-        //     }
-        // })
+        return await this.db.user.create({
+            data: {
+                id: user.kodeidentitas,
+                fullname: user.nama,
+                username: user.username,
+                namaRole: user.nama_role,
+                organizationCode: user.kode_org,
+                account: {
+                    create: {
+                        faculty,
+                        major: educational_program + " " + study_program,
+                        gender: Gender.ATTACK_HELICOPTER,
+                    }
+                }
+            }
+        }).catch(async err => {
+            if (err.code === 'P2002') {
+                return await this.db.user.findUnique({ where: { id: user.kodeidentitas } })
+            }
+        })
+    }
+
+    async findById(id: string) {
+        return await this.db.user.findUnique({
+            where: {
+                id: id
+            },
+            include: {
+                account: true
+            }
+        })
+    }
+
+    async findByUsername(username: string) {
+        return await this.db.user.findUnique({
+            where: {
+                username
+            },
+            include: {
+                account: true
+            }
+        })
+    }
+
+    async update(id: string, data: Prisma.UserUpdateInput) {
+        return await this.db.user.update({
+            where: {
+                id
+            },
+            data
+        })
+    }
+
+    async delete(id: string) {
+        return await this.db.user.delete({
+            where: {
+                id
+            }
+        })
     }
 }

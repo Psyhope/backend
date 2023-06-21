@@ -20,3 +20,5 @@ export const FACULTY_MAP = {
     "#.#.20.01": "KAJIAN STRATEJIK DAN GLOBAL"
 } as const
 
+export type Faculties = typeof FACULTY_MAP[keyof typeof FACULTY_MAP];
+

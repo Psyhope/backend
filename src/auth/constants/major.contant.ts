@@ -1,5 +1,5 @@
 export const MAJOR_MAP = {
-    "KEDOKTERAN": <const>[
+    "KEDOKTERAN": [
         {
             "kd_org": "37.00.01.01",
             "study_program": "Fisioterapi",
@@ -281,7 +281,7 @@ export const MAJOR_MAP = {
             "educational_program": "S3 (Doctoral Program)"
         }
     ],
-    "KEDOKTERAN GIGI": <const>[
+    "KEDOKTERAN GIGI": [
         {
             "kd_org": "01.00.02.01",
             "study_program": "Pendidikan Dokter Gigi",
@@ -358,7 +358,7 @@ export const MAJOR_MAP = {
             "educational_program": "S3 (Doctoral Program)"
         }
     ],
-    "MATEMATIKA & ILMU PENGETAHUAN ALAM": <const>[
+    "MATEMATIKA & ILMU PENGETAHUAN ALAM": [
         {
             "kd_org": "01.05.03.01",
             "study_program": "Farmasi Rumah Sakit dan Distribusi Pemasaran",
@@ -565,7 +565,7 @@ export const MAJOR_MAP = {
             "educational_program": "S3 (Doctoral Program)"
         }
     ],
-    "TEKNIK": <const>[
+    "TEKNIK": [
         {
             "kd_org": "01.05.04.01",
             "study_program": "Arsitektur",
@@ -877,7 +877,7 @@ export const MAJOR_MAP = {
             "educational_program": "S3 (Doctoral Program)"
         }
     ],
-    "HUKUM": <const>[
+    "HUKUM": [
         {
             "kd_org": "01.00.05.01",
             "study_program": "Ilmu Hukum",
@@ -914,7 +914,7 @@ export const MAJOR_MAP = {
             "educational_program": "S3 (Doctoral Program)"
         }
     ],
-    "EKONOMI & BISNIS": <const>[
+    "EKONOMI & BISNIS": [
         {
             "kd_org": "01.03.06.01",
             "study_program": "Akuntansi",
@@ -1046,7 +1046,7 @@ export const MAJOR_MAP = {
             "educational_program": "S3 (Doctoral Program)"
         }
     ],
-    "ILMU PENGETAHUAN BUDAYA": <const>[
+    "ILMU PENGETAHUAN BUDAYA": [
         {
             "kd_org": "02.00.07.01",
             "study_program": "Bahasa Arab",
@@ -1308,7 +1308,7 @@ export const MAJOR_MAP = {
             "educational_program": "S3 (Doctoral Program)"
         }
     ],
-    "PSIKOLOGI": <const>[
+    "PSIKOLOGI": [
         {
             "kd_org": "01.00.08.01",
             "study_program": "Psikologi",
@@ -1350,7 +1350,7 @@ export const MAJOR_MAP = {
             "educational_program": "S3 (Doctoral Program)"
         }
     ],
-    "ILMU SOSIAL & ILMU POLITIK": <const>[
+    "ILMU SOSIAL & ILMU POLITIK": [
         {
             "kd_org": "01.03.09.01",
             "study_program": "Administrasi Asuransi dan Aktuaria",
@@ -1577,7 +1577,7 @@ export const MAJOR_MAP = {
             "educational_program": "S3 (Doctoral Program)"
         }
     ],
-    "KESEHATAN MASYARAKAT": <const>[
+    "KESEHATAN MASYARAKAT": [
         {
             "kd_org": "01.01.10.01",
             "study_program": "Asuransi Kesehatan",
@@ -1669,7 +1669,7 @@ export const MAJOR_MAP = {
             "educational_program": "S3 (Doctoral Program)"
         }
     ],
-    "ILMU KOMPUTER": <const>[
+    "ILMU KOMPUTER": [
         {
             "kd_org": "01.00.12.01",
             "study_program": "Ilmu Komputer",
@@ -1716,7 +1716,7 @@ export const MAJOR_MAP = {
             "educational_program": "S3 (Doctoral Program)"
         }
     ],
-    "ILMU KEPERAWATAN": <const>[
+    "ILMU KEPERAWATAN": [
         {
             "kd_org": "01.00.13.01",
             "study_program": "Ilmu Keperawatan",
@@ -1768,7 +1768,7 @@ export const MAJOR_MAP = {
             "educational_program": "S3 (Doctoral Program)"
         }
     ],
-    "PASCASARJANA (not active)": <const>[
+    "PASCASARJANA (not active)": [
         {
             "kd_org": "01.00.14.01",
             "study_program": "Kajian Ilmu Kepolisian (Police Studies)",
@@ -1830,7 +1830,7 @@ export const MAJOR_MAP = {
             "educational_program": "S3 (Doctoral Program)"
         }
     ],
-    "PENDIDIKAN VOKASI": <const>[
+    "PENDIDIKAN VOKASI": [
         {
             "kd_org": "07.00.15.01",
             "study_program": "Administrasi Asuransi dan Aktuaria",
@@ -1927,7 +1927,7 @@ export const MAJOR_MAP = {
             "educational_program": "D4 (Diploma IV)"
         }
     ],
-    "PEROLEHAN KREDIT": <const>[
+    "PEROLEHAN KREDIT": [
         {
             "kd_org": "01.00.16.01",
             "study_program": "Pertukaran Mahasiswa (Student Exchange)",
@@ -1949,7 +1949,7 @@ export const MAJOR_MAP = {
             "educational_program": "S3 (Doctoral Program)"
         }
     ],
-    "FARMASI": <const>[
+    "FARMASI": [
         {
             "kd_org": "01.00.17.01",
             "study_program": "Farmasi",
@@ -1981,7 +1981,7 @@ export const MAJOR_MAP = {
             "educational_program": "S3 (Doctoral Program)"
         }
     ],
-    "ILMU ADMINISTRASI": <const>[
+    "ILMU ADMINISTRASI": [
         {
             "kd_org": "01.00.18.01",
             "study_program": "Ilmu Administrasi Fiskal",
@@ -2038,7 +2038,7 @@ export const MAJOR_MAP = {
             "educational_program": "S3 (Doctoral Program)"
         }
     ],
-    "ILMU LINGKUNGAN": <const>[
+    "ILMU LINGKUNGAN": [
         {
             "kd_org": "01.00.19.01",
             "study_program": "Ilmu Lingkungan",
@@ -2055,7 +2055,7 @@ export const MAJOR_MAP = {
             "educational_program": "S3 (Doctoral Program)"
         }
     ],
-    "KAJIAN STRATEJIK & GLOBAL": <const>[
+    "KAJIAN STRATEJIK & GLOBAL": [
         {
             "kd_org": "03.00.20.01",
             "study_program": "Kajian Gender",
@@ -2107,4 +2107,12 @@ export const MAJOR_MAP = {
             "educational_program": "S3 (Doctoral Program)"
         }
     ]
-} as const 
+} as const
+
+export type FacultiesKey = keyof typeof MAJOR_MAP
+interface Major {
+    kd_org: string
+    study_program: string
+    educational_program: string
+}
+export type Majors = Record<FacultiesKey, Major[]>
