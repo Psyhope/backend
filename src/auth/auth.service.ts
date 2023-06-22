@@ -14,7 +14,7 @@ export class AuthService {
 
     async login(username: string, password: string) {
         const user = await this.userRepo.create(username, password)
-        const tokens = await this.getTokens(user.id, user.username);
+        const tokens = await this.getTokens(user.id);
         await this.updateRefreshToken(user.id, tokens.refreshToken);
         return tokens;
     }
@@ -31,15 +31,17 @@ export class AuthService {
     }
 
 
-    async getTokens(userId: string, username: string) {
+    async getTokens(userId: string) {
+        const { username, account } = await this.userRepo.findById(userId);
+        const { role } = account;
         const [accessToken, refreshToken] = await Promise.all([
             this.jwtService.signAsync(
-                { sub: userId, username },
+                { sub: userId, username, role },
                 { secret: this.configService.get<string>('JWT_ACCESS_SECRET'), expiresIn: '15m' },
             ),
             this.jwtService.signAsync(
-                { sub: userId, username },
-                { secret: this.configService.get<string>('JWT_REFRESH_SECRET'), expiresIn: '7d' },
+                { sub: userId, username, role },
+                { secret: this.configService.get<string>('JWT_REFRESH_SECRET'), expiresIn: '3d' },
             ),
         ]);
 
@@ -57,7 +59,7 @@ export class AuthService {
         if (!(await verify(user.token, refreshToken)))
             throw new ForbiddenException("Access denied");
 
-        const tokens = await this.getTokens(user.id, user.username);
+        const tokens = await this.getTokens(user.id);
         await this.updateRefreshToken(user.id, tokens.refreshToken);
         return tokens;
     }

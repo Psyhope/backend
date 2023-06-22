@@ -17,7 +17,10 @@ enum Gender {
 }
 
 enum Role {
-  COUNSELOR
+  FACULTY_COUNSELOR
+  PSYHOPE_COUNSELOR
+  FACULTY_ADMIN
+  PSYHOPE_ADMIN
   CLIENT
 }
 
@@ -38,6 +41,7 @@ model User {
 
 model Account {
   id      Int      @id @default(autoincrement())
+  role    Role     @default(CLIENT)
   user    User     @relation(fields: [userId], references: [id])
   userId  String   @unique
   gender  Gender
