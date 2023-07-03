@@ -1,13 +1,10 @@
 import { Role } from "@prisma/client";
 import { LoggedIn } from "./loggedIn.guard";
+import { GqlExecutionContext } from "@nestjs/graphql";
 
 export class FacultyAdmin extends LoggedIn {
-    constructor() {
-        super();
-    }
     canActivate(context) {
-        const request = context.switchToHttp().getRequest();
-        const user = request.user;
-        return user.role === Role.FACULTY_ADMIN;
+        const ctx = GqlExecutionContext.create(context);
+        return ctx.getContext().req.user.role === Role.FACULTY_ADMIN
     }
 }
