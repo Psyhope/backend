@@ -1,0 +1,21 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Account {
+  faculty: String!
+  role: String!
+  gender: String!
+  major: String!
+}
+
+type User {
+  id: String!
+  username: String!
+  fullname: String!
+  account: Account!
+}
+
+type Query {
+  user: User!
+}

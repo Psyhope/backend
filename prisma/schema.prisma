@@ -14,7 +14,10 @@ enum Gender {
 }
 
 enum Role {
-  COUNSELOR
+  FACULTY_COUNSELOR
+  PSYHOPE_COUNSELOR
+  FACULTY_ADMIN
+  PSYHOPE_ADMIN
   CLIENT
 }
 
@@ -23,22 +26,37 @@ enum Channel {
   LINE
 }
 
+enum CounselorType {
+  PSYHOPE
+  FACULTY
+}
+
 model User {
-  id               String   @id
-  namaRole         String   @map("nama_role")
-  username         String   @unique
+  id               String    @id
+  namaRole         String    @map("nama_role")
+  username         String    @unique
   fullname         String
-  organizationCode String   @map("organization_code")
+  organizationCode String    @map("organization_code")
   token            String?
   account          Account?
+  bookings         Booking[]
 }
 
 model Account {
   id      Int      @id @default(autoincrement())
+  role    Role     @default(CLIENT)
   user    User     @relation(fields: [userId], references: [id])
   userId  String   @unique
   gender  Gender
   faculty String
   major   String
   channel Channel?
+}
+
+model Booking {
+  id            Int           @id @default(autoincrement())
+  user          User          @relation(fields: [userId], references: [id])
+  userId        String
+  time          DateTime
+  counselorType CounselorType @map("counselor_type")
 }
