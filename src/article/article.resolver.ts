@@ -19,12 +19,17 @@ export class ArticleResolver {
     return this.articleService.create(createArticleInput);
   }
 
-  @Query(() => [Article], { name: 'article' })
+  @Query(() => [Article])
   findAll() {
     return this.articleService.findAll();
   }
 
-  @Query(() => Article, { name: 'article' })
+  @Query(() => Article)
+  findByPage(@Args('page', { type: () => Int }) page: number) {
+    return this.articleService.findByPage(page);
+  }
+
+  @Query(() => Article)
   findOne(@Args('id', { type: () => Int }) id: number) {
     return this.articleService.findOne(id);
   }

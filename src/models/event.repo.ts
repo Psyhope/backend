@@ -25,6 +25,19 @@ export class EventRepositories {
     });
   }
 
+  async findAll() {
+    return await this.db.event.findMany();
+  }
+
+  async findByPage(page: number) {
+    const take = 10;
+    const skip = (page - 1) * 10;
+    return await this.db.event.findMany({
+      skip,
+      take,
+    });
+  }
+
   async findById(id: number) {
     return await this.db.event.findUnique({
       where: {

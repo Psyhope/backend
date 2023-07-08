@@ -16,6 +16,10 @@ export class ArticleService {
     return this.articleRepo.findAll();
   }
 
+  findByPage(page: number) {
+    return this.articleRepo.findByPage(page);
+  }
+
   findOne(id: number) {
     return this.articleRepo.findById(id);
   }

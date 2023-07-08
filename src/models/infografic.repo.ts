@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { DbService } from 'src/providers/database/db';
 
 @Injectable()
-export class infograficRepositories {
+export class InfograficRepositories {
   constructor(private readonly db: DbService) {}
 
   async create(title: string, description: string, infograficUrl: string) {
@@ -12,6 +12,19 @@ export class infograficRepositories {
         description,
         infograficUrl,
       },
+    });
+  }
+
+  async findByAll() {
+    return await this.db.infografic.findMany();
+  }
+
+  async findByPage(page: number) {
+    const take = 10;
+    const skip = (page - 1) * 10;
+    return await this.db.infografic.findMany({
+      skip,
+      take,
     });
   }
 
@@ -41,8 +54,8 @@ export class infograficRepositories {
     });
   }
 
-  async delete(id: string) {
-    return await this.db.user.delete({
+  async delete(id: number) {
+    return await this.db.infografic.delete({
       where: {
         id,
       },

@@ -19,6 +19,15 @@ export class ArticleRepositories {
     return await this.db.article.findMany();
   }
 
+  async findByPage(page: number) {
+    const take = 10;
+    const skip = (page - 1) * 10;
+    return await this.db.article.findMany({
+      skip,
+      take,
+    });
+  }
+
   async findById(id: number) {
     return await this.db.article.findUnique({
       where: {

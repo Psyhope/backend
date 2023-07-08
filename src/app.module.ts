@@ -10,6 +10,7 @@ import { join } from 'path';
 import { UserModule } from './user/user.module';
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 import { ArticleModule } from './article/article.module';
+import { InfograficModule } from './infografic/infografic.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { ArticleModule } from './article/article.module';
     }),
     UserModule,
     ArticleModule,
+    InfograficModule,
   ],
   controllers: [AuthController, AppController],
   providers: [AppService],
