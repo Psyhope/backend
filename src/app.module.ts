@@ -12,6 +12,7 @@ import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin
 import { ArticleModule } from './article/article.module';
 import { InfograficModule } from './infografic/infografic.module';
 import { EventModule } from './event/event.module';
+import { BookingModule } from './booking/booking.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { EventModule } from './event/event.module';
     ArticleModule,
     InfograficModule,
     EventModule,
+    BookingModule,
   ],
   controllers: [AuthController, AppController],
   providers: [AppService],
