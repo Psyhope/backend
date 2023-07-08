@@ -41,6 +41,8 @@ model User {
   account          Account?
   bookings         Booking[]
   isOnboarded      Boolean   @default(false)
+  lineAcc      String?
+  igAcc      String?
 }
 
 model Account {

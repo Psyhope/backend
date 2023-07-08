@@ -13,7 +13,7 @@ export class UserResolver {
   @Query(() => User)
   @UseGuards(LoggedIn)
   async user(@CurrentUser() user: JwtPayload): Promise<User> {
-    const { username, fullname, account, isOnboarded } =
+    const { username, fullname, account, isOnboarded, lineAcc, igAcc } =
       await this.userRepo.findById(user.sub);
     const { role, gender, faculty, major } = account;
     return {
@@ -27,6 +27,8 @@ export class UserResolver {
         major,
         role,
       },
+      lineAcc,
+      igAcc,
     };
   }
 }
