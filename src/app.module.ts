@@ -11,6 +11,7 @@ import { UserModule } from './user/user.module';
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 import { ArticleModule } from './article/article.module';
 import { InfograficModule } from './infografic/infografic.module';
+import { EventModule } from './event/event.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { InfograficModule } from './infografic/infografic.module';
     UserModule,
     ArticleModule,
     InfograficModule,
+    EventModule,
   ],
   controllers: [AuthController, AppController],
   providers: [AppService],
