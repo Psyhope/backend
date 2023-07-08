@@ -5,7 +5,7 @@ import { DbService } from 'src/providers/database/db';
 import { SSOAuthService } from 'src/auth/providers/sso.service';
 
 @Module({
-    providers: [UserRepositories, UserResolver, DbService, SSOAuthService],
-    exports: [UserRepositories, DbService, SSOAuthService, UserResolver]
+  providers: [UserRepositories, UserResolver, DbService, SSOAuthService],
+  exports: [UserRepositories, DbService, SSOAuthService, UserResolver],
 })
-export class UserModule { }
+export class UserModule {}

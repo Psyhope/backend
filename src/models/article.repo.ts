@@ -15,6 +15,10 @@ export class ArticleRepositories {
     });
   }
 
+  async findAll() {
+    return await this.db.article.findMany();
+  }
+
   async findById(id: number) {
     return await this.db.article.findUnique({
       where: {
