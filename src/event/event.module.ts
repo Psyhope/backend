@@ -6,6 +6,6 @@ import { EventRepositories } from 'src/models/event.repo';
 
 @Module({
   providers: [EventResolver, EventService, DbService, EventRepositories],
-  exports: [DbService, EventRepositories],
+  exports: [EventResolver, EventService, DbService, EventRepositories],
 })
 export class EventModule {}

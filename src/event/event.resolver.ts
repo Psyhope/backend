@@ -22,8 +22,8 @@ export class EventResolver {
     return this.eventService.findAll();
   }
 
-  @Query(() => Event)
-  findById(@Args('page', { type: () => Int }) page: number) {
+  @Query(() => [Event])
+  findByPage(@Args('page', { type: () => Int }) page: number) {
     return this.eventService.findByPage(page);
   }
 

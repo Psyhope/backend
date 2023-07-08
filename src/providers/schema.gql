@@ -55,9 +55,8 @@ type Event {
 type Query {
   user: User!
   findAll: [Event!]!
-  findByPage(page: Int!): Infografic!
+  findByPage(page: Int!): [Event!]!
   findOne(id: Int!): Event!
-  findById(page: Int!): Event!
 }
 
 type Mutation {

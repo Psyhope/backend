@@ -24,7 +24,7 @@ export class ArticleResolver {
     return this.articleService.findAll();
   }
 
-  @Query(() => Article)
+  @Query(() => [Article])
   findByPage(@Args('page', { type: () => Int }) page: number) {
     return this.articleService.findByPage(page);
   }

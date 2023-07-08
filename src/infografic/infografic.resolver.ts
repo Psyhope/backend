@@ -24,7 +24,7 @@ export class InfograficResolver {
     return this.infograficService.findAll();
   }
 
-  @Query(() => Infografic)
+  @Query(() => [Infografic])
   findByPage(@Args('page', { type: () => Int }) page: number) {
     return this.infograficService.findOne(page);
   }
