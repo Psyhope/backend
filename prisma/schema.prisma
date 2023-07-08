@@ -40,6 +40,7 @@ model User {
   token            String?
   account          Account?
   bookings         Booking[]
+  isOnboarded      Boolean   @default(false)
 }
 
 model Account {
@@ -59,4 +60,34 @@ model Booking {
   userId        String
   time          DateTime
   counselorType CounselorType @map("counselor_type")
+}
+
+model Article {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  title     String
+  content   String   @db.Text
+  posterUrl String
+}
+
+model Event {
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  title       String
+  date        DateTime @db.Date
+  location    String
+  time        String
+  description String   @db.Text
+  posterUrl   String
+}
+
+model Infografic {
+  id            Int      @id @default(autoincrement())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  title         String
+  description   String   @db.Text
+  infograficUrl String
 }

@@ -14,8 +14,105 @@ type User {
   username: String!
   fullname: String!
   account: Account!
+  isOnboarded: Boolean!
+}
+
+type Article {
+  id: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  title: String!
+  content: String!
+  posterUrl: String!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Infografic {
+  id: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  title: String!
+  description: String!
+  infograficUrl: String!
+}
+
+type Event {
+  id: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  title: String!
+  date: DateTime!
+  location: String!
+  time: String!
+  description: String!
+  posterUrl: String!
 }
 
 type Query {
   user: User!
+  findAll: [Event!]!
+  findByPage(page: Int!): Infografic!
+  findOne(id: Int!): Event!
+  findById(page: Int!): Event!
+}
+
+type Mutation {
+  createArticle(createArticleInput: CreateArticleInput!): Article!
+  updateArticle(updateArticleInput: UpdateArticleInput!): Article!
+  removeArticle(id: Int!): Article!
+  createInfografic(createInfograficInput: CreateInfograficInput!): Infografic!
+  updateInfografic(updateInfograficInput: UpdateInfograficInput!): Infografic!
+  removeInfografic(id: Int!): Infografic!
+  createEvent(createEventInput: CreateEventInput!): Event!
+  updateEvent(updateEventInput: UpdateEventInput!): Event!
+  removeEvent(id: Int!): Event!
+}
+
+input CreateArticleInput {
+  title: String!
+  content: String!
+  posterUrl: String!
+}
+
+input UpdateArticleInput {
+  title: String!
+  content: String!
+  posterUrl: String!
+  id: Int!
+}
+
+input CreateInfograficInput {
+  title: String!
+  description: String!
+  infograficUrl: String!
+}
+
+input UpdateInfograficInput {
+  title: String!
+  description: String!
+  infograficUrl: String!
+  id: Int!
+}
+
+input CreateEventInput {
+  title: String!
+  date: DateTime!
+  location: String!
+  time: String!
+  description: String!
+  posterUrl: String!
+}
+
+input UpdateEventInput {
+  title: String!
+  date: DateTime!
+  location: String!
+  time: String!
+  description: String!
+  posterUrl: String!
+  id: Int!
 }
