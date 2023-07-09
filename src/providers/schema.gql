@@ -14,15 +14,9 @@ type User {
   username: String!
   fullname: String!
   account: Account!
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
   isOnboarded: Boolean!
   lineAcc: String
   igAcc: String
-=======
-  isOnboarded: Boolean!
->>>>>>> a2c736524cd51aaf6571c4a9ede063f3feda5b74
 }
 
 type Article {
@@ -58,47 +52,44 @@ type Event {
   time: String!
   description: String!
   posterUrl: String!
-<<<<<<< HEAD
 }
 
 type Booking {
   id: Int!
-  bookingDate: DateTime!
-  bookingType: String!
+
+  """The time of the booking"""
+  time: DateTime!
+  userId: String!
+  counselorType: CounselorType!
+
+  """The reason for applying for a counseling session"""
   reasonApply: String!
   closestKnown: Boolean!
-  number_1: Int!
-  number_2: Int!
-  number_3: Int!
-  number_4: Int!
-  number_5: Int!
-  number_6: Int!
-  number_7: Int!
-  number_8: Int!
-  number_9: Int!
-  number_10: Int!
-  number_11: Int!
-  number_12: Int!
->>>>>>> 7fdee32e9e550da9a133fd842fb57bdadc9e8bfa
-=======
->>>>>>> a2c736524cd51aaf6571c4a9ede063f3feda5b74
+
+  """
+  Answers for all 12 question on the booking form in order, each number from 1-4 corresponds to the options on the form
+  """
+  answers: [Int!]!
+}
+
+"""The type of counselor, either PSYHOPE or FACULTY"""
+enum CounselorType {
+  PSYHOPE
+  FACULTY
+}
+
+type RescheduleRequest {
+  booking: Booking!
+  time: DateTime!
 }
 
 type Query {
   user: User!
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-  findAll: [Event!]!
-  findByPage(page: Int!): Infografic!
-  findOne(id: Int!): Event!
-  findById(page: Int!): Event!
-  booking(id: Int!): Booking!
-=======
   findAll: [Event!]!
   findByPage(page: Int!): [Event!]!
   findOne(id: Int!): Event!
->>>>>>> a2c736524cd51aaf6571c4a9ede063f3feda5b74
+  findById(page: Int!): Event!
+  booking: [Booking!]!
 }
 
 type Mutation {
@@ -111,12 +102,10 @@ type Mutation {
   createEvent(createEventInput: CreateEventInput!): Event!
   updateEvent(updateEventInput: UpdateEventInput!): Event!
   removeEvent(id: Int!): Event!
-<<<<<<< HEAD
   createBooking(createBookingInput: CreateBookingInput!): Booking!
   updateBooking(updateBookingInput: UpdateBookingInput!): Booking!
   removeBooking(id: Int!): Booking!
-=======
->>>>>>> a2c736524cd51aaf6571c4a9ede063f3feda5b74
+  rescheduleBooking(id: Int!): RescheduleRequest!
 }
 
 input CreateArticleInput {
@@ -162,19 +151,45 @@ input UpdateEventInput {
   description: String!
   posterUrl: String!
   id: Int!
-<<<<<<< HEAD
 }
 
 input CreateBookingInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  time: DateTime!
+  userId: String!
+  counselorType: CounselorType!
+  reasonApply: String!
+  closestKnown: Boolean!
+  number_1: Int!
+  number_2: Int!
+  number_3: Int!
+  number_4: Int!
+  number_5: Int!
+  number_6: Int!
+  number_7: Int!
+  number_8: Int!
+  number_9: Int!
+  number_10: Int!
+  number_11: Int!
+  number_12: Int!
 }
 
 input UpdateBookingInput {
-  """Example field (placeholder)"""
-  exampleField: Int
+  time: DateTime
+  userId: String
+  counselorType: CounselorType
+  reasonApply: String
+  closestKnown: Boolean
+  number_1: Int
+  number_2: Int
+  number_3: Int
+  number_4: Int
+  number_5: Int
+  number_6: Int
+  number_7: Int
+  number_8: Int
+  number_9: Int
+  number_10: Int
+  number_11: Int
+  number_12: Int
   id: Int!
->>>>>>> 7fdee32e9e550da9a133fd842fb57bdadc9e8bfa
-=======
->>>>>>> a2c736524cd51aaf6571c4a9ede063f3feda5b74
 }

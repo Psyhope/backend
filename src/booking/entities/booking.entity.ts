@@ -1,5 +1,4 @@
-import { ObjectType, Field, Int } from '@nestjs/graphql';
-import { User } from 'src/user/models/user.model';
+import { ObjectType, Field, Int, registerEnumType } from '@nestjs/graphql';
 
 export enum CounselorType {
   PSYHOPE = "PSYHOPE",
@@ -11,54 +10,28 @@ export class Booking {
   @Field(() => Int)
   id: number;
 
-  @Field(()=> Date)
+  @Field(() => Date, { description: 'The time of the booking' })
   time: Date;
 
   @Field(() => String)
   userId: string;
 
-  @Field(() => CounselorType, {defaultValue : CounselorType.PSYHOPE, nullable: false})
+  @Field(() => CounselorType, { defaultValue: CounselorType.PSYHOPE, nullable: false })
   counselorType: CounselorType;
 
-  @Field(() => String)
+  @Field(() => String, { description: 'The reason for applying for a counseling session' })
   reasonApply: String;
 
   @Field(() => Boolean)
   closestKnown: Boolean;
 
-  @Field(() => Int)
-  number_1: number;
-
-  @Field(() => Int)
-  number_2: number;
-
-  @Field(() => Int)
-  number_3: number;
-
-  @Field(() => Int)
-  number_4: number;
-
-  @Field(() => Int)
-  number_5: number;
-
-  @Field(() => Int)
-  number_6: number;
-
-  @Field(() => Int)
-  number_7: number;
-
-  @Field(() => Int)
-  number_8: number;
-
-  @Field(() => Int)
-  number_9: number;
-
-  @Field(() => Int)
-  number_10: number;
-
-  @Field(() => Int)
-  number_11: number;
-
-  @Field(() => Int)
-  number_12: number;
+  @Field(() => [Int], {
+    description: 'Answers for all 12 question on the booking form in order, each number from 1-4 corresponds to the options on the form'
+  })
+  answers: number;
 }
+
+registerEnumType(CounselorType, {
+  name: 'CounselorType',
+  description: 'The type of counselor, either PSYHOPE or FACULTY',
+})

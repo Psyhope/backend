@@ -7,16 +7,16 @@ export class CreateBookingInput {
   time: Date;
 
   @Field(() => String)
-  userId : String
+  userId: string
 
   @Field(() => CounselorType)
   counselorType: CounselorType
 
   @Field(() => String)
-  reasonApply: String
+  reasonApply: string
 
-  @Field(()=> Boolean)
-  closestKnown: Boolean
+  @Field(() => Boolean)
+  closestKnown: boolean
 
   @Field(() => Int)
   number_1: number;

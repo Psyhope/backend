@@ -6,10 +6,6 @@ import { ArticleRepositories } from 'src/models/article.repo';
 
 @Module({
   providers: [ArticleResolver, ArticleService, DbService, ArticleRepositories],
-<<<<<<< HEAD
-  exports: [DbService, ArticleRepositories],
-=======
   exports: [ArticleResolver, ArticleService, DbService, ArticleRepositories],
->>>>>>> a2c736524cd51aaf6571c4a9ede063f3feda5b74
 })
-export class ArticleModule {}
+export class ArticleModule { }

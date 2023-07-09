@@ -2,17 +2,20 @@ import { Injectable } from '@nestjs/common';
 import { CreateBookingInput } from './dto/create-booking.input';
 import { UpdateBookingInput } from './dto/update-booking.input';
 import { DbService } from 'src/providers/database/db';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class BookingService {
-  constructor(private readonly db: DbService) {}
+  constructor(private readonly db: DbService) { }
 
-  create(createBookingInput: CreateBookingInput) {
-    return ;
+  async create(createBookingDto: Prisma.BookingCreateInput) {
+    return await this.db.booking.create({
+      data: createBookingDto
+    });
   }
 
-  findAll() {
-    return `This action returns all booking`;
+  async findAll(args: Prisma.BookingFindManyArgs) {
+    return await this.db.booking.findMany(args);
   }
 
   findOne(id: number) {

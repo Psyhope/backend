@@ -32,17 +32,18 @@ enum CounselorType {
 }
 
 model User {
-  id               String    @id
-  namaRole         String    @map("nama_role")
-  username         String    @unique
+  id               String          @id
+  namaRole         String          @map("nama_role")
+  username         String          @unique
   fullname         String
-  organizationCode String    @map("organization_code")
+  organizationCode String          @map("organization_code")
   token            String?
   account          Account?
   bookings         Booking[]
-  isOnboarded      Boolean   @default(false)
+  isOnboarded      Boolean         @default(false)
   lineAcc          String?
   igAcc            String?
+  CounselingLog    CounselingLog[]
 }
 
 model Account {
@@ -57,25 +58,26 @@ model Account {
 }
 
 model Booking {
-  id            Int           @id @default(autoincrement())
-  user          User          @relation(fields: [userId], references: [id])
-  userId        String
-  time          DateTime
-  counselorType CounselorType @map("counselor_type")
-  reasonApply   String
-  closestKnown  Boolean
-  number_1      Int
-  number_2      Int
-  number_3      Int
-  number_4      Int
-  number_5      Int
-  number_6      Int
-  number_7      Int
-  number_8      Int
-  number_9      Int
-  number_10     Int
-  number_11     Int
-  number_12     Int
+  id                Int                 @id @default(autoincrement())
+  user              User                @relation(fields: [userId], references: [id])
+  userId            String
+  time              DateTime
+  counselorType     CounselorType       @map("counselor_type")
+  reasonApply       String
+  closestKnown      Boolean
+  number_1          Int
+  number_2          Int
+  number_3          Int
+  number_4          Int
+  number_5          Int
+  number_6          Int
+  number_7          Int
+  number_8          Int
+  number_9          Int
+  number_10         Int
+  number_11         Int
+  number_12         Int
+  RescheduleRequest RescheduleRequest[]
 }
 
 model Article {
@@ -106,4 +108,19 @@ model Infografic {
   title         String
   description   String   @db.Text
   infograficUrl String
+}
+
+model RescheduleRequest {
+  id        Int      @id @default(autoincrement())
+  booking   Booking  @relation(fields: [bookingId], references: [id])
+  bookingId Int      @map("booking_id")
+  time      DateTime
+}
+
+model CounselingLog {
+  id     Int      @id @default(autoincrement())
+  client User     @relation(fields: [userId], references: [id])
+  userId String
+  time   DateTime
+  detail String   @db.Text
 }

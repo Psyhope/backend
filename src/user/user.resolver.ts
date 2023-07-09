@@ -5,6 +5,7 @@ import { CurrentUser } from 'src/auth/decorator/currentUser.decorator';
 import { UseGuards } from '@nestjs/common';
 import { LoggedIn } from 'src/guards/loggedIn.guard';
 import { JwtPayload } from 'src/auth/interfaces/jwt.payload';
+import { resolveName } from 'src/lib/resolveUsername';
 
 @Resolver(() => User)
 export class UserResolver {
@@ -19,7 +20,7 @@ export class UserResolver {
     return {
       id: user.sub,
       username,
-      fullname,
+      fullname: resolveName(user.sub, fullname),
       isOnboarded,
       account: {
         faculty,
