@@ -1,4 +1,10 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { User } from 'src/user/models/user.model';
+
+export enum CounselorType {
+  PSYHOPE = "PSYHOPE",
+  FACULTY = "FACULTY"
+}
 
 @ObjectType()
 export class Booking {
@@ -6,10 +12,13 @@ export class Booking {
   id: number;
 
   @Field(()=> Date)
-  bookingDate: Date;
+  time: Date;
 
   @Field(() => String)
-  bookingType: String
+  userId: string;
+
+  @Field(() => CounselorType, {defaultValue : CounselorType.PSYHOPE, nullable: false})
+  counselorType: CounselorType;
 
   @Field(() => String)
   reasonApply: String;

@@ -3,12 +3,15 @@ import { BookingService } from './booking.service';
 import { Booking } from './entities/booking.entity';
 import { CreateBookingInput } from './dto/create-booking.input';
 import { UpdateBookingInput } from './dto/update-booking.input';
+import { UseGuards } from '@nestjs/common';
+import { LoggedIn } from 'src/guards/loggedIn.guard';
 
 @Resolver(() => Booking)
 export class BookingResolver {
   constructor(private readonly bookingService: BookingService) {}
 
   @Mutation(() => Booking)
+  @UseGuards(LoggedIn)
   createBooking(@Args('createBookingInput') createBookingInput: CreateBookingInput) {
     return this.bookingService.create(createBookingInput);
   }
