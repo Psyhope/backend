@@ -33,8 +33,6 @@ import { BookingModule } from './booking/booking.module';
     BookingModule,
   ],
   controllers: [AuthController, AppController],
-  providers: [
-    AppService,
-  ],
+  providers: [AppService],
 })
 export class AppModule { }

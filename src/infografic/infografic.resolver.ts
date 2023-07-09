@@ -9,7 +9,7 @@ import { PsyhopeAdmin } from 'src/guards/psyhopeAdmin.guard';
 
 @Resolver(() => Infografic)
 export class InfograficResolver {
-  constructor(private readonly infograficService: InfograficService) {}
+  constructor(private readonly infograficService: InfograficService) { }
 
   @Mutation(() => Infografic)
   @UseGuards(FacultyAdmin, PsyhopeAdmin)
@@ -24,7 +24,7 @@ export class InfograficResolver {
     return this.infograficService.findAll();
   }
 
-  @Query(() => Infografic)
+  @Query(() => [Infografic])
   findByPage(@Args('page', { type: () => Int }) page: number) {
     return this.infograficService.findOne(page);
   }

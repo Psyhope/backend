@@ -9,7 +9,7 @@ import { PsyhopeAdmin } from 'src/guards/psyhopeAdmin.guard';
 
 @Resolver(() => Event)
 export class EventResolver {
-  constructor(private readonly eventService: EventService) {}
+  constructor(private readonly eventService: EventService) { }
 
   @Mutation(() => Event)
   @UseGuards(FacultyAdmin, PsyhopeAdmin)
@@ -23,7 +23,10 @@ export class EventResolver {
   }
 
   @Query(() => Event)
-  findById(@Args('page', { type: () => Int }) page: number) {
+  findById(@Args('page', { type: () => Int }) page: number) { }
+
+  @Query(() => [Event])
+  findByPage(@Args('page', { type: () => Int }) page: number) {
     return this.eventService.findByPage(page);
   }
 

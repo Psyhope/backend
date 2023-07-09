@@ -3,6 +3,7 @@ import { AuthService } from "./auth.service";
 import { AccessTokenGuard } from "src/guards/accessToken.guard";
 import { Request, Response } from "express";
 import { RefreshTokenGuard } from "src/guards/refreshToken.guard";
+import { Throttle } from "@nestjs/throttler";
 
 @Controller('auth')
 export class AuthController {
@@ -21,11 +22,11 @@ export class AuthController {
   }
 
   @UseGuards(AccessTokenGuard)
-  @Get('logout')
+  @Get("logout")
   async logout(@Req() req: Request, @Res() res: Response) {
-    res.clearCookie('refreshToken').clearCookie('accessToken');
-    await this.auth.logout(req.user['sub']);
-    return res.send({ message: 'Logout success' });
+    res.clearCookie("refreshToken").clearCookie("accessToken");
+    await this.auth.logout(req.user["sub"]);
+    return res.send({ message: "Logout success" });
   }
 
   @UseGuards(RefreshTokenGuard)
@@ -41,3 +42,4 @@ export class AuthController {
     })
   }
 }
+

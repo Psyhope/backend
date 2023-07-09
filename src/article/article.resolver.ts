@@ -24,7 +24,11 @@ export class ArticleResolver {
     return this.articleService.findAll();
   }
 
+<<<<<<< HEAD
   @Query(() => Article)
+=======
+  @Query(() => [Article])
+>>>>>>> a2c736524cd51aaf6571c4a9ede063f3feda5b74
   findByPage(@Args('page', { type: () => Int }) page: number) {
     return this.articleService.findByPage(page);
   }

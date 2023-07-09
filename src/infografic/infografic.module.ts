@@ -11,6 +11,11 @@ import { InfograficRepositories } from 'src/models/infografic.repo';
     DbService,
     InfograficRepositories,
   ],
-  exports: [DbService, InfograficRepositories],
+  exports: [
+    InfograficResolver,
+    InfograficService,
+    DbService,
+    InfograficRepositories,
+  ],
 })
-export class InfograficModule {}
+export class InfograficModule { }

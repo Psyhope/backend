@@ -43,8 +43,11 @@ export class UserRepositories {
               gender: Gender.ATTACK_HELICOPTER,
             },
           },
+<<<<<<< HEAD
           lineAcc: null,
           igAcc: null,
+=======
+>>>>>>> a2c736524cd51aaf6571c4a9ede063f3feda5b74
         },
       })
       .catch(async (err) => {

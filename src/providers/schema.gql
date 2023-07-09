@@ -15,10 +15,14 @@ type User {
   fullname: String!
   account: Account!
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
   isOnboarded: Boolean!
   lineAcc: String
   igAcc: String
+=======
+  isOnboarded: Boolean!
+>>>>>>> a2c736524cd51aaf6571c4a9ede063f3feda5b74
 }
 
 type Article {
@@ -54,6 +58,7 @@ type Event {
   time: String!
   description: String!
   posterUrl: String!
+<<<<<<< HEAD
 }
 
 type Booking {
@@ -75,10 +80,13 @@ type Booking {
   number_11: Int!
   number_12: Int!
 >>>>>>> 7fdee32e9e550da9a133fd842fb57bdadc9e8bfa
+=======
+>>>>>>> a2c736524cd51aaf6571c4a9ede063f3feda5b74
 }
 
 type Query {
   user: User!
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
   findAll: [Event!]!
@@ -86,6 +94,11 @@ type Query {
   findOne(id: Int!): Event!
   findById(page: Int!): Event!
   booking(id: Int!): Booking!
+=======
+  findAll: [Event!]!
+  findByPage(page: Int!): [Event!]!
+  findOne(id: Int!): Event!
+>>>>>>> a2c736524cd51aaf6571c4a9ede063f3feda5b74
 }
 
 type Mutation {
@@ -98,9 +111,12 @@ type Mutation {
   createEvent(createEventInput: CreateEventInput!): Event!
   updateEvent(updateEventInput: UpdateEventInput!): Event!
   removeEvent(id: Int!): Event!
+<<<<<<< HEAD
   createBooking(createBookingInput: CreateBookingInput!): Booking!
   updateBooking(updateBookingInput: UpdateBookingInput!): Booking!
   removeBooking(id: Int!): Booking!
+=======
+>>>>>>> a2c736524cd51aaf6571c4a9ede063f3feda5b74
 }
 
 input CreateArticleInput {
@@ -146,6 +162,7 @@ input UpdateEventInput {
   description: String!
   posterUrl: String!
   id: Int!
+<<<<<<< HEAD
 }
 
 input CreateBookingInput {
@@ -158,4 +175,6 @@ input UpdateBookingInput {
   exampleField: Int
   id: Int!
 >>>>>>> 7fdee32e9e550da9a133fd842fb57bdadc9e8bfa
+=======
+>>>>>>> a2c736524cd51aaf6571c4a9ede063f3feda5b74
 }

@@ -8,4 +8,4 @@ import { SSOAuthService } from 'src/auth/providers/sso.service';
   providers: [UserRepositories, UserResolver, DbService, SSOAuthService],
   exports: [UserRepositories, DbService, SSOAuthService, UserResolver],
 })
-export class UserModule { }
+export class UserModule {}
