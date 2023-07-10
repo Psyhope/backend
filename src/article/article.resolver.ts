@@ -20,17 +20,17 @@ export class ArticleResolver {
   }
 
   @Query(() => [Article])
-  findAll() {
+  findAllArticle() {
     return this.articleService.findAll();
   }
 
   @Query(() => [Article])
-  findByPage(@Args('page', { type: () => Int }) page: number) {
+  findByPageArticle(@Args('page', { type: () => Int }) page: number) {
     return this.articleService.findByPage(page);
   }
 
   @Query(() => Article)
-  findOne(@Args('id', { type: () => Int }) id: number) {
+  findOneArticle(@Args('id', { type: () => Int }) id: number) {
     return this.articleService.findOne(id);
   }
 

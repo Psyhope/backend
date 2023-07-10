@@ -20,17 +20,17 @@ export class InfograficResolver {
   }
 
   @Query(() => [Infografic])
-  findAll() {
+  findAllInfografic() {
     return this.infograficService.findAll();
   }
 
   @Query(() => [Infografic])
-  findByPage(@Args('page', { type: () => Int }) page: number) {
+  findByPageInfografic(@Args('page', { type: () => Int }) page: number) {
     return this.infograficService.findOne(page);
   }
 
   @Query(() => Infografic)
-  findOne(@Args('id', { type: () => Int }) id: number) {
+  findOneInfografic(@Args('id', { type: () => Int }) id: number) {
     return this.infograficService.findOne(id);
   }
 

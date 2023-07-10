@@ -18,17 +18,17 @@ export class EventResolver {
   }
 
   @Query(() => [Event])
-  findAll() {
+  findAllEvent() {
     return this.eventService.findAll();
   }
 
   @Query(() => [Event])
-  findByPage(@Args('page', { type: () => Int }) page: number) {
+  findByPageEvent(@Args('page', { type: () => Int }) page: number) {
     return this.eventService.findByPage(page);
   }
 
   @Query(() => Event)
-  findOne(@Args('id', { type: () => Int }) id: number) {
+  findOneEvent(@Args('id', { type: () => Int }) id: number) {
     return this.eventService.findOne(id);
   }
 

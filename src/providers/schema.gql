@@ -54,9 +54,15 @@ type Event {
 
 type Query {
   user: User!
-  findAll: [Event!]!
-  findByPage(page: Int!): [Event!]!
-  findOne(id: Int!): Event!
+  findAllArticle: [Article!]!
+  findByPageArticle(page: Int!): [Article!]!
+  findOneArticle(id: Int!): Article!
+  findAllInfografic: [Infografic!]!
+  findByPageInfografic(page: Int!): [Infografic!]!
+  findOneInfografic(id: Int!): Infografic!
+  findAllEvent: [Event!]!
+  findByPageEvent(page: Int!): [Event!]!
+  findOneEvent(id: Int!): Event!
 }
 
 type Mutation {
