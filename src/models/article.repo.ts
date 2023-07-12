@@ -5,12 +5,18 @@ import { DbService } from 'src/providers/database/db';
 export class ArticleRepositories {
   constructor(private readonly db: DbService) {}
 
-  async create(title: string, content: string, posterUrl: string) {
+  async create(
+    title: string,
+    content: string,
+    posterUrl: string,
+    thumbnailUrl: string,
+  ) {
     return await this.db.article.create({
       data: {
         title,
         content,
         posterUrl,
+        thumbnailUrl,
       },
     });
   }
@@ -36,7 +42,13 @@ export class ArticleRepositories {
     });
   }
 
-  async update(id: number, title: string, content: string, posterUrl: string) {
+  async update(
+    id: number,
+    title: string,
+    content: string,
+    posterUrl: string,
+    thumbnailUrl: string,
+  ) {
     return await this.db.article.update({
       where: {
         id,
@@ -45,6 +57,7 @@ export class ArticleRepositories {
         title,
         content,
         posterUrl,
+        thumbnailUrl,
       },
     });
   }
