@@ -8,8 +8,8 @@ export class ArticleService {
   constructor(private readonly articleRepo: ArticleRepositories) {}
 
   create(createArticleInput: CreateArticleInput) {
-    const { title, content, posterUrl } = createArticleInput;
-    return this.articleRepo.create(title, content, posterUrl);
+    const { title, content, posterUrl, thumbnailUrl } = createArticleInput;
+    return this.articleRepo.create(title, content, posterUrl, thumbnailUrl);
   }
 
   findAll() {
@@ -25,8 +25,8 @@ export class ArticleService {
   }
 
   update(updateArticleInput: UpdateArticleInput) {
-    const { id, title, content, posterUrl } = updateArticleInput;
-    return this.articleRepo.update(id, title, content, posterUrl);
+    const { id, title, content, posterUrl, thumbnailUrl } = updateArticleInput;
+    return this.articleRepo.update(id, title, content, posterUrl, thumbnailUrl);
   }
 
   remove(id: number) {
