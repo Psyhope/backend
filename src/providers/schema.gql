@@ -24,6 +24,7 @@ type Article {
   title: String!
   content: String!
   posterUrl: String!
+  thumbnailUrl: String!
 }
 
 """
@@ -81,12 +82,14 @@ input CreateArticleInput {
   title: String!
   content: String!
   posterUrl: String!
+  thumbnailUrl: String!
 }
 
 input UpdateArticleInput {
   title: String!
   content: String!
   posterUrl: String!
+  thumbnailUrl: String!
   id: Int!
 }
 
