@@ -13,6 +13,15 @@ enum Gender {
   ATTACK_HELICOPTER
 }
 
+enum BookingState {
+  ACCEPTED
+  BOOKED
+  TERMINATED
+  NEED_RESCHEDULE
+  RESCHEDULED
+  FINISHED
+}
+
 enum Role {
   FACULTY_COUNSELOR
   PSYHOPE_COUNSELOR
@@ -78,6 +87,7 @@ model Booking {
   number_11         Int
   number_12         Int
   RescheduleRequest RescheduleRequest[]
+  state             BookingState        @default(BOOKED)
 }
 
 model Article {

@@ -12,6 +12,23 @@ export class BookingRepositories {
         });
     }
 
+    async findMany(args: Prisma.BookingFindManyArgs) {
+        return await this.db.booking.findMany(args);
+    }
+
+    async findById(id: number) {
+        return await this.db.booking.findUnique({
+            where: { id }
+        });
+    }
+
+    update(id: number, updateBookingInput: Prisma.BookingUpdateArgs["data"]) {
+        return this.db.booking.update({
+            where: { id },
+            data: updateBookingInput
+        });
+    }
+
     async delete(id: number) {
         return await this.db.booking.delete({ where: { id } });
     }

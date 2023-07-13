@@ -2,6 +2,35 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Booking {
+  id: Int!
+
+  """The time of the booking"""
+  time: DateTime!
+  userId: String!
+  counselorType: CounselorType!
+
+  """The reason for applying for a counseling session"""
+  reasonApply: String!
+  closestKnown: Boolean!
+
+  """
+  Answers for all 12 question on the booking form in order, each number from 1-4 corresponds to the options on the form
+  """
+  answers: [Int!]!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+"""The type of counselor, either PSYHOPE or FACULTY"""
+enum CounselorType {
+  PSYHOPE
+  FACULTY
+}
+
 type Account {
   faculty: String!
   role: String!
@@ -15,8 +44,15 @@ type User {
   fullname: String!
   account: Account!
   isOnboarded: Boolean!
+  bookings: [Booking!]!
   lineAcc: String
   igAcc: String
+}
+
+type RescheduleRequest {
+  id: Float!
+  booking: Booking!
+  time: DateTime!
 }
 
 type Article {
@@ -27,11 +63,6 @@ type Article {
   content: String!
   posterUrl: String!
 }
-
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
 
 type Infografic {
   id: Int!
@@ -54,42 +85,15 @@ type Event {
   posterUrl: String!
 }
 
-type Booking {
-  id: Int!
-
-  """The time of the booking"""
-  time: DateTime!
-  userId: String!
-  counselorType: CounselorType!
-
-  """The reason for applying for a counseling session"""
-  reasonApply: String!
-  closestKnown: Boolean!
-
-  """
-  Answers for all 12 question on the booking form in order, each number from 1-4 corresponds to the options on the form
-  """
-  answers: [Int!]!
-}
-
-"""The type of counselor, either PSYHOPE or FACULTY"""
-enum CounselorType {
-  PSYHOPE
-  FACULTY
-}
-
-type RescheduleRequest {
-  booking: Booking!
-  time: DateTime!
-}
-
 type Query {
   user: User!
   findAll: [Event!]!
   findByPage(page: Int!): [Event!]!
   findOne(id: Int!): Event!
   findById(page: Int!): Event!
-  booking: [Booking!]!
+
+  "\n      Get all bookings based on the user's role,\n      CLIENT: Get all bookings made by the user.\n      FACULTY_ADMIN: Get all bookings made by the user's faculty.\n      FACULTY_COUNSELOR: Get all bookings made by the user's faculty.\n      PSYHOPE_ADMIN: Get all bookings.\n      PSYHOPE_COUNSELOR: Get all bookings.\n      "
+  bookings: [Booking!]!
 }
 
 type Mutation {
@@ -103,9 +107,9 @@ type Mutation {
   updateEvent(updateEventInput: UpdateEventInput!): Event!
   removeEvent(id: Int!): Event!
   createBooking(createBookingInput: CreateBookingInput!): Booking!
-  updateBooking(updateBookingInput: UpdateBookingInput!): Booking!
-  removeBooking(id: Int!): Booking!
-  rescheduleBooking(id: Int!): RescheduleRequest!
+  rescheduleBooking(id: Int!, date: String!, time: String!): RescheduleRequest!
+  acceptRescheduleRequest(id: Int!): Booking!
+  terminateBooking(id: String!): Booking!
 }
 
 input CreateArticleInput {
@@ -171,25 +175,4 @@ input CreateBookingInput {
   number_10: Int!
   number_11: Int!
   number_12: Int!
-}
-
-input UpdateBookingInput {
-  time: DateTime
-  userId: String
-  counselorType: CounselorType
-  reasonApply: String
-  closestKnown: Boolean
-  number_1: Int
-  number_2: Int
-  number_3: Int
-  number_4: Int
-  number_5: Int
-  number_6: Int
-  number_7: Int
-  number_8: Int
-  number_9: Int
-  number_10: Int
-  number_11: Int
-  number_12: Int
-  id: Int!
 }
