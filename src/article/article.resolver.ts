@@ -6,13 +6,14 @@ import { UpdateArticleInput } from './dto/update-article.input';
 import { UseGuards } from '@nestjs/common';
 import { FacultyAdmin } from 'src/guards/facultyAdmin.guard';
 import { PsyhopeAdmin } from 'src/guards/psyhopeAdmin.guard';
+import { LoggedIn } from 'src/guards/loggedIn.guard';
 
 @Resolver(() => Article)
 export class ArticleResolver {
   constructor(private readonly articleService: ArticleService) {}
 
   @Mutation(() => Article)
-  @UseGuards(FacultyAdmin, PsyhopeAdmin)
+  @UseGuards(LoggedIn, FacultyAdmin, PsyhopeAdmin)
   createArticle(
     @Args('createArticleInput') createArticleInput: CreateArticleInput,
   ) {
@@ -35,7 +36,7 @@ export class ArticleResolver {
   }
 
   @Mutation(() => Article)
-  @UseGuards(FacultyAdmin, PsyhopeAdmin)
+  @UseGuards(LoggedIn, FacultyAdmin, PsyhopeAdmin)
   updateArticle(
     @Args('updateArticleInput') updateArticleInput: UpdateArticleInput,
   ) {
@@ -43,7 +44,7 @@ export class ArticleResolver {
   }
 
   @Mutation(() => Article)
-  @UseGuards(FacultyAdmin, PsyhopeAdmin)
+  @UseGuards(LoggedIn, FacultyAdmin, PsyhopeAdmin)
   removeArticle(@Args('id', { type: () => Int }) id: number) {
     return this.articleService.remove(id);
   }
