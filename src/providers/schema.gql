@@ -58,18 +58,16 @@ type Booking {
   id: Int!
 
   """The time of the booking"""
-  time: DateTime!
+  bookingTime: String!
+
+  """The time of the booking"""
+  bookingDate: DateTime!
   userId: String!
   counselorType: CounselorType!
 
   """The reason for applying for a counseling session"""
   reasonApply: String!
   closestKnown: Boolean!
-
-  """
-  Answers for all 12 question on the booking form in order, each number from 1-4 corresponds to the options on the form
-  """
-  answers: [Int!]!
 }
 
 """The type of counselor, either PSYHOPE or FACULTY"""
@@ -83,6 +81,12 @@ type RescheduleRequest {
   time: DateTime!
 }
 
+type CouncelorSchedule {
+  id: Int!
+  workDay: String!
+  workTime: String!
+}
+
 type Query {
   user: User!
   findAll: [Event!]!
@@ -90,6 +94,13 @@ type Query {
   findOne(id: Int!): Event!
   findById(page: Int!): Event!
   booking: [Booking!]!
+  schedule(getScheduleDTO: GetScheduleDTO!): [CouncelorSchedule!]
+}
+
+input GetScheduleDTO {
+  day: DateTime!
+  dayTime: String!
+  counselorType: CounselorType!
 }
 
 type Mutation {
@@ -102,7 +113,7 @@ type Mutation {
   createEvent(createEventInput: CreateEventInput!): Event!
   updateEvent(updateEventInput: UpdateEventInput!): Event!
   removeEvent(id: Int!): Event!
-  createBooking(createBookingInput: CreateBookingInput!): Booking!
+  createBooking(createBookingInput: CreateBookingInput!): Booking
   updateBooking(updateBookingInput: UpdateBookingInput!): Booking!
   removeBooking(id: Int!): Booking!
   rescheduleBooking(id: Int!): RescheduleRequest!
@@ -154,8 +165,8 @@ input UpdateEventInput {
 }
 
 input CreateBookingInput {
-  time: DateTime!
-  userId: String!
+  bookingDate: DateTime!
+  bookingTime: String!
   counselorType: CounselorType!
   reasonApply: String!
   closestKnown: Boolean!
@@ -174,8 +185,8 @@ input CreateBookingInput {
 }
 
 input UpdateBookingInput {
-  time: DateTime
-  userId: String
+  bookingDate: DateTime
+  bookingTime: String
   counselorType: CounselorType
   reasonApply: String
   closestKnown: Boolean

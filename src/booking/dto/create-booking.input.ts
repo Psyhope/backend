@@ -4,10 +4,10 @@ import { CounselorType } from '../entities/booking.entity';
 @InputType()
 export class CreateBookingInput {
   @Field(() => Date)
-  time: Date;
-
+  bookingDate: Date;
+  
   @Field(() => String)
-  userId: string
+  bookingTime: string
 
   @Field(() => CounselorType)
   counselorType: CounselorType

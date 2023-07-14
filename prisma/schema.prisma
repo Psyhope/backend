@@ -13,6 +13,12 @@ enum Gender {
   ATTACK_HELICOPTER
 }
 
+enum Topic {
+  TOPIC_1
+  TOPIC_2
+  TOPIC_3
+}
+
 enum Role {
   FACULTY_COUNSELOR
   PSYHOPE_COUNSELOR
@@ -44,6 +50,25 @@ model User {
   lineAcc          String?
   igAcc            String?
   CounselingLog    CounselingLog[]
+  Councelor        Councelor?
+}
+
+model Councelor {
+  id       Int       @id @default(autoincrement())
+  user     User      @relation(fields: [userId], references: [id])
+  userId   String    @unique
+  counselorType     CounselorType
+  isOn     Boolean   @default(true)
+  Booking  Booking[]
+  councelorSchedule CouncelorSchedule[]
+}
+
+model CouncelorSchedule{
+  id      Int      @id @default(autoincrement())
+  councelor         Councelor?          @relation(fields: [councelorId], references: [id])
+  councelorId       Int?
+  workDay String
+  workTime String
 }
 
 model Account {
@@ -61,10 +86,14 @@ model Booking {
   id                Int                 @id @default(autoincrement())
   user              User                @relation(fields: [userId], references: [id])
   userId            String
-  time              DateTime
+  councelor         Councelor?          @relation(fields: [councelorId], references: [id])
+  councelorId       Int?
+  bookingDate       DateTime            @db.Date
+  bookingTime       String
   counselorType     CounselorType       @map("counselor_type")
   reasonApply       String
   closestKnown      Boolean
+  isAccepted        Boolean             @default(false)
   number_1          Int
   number_2          Int
   number_3          Int
@@ -78,6 +107,8 @@ model Booking {
   number_11         Int
   number_12         Int
   RescheduleRequest RescheduleRequest[]
+  bookingTopic      Topic[]
+  blacklist         String[]
 }
 
 model Article {

@@ -5,18 +5,24 @@ import { CreateBookingInput } from './dto/create-booking.input';
 import { UpdateBookingInput } from './dto/update-booking.input';
 import { UseGuards } from '@nestjs/common';
 import { LoggedIn } from 'src/guards/loggedIn.guard';
-import { RescheduleRequest } from './entities/recheduleRequest.entity';
+import { RescheduleRequest } from './entities/rescheduleRequest.entity';
 import { CurrentUser } from 'src/auth/decorator/currentUser.decorator';
 import { JwtPayload } from 'src/auth/interfaces/jwt.payload';
 import { UserRepositories } from 'src/models/user.repo';
+import { PeerCounselor } from 'src/guards/peerCounselor.guard';
+import { PsyhopeCounselor } from 'src/guards/psyhopeCounselor.guard';
+import { Councelor } from './entities/counselor.entity';
+import { GetScheduleDTO } from './dto/getSchedule.input';
+import { CouncelorSchedule } from './entities/councelorSchedule.entity';
 
 @Resolver(() => Booking)
 export class BookingResolver {
   constructor(private readonly bookingService: BookingService, private readonly userRepo: UserRepositories) { }
 
-  @Mutation(() => Booking)
+  @Mutation(() => Booking, {nullable: true })
   @UseGuards(LoggedIn)
-  createBooking(@CurrentUser() user: JwtPayload, @Args('createBookingInput') createBookingInput: CreateBookingInput) {
+  async createBooking(@CurrentUser() user: JwtPayload, @Args('createBookingInput') createBookingInput: CreateBookingInput) {
+    const _user = await this.userRepo.findById(user.sub);
     return this.bookingService.create({
       ...createBookingInput,
       user: {
@@ -24,9 +30,10 @@ export class BookingResolver {
           id: user.sub
         }
       }
-    });
+    },
+    _user.account.faculty );
   }
-
+  
   @Query(() => [Booking], { name: 'booking' })
   @UseGuards(LoggedIn)
   async bookings(@CurrentUser() user: JwtPayload) {
@@ -52,6 +59,13 @@ export class BookingResolver {
       case "PSYHOPE_COUNSELOR":
         return await this.bookingService.findAll({});
     }
+  }
+
+  @Query(() => [CouncelorSchedule], { name: 'schedule', nullable: true })
+  @UseGuards(LoggedIn)
+  async getSchedule(@CurrentUser() user: JwtPayload, @Args('getScheduleDTO') getScheduleDTO: GetScheduleDTO) {
+    const _user = await this.userRepo.findById(user.sub);
+    return await this.bookingService.getSchedule(getScheduleDTO.day, getScheduleDTO.counselorType, _user.account.faculty, getScheduleDTO.dayTime);
   }
 
   // @Query(() => Booking, { name: 'booking' })

@@ -10,8 +10,11 @@ export class Booking {
   @Field(() => Int)
   id: number;
 
+  @Field(() => String, { description: 'The time of the booking' })
+  bookingTime: string;
+
   @Field(() => Date, { description: 'The time of the booking' })
-  time: Date;
+  bookingDate: Date;
 
   @Field(() => String)
   userId: string;
@@ -24,11 +27,6 @@ export class Booking {
 
   @Field(() => Boolean)
   closestKnown: Boolean;
-
-  @Field(() => [Int], {
-    description: 'Answers for all 12 question on the booking form in order, each number from 1-4 corresponds to the options on the form'
-  })
-  answers: number;
 }
 
 registerEnumType(CounselorType, {
