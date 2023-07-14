@@ -14,6 +14,8 @@ import { PsyhopeCounselor } from 'src/guards/psyhopeCounselor.guard';
 import { Councelor } from './entities/counselor.entity';
 import { GetScheduleDTO } from './dto/getSchedule.input';
 import { CouncelorSchedule } from './entities/councelorSchedule.entity';
+import { RejectBookingDTO } from './dto/rejectBooking.input';
+import { use } from 'passport';
 
 @Resolver(() => Booking)
 export class BookingResolver {
@@ -72,6 +74,14 @@ export class BookingResolver {
   // findOne(@Args('id', { type: () => Int }) id: number) {
   //   return this.bookingService.findOne(id);
   // }
+
+  @Mutation(() => Booking)
+  @UseGuards(LoggedIn)
+  async rejectBooking(@Args('rejectBookingInput') rejectBookingInput: RejectBookingDTO, @CurrentUser() user: JwtPayload) {
+    const _user = await this.userRepo.findById(user.sub);
+    return this.bookingService.reject(rejectBookingInput.id, _user.id, _user.account.faculty);
+  }
+
 
   @Mutation(() => Booking)
   updateBooking(@Args('updateBookingInput') updateBookingInput: UpdateBookingInput) {

@@ -7,10 +7,11 @@ import { Prisma } from '@prisma/client';
 import { dayNames } from './const';
 import { Councelor } from './entities/counselor.entity';
 import { CounselorType } from './entities/booking.entity';
+import { UserRepositories } from 'src/models/user.repo';
 
 @Injectable()
 export class BookingService {
-  constructor(private readonly db: DbService) { }
+  constructor(private readonly db: DbService, private readonly userRepo: UserRepositories) { }
 
   async create(createBookingDto: Prisma.BookingCreateInput, faculty: string) {
 
@@ -20,7 +21,8 @@ export class BookingService {
         where: {
           councelorSchedule: {
             some: {
-              workDay: dayNames[new Date(createBookingDto.bookingDate.toLocaleString()).getDay()]
+              workDay: dayNames[new Date(createBookingDto.bookingDate.toLocaleString()).getDay()],
+              workTime: createBookingDto.bookingTime
             },
           },
           counselorType: createBookingDto.counselorType,
@@ -43,7 +45,8 @@ export class BookingService {
         where: {
           councelorSchedule: {
             some: {
-              workDay: dayNames[new Date(createBookingDto.bookingDate.toLocaleString()).getDay()]
+              workDay: dayNames[new Date(createBookingDto.bookingDate.toLocaleString()).getDay()],
+              workTime: createBookingDto.bookingTime
             },
           },
           counselorType: createBookingDto.counselorType,
@@ -70,6 +73,105 @@ export class BookingService {
 
   async findAll(args: Prisma.BookingFindManyArgs) {
     return await this.db.booking.findMany(args);
+  }
+
+  async reject(id: number, userId: string, faculty: string){
+    const updateBlacklist = await this.db.booking.update({
+      where: {
+        id,
+      },
+      data: {
+        blacklist: {
+          push: userId
+        }
+      }
+    })
+
+    let randomizedCouncelor = await this.db.councelor.findFirst({
+      where: {
+        userId,
+      }
+    });
+
+    if(updateBlacklist.counselorType == "PSYHOPE"){
+      // kasih constraint ketika udah lebih dari 4x loop blm dapet juga jadinya cancel
+      while(updateBlacklist.blacklist.includes(randomizedCouncelor.userId)){
+        console.log(randomizedCouncelor)
+        console.log(updateBlacklist)
+        randomizedCouncelor = await this.db.councelor.findFirst({
+          where: {
+            counselorType: updateBlacklist.counselorType,
+            councelorSchedule: {
+              some: {
+                workDay: dayNames[updateBlacklist.bookingDate.getDay()],
+                workTime: updateBlacklist.bookingTime
+              },
+            },  
+            Booking : {
+              none : {
+                bookingDate: updateBlacklist.bookingDate,
+                bookingTime: updateBlacklist.bookingTime
+              }
+            }
+          }
+        });
+      }
+      console.log(randomizedCouncelor)
+
+
+      return this.db.booking.update({
+        where: {
+          id,
+        },
+        data: {
+          councelor: {
+            connect: {
+              id: randomizedCouncelor.id,
+            }
+          }
+        }
+      })
+    }
+    else {
+      randomizedCouncelor = await this.db.councelor.findFirst({
+        where: {
+          counselorType: updateBlacklist.counselorType,
+          user : {
+            account:{
+              faculty,
+            }
+          },
+          councelorSchedule: {
+            some: {
+              workDay: dayNames[updateBlacklist.bookingDate.getDay()],
+            },
+          },
+          Booking: {
+            none : {
+              blacklist : {
+                has: userId,
+              }
+            }
+          }
+
+        }
+      });
+
+      return this.db.booking.update({
+        where: {
+          id,
+        },
+        data: {
+          councelor: {
+            connect: {
+              id: randomizedCouncelor.id,
+            }
+          }
+        }
+      })
+    }
+
+
   }
 
   findOne(id: number) {

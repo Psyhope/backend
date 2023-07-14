@@ -114,6 +114,7 @@ type Mutation {
   updateEvent(updateEventInput: UpdateEventInput!): Event!
   removeEvent(id: Int!): Event!
   createBooking(createBookingInput: CreateBookingInput!): Booking
+  rejectBooking(rejectBookingInput: RejectBookingDTO!): Booking!
   updateBooking(updateBookingInput: UpdateBookingInput!): Booking!
   removeBooking(id: Int!): Booking!
   rescheduleBooking(id: Int!): RescheduleRequest!
@@ -182,6 +183,10 @@ input CreateBookingInput {
   number_10: Int!
   number_11: Int!
   number_12: Int!
+}
+
+input RejectBookingDTO {
+  id: Int!
 }
 
 input UpdateBookingInput {
