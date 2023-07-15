@@ -83,7 +83,7 @@ export class ArticleResolver {
     return this.articleService.remove(id);
   }
 
-  @Query(() => Article)
+  @Query(() => [Article])
   findByLimitArticle(@Args('limit', { type: () => Int }) limit: number) {
     return this.articleService.findByLimit(limit);
   }

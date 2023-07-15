@@ -58,7 +58,7 @@ type Query {
   findAllArticle: [Article!]!
   findByPageArticle(page: Int!): [Article!]!
   findOneArticle(id: Int!): Article!
-  findByLimitArticle(limit: Int!): Article!
+  findByLimitArticle(limit: Int!): [Article!]!
   countArticle: Float!
   findAllInfografic: [Infografic!]!
   findByPageInfografic(page: Int!): [Infografic!]!
@@ -66,6 +66,8 @@ type Query {
   findAllEvent: [Event!]!
   findByPageEvent(page: Int!): [Event!]!
   findOneEvent(id: Int!): Event!
+  findByLimitEvent(limit: Int!): [Event!]!
+  countEvent: Float!
 }
 
 type Mutation {

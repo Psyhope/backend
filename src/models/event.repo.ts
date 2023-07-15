@@ -26,7 +26,11 @@ export class EventRepositories {
   }
 
   async findAll() {
-    return await this.db.event.findMany();
+    return await this.db.event.findMany({
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
   }
 
   async findByPage(page: number) {
@@ -35,6 +39,9 @@ export class EventRepositories {
     return await this.db.event.findMany({
       skip,
       take,
+      orderBy: {
+        createdAt: 'desc',
+      },
     });
   }
 
@@ -76,5 +83,18 @@ export class EventRepositories {
         id,
       },
     });
+  }
+
+  async findByLimit(limit: number) {
+    return await this.db.event.findMany({
+      orderBy: {
+        createdAt: 'desc',
+      },
+      take: limit,
+    });
+  }
+
+  async count() {
+    return await this.db.event.count();
   }
 }
