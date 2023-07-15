@@ -32,4 +32,12 @@ export class ArticleService {
   remove(id: number) {
     return this.articleRepo.delete(id);
   }
+
+  findByLimit(limit: number) {
+    return this.articleRepo.findByLimit(limit);
+  }
+
+  count() {
+    return this.articleRepo.count();
+  }
 }

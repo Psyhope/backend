@@ -22,7 +22,11 @@ export class ArticleRepositories {
   }
 
   async findAll() {
-    return await this.db.article.findMany();
+    return await this.db.article.findMany({
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
   }
 
   async findByPage(page: number) {
@@ -31,6 +35,9 @@ export class ArticleRepositories {
     return await this.db.article.findMany({
       skip,
       take,
+      orderBy: {
+        createdAt: 'desc',
+      },
     });
   }
 
@@ -68,5 +75,18 @@ export class ArticleRepositories {
         id,
       },
     });
+  }
+
+  async findByLimit(limit: number) {
+    return await this.db.article.findMany({
+      orderBy: {
+        createdAt: 'desc',
+      },
+      take: limit,
+    });
+  }
+
+  async count() {
+    return await this.db.article.count();
   }
 }

@@ -58,6 +58,8 @@ type Query {
   findAllArticle: [Article!]!
   findByPageArticle(page: Int!): [Article!]!
   findOneArticle(id: Int!): Article!
+  findByLimitArticle(limit: Int!): Article!
+  countArticle: Float!
   findAllInfografic: [Infografic!]!
   findByPageInfografic(page: Int!): [Infografic!]!
   findOneInfografic(id: Int!): Infografic!
