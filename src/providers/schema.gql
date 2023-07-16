@@ -15,6 +15,8 @@ type User {
   fullname: String!
   account: Account!
   isOnboarded: Boolean!
+  lineAcc: String
+  igAcc: String
 }
 
 type Article {
@@ -53,6 +55,41 @@ type Event {
   posterUrl: String!
 }
 
+type Booking {
+  id: Int!
+
+  """
+  The time of the booking
+  """
+  time: DateTime!
+  userId: String!
+  counselorType: CounselorType!
+
+  """
+  The reason for applying for a counseling session
+  """
+  reasonApply: String!
+  closestKnown: Boolean!
+
+  """
+  Answers for all 12 question on the booking form in order, each number from 1-4 corresponds to the options on the form
+  """
+  answers: [Int!]!
+}
+
+"""
+The type of counselor, either PSYHOPE or FACULTY
+"""
+enum CounselorType {
+  PSYHOPE
+  FACULTY
+}
+
+type RescheduleRequest {
+  booking: Booking!
+  time: DateTime!
+}
+
 type Query {
   user: User!
   findAllArticle: [Article!]!
@@ -82,6 +119,10 @@ type Mutation {
   createEvent(createEventInput: CreateEventInput!): Event!
   updateEvent(updateEventInput: UpdateEventInput!): Event!
   removeEvent(id: Int!): Event!
+  createBooking(createBookingInput: CreateBookingInput!): Booking!
+  updateBooking(updateBookingInput: UpdateBookingInput!): Booking!
+  removeBooking(id: Int!): Booking!
+  rescheduleBooking(id: Int!): RescheduleRequest!
 }
 
 input CreateArticleInput {
@@ -128,5 +169,46 @@ input UpdateEventInput {
   time: String!
   description: String!
   posterUrl: String!
+  id: Int!
+}
+
+input CreateBookingInput {
+  time: DateTime!
+  userId: String!
+  counselorType: CounselorType!
+  reasonApply: String!
+  closestKnown: Boolean!
+  number_1: Int!
+  number_2: Int!
+  number_3: Int!
+  number_4: Int!
+  number_5: Int!
+  number_6: Int!
+  number_7: Int!
+  number_8: Int!
+  number_9: Int!
+  number_10: Int!
+  number_11: Int!
+  number_12: Int!
+}
+
+input UpdateBookingInput {
+  time: DateTime
+  userId: String
+  counselorType: CounselorType
+  reasonApply: String
+  closestKnown: Boolean
+  number_1: Int
+  number_2: Int
+  number_3: Int
+  number_4: Int
+  number_5: Int
+  number_6: Int
+  number_7: Int
+  number_8: Int
+  number_9: Int
+  number_10: Int
+  number_11: Int
+  number_12: Int
   id: Int!
 }

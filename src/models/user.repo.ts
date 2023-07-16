@@ -14,7 +14,7 @@ export class UserRepositories {
   constructor(
     private readonly db: DbService,
     private readonly sso: SSOAuthService,
-  ) {}
+  ) { }
 
   async create(username: string, password: string) {
     const user = await this.sso.validate(username, password);
@@ -43,6 +43,8 @@ export class UserRepositories {
               gender: Gender.ATTACK_HELICOPTER,
             },
           },
+          lineAcc: null,
+          igAcc: null,
         },
       })
       .catch(async (err) => {

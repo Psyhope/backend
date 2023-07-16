@@ -24,4 +24,4 @@ import { UserRepositories } from 'src/models/user.repo';
     SSOAuthService,
   ],
 })
-export class EventModule {}
+export class EventModule { }

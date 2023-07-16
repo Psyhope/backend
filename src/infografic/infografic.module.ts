@@ -24,4 +24,4 @@ import { SSOAuthService } from 'src/auth/providers/sso.service';
     SSOAuthService,
   ],
 })
-export class InfograficModule {}
+export class InfograficModule { }

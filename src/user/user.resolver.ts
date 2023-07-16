@@ -5,21 +5,22 @@ import { CurrentUser } from 'src/auth/decorator/currentUser.decorator';
 import { UseGuards } from '@nestjs/common';
 import { LoggedIn } from 'src/guards/loggedIn.guard';
 import { JwtPayload } from 'src/auth/interfaces/jwt.payload';
+import { resolveName } from 'src/lib/resolveUsername';
 
 @Resolver(() => User)
 export class UserResolver {
-  constructor(private readonly userRepo: UserRepositories) {}
+  constructor(private readonly userRepo: UserRepositories) { }
 
   @Query(() => User)
   @UseGuards(LoggedIn)
   async user(@CurrentUser() user: JwtPayload): Promise<User> {
-    const { username, fullname, account, isOnboarded } =
+    const { username, fullname, account, isOnboarded, lineAcc, igAcc } =
       await this.userRepo.findById(user.sub);
     const { role, gender, faculty, major } = account;
     return {
       id: user.sub,
       username,
-      fullname,
+      fullname: resolveName(user.sub, fullname),
       isOnboarded,
       account: {
         faculty,
@@ -27,6 +28,8 @@ export class UserResolver {
         major,
         role,
       },
+      lineAcc,
+      igAcc,
     };
   }
 }
