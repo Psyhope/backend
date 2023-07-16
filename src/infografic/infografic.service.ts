@@ -32,4 +32,12 @@ export class InfograficService {
   remove(id: number) {
     return this.infograficRepo.delete(id);
   }
+
+  findByLimit(limit: number) {
+    return this.infograficRepo.findByLimit(limit);
+  }
+
+  count() {
+    return this.infograficRepo.count();
+  }
 }

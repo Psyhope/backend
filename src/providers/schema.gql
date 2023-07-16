@@ -63,6 +63,8 @@ type Query {
   findAllInfografic: [Infografic!]!
   findByPageInfografic(page: Int!): [Infografic!]!
   findOneInfografic(id: Int!): Infografic!
+  findByLimitInfografic(limit: Int!): [Infografic!]!
+  countInfografic: Float!
   findAllEvent: [Event!]!
   findByPageEvent(page: Int!): [Event!]!
   findOneEvent(id: Int!): Event!
