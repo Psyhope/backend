@@ -16,6 +16,7 @@ import { GetScheduleDTO } from './dto/getSchedule.input';
 import { CouncelorSchedule } from './entities/councelorSchedule.entity';
 import { RejectBookingDTO } from './dto/rejectBooking.input';
 import { use } from 'passport';
+import { AcceptBooking } from './dto/accept-booking.input';
 
 @Resolver(() => Booking)
 export class BookingResolver {
@@ -80,6 +81,14 @@ export class BookingResolver {
   async rejectBooking(@Args('rejectBookingInput') rejectBookingInput: RejectBookingDTO, @CurrentUser() user: JwtPayload) {
     const _user = await this.userRepo.findById(user.sub);
     return this.bookingService.reject(rejectBookingInput.id, _user.id, _user.account.faculty);
+  }
+
+  @Mutation(() => Booking, { nullable:true })
+  @UseGuards(LoggedIn)
+  async accpetBooking(@Args('accBookingInput') accBookingInput: AcceptBooking, @CurrentUser() user: JwtPayload) {
+    const _user = await this.userRepo.findById(user.sub);
+    if(_user.account.role == "CLIENT") return null;
+    return this.bookingService.accept(accBookingInput.id);
   }
 
 

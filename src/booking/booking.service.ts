@@ -8,6 +8,7 @@ import { dayNames } from './const';
 import { Councelor } from './entities/counselor.entity';
 import { CounselorType } from './entities/booking.entity';
 import { UserRepositories } from 'src/models/user.repo';
+import { all } from 'axios';
 
 @Injectable()
 export class BookingService {
@@ -75,6 +76,17 @@ export class BookingService {
     return await this.db.booking.findMany(args);
   }
 
+  async accept(id: number){
+    return this.db.booking.update({
+      where: {
+        id,
+      },
+      data : {
+        isAccepted : true,
+      }
+    })
+  }
+
   async reject(id: number, userId: string, faculty: string){
     const updateBlacklist = await this.db.booking.update({
       where: {
@@ -87,89 +99,74 @@ export class BookingService {
       }
     })
 
-    let randomizedCouncelor = await this.db.councelor.findFirst({
-      where: {
-        userId,
-      }
-    });
+    let counselorIdAvailable = []
+    let allCounselor = null
 
     if(updateBlacklist.counselorType == "PSYHOPE"){
       // kasih constraint ketika udah lebih dari 4x loop blm dapet juga jadinya cancel
-      while(updateBlacklist.blacklist.includes(randomizedCouncelor.userId)){
-        console.log(randomizedCouncelor)
-        console.log(updateBlacklist)
-        randomizedCouncelor = await this.db.councelor.findFirst({
-          where: {
-            counselorType: updateBlacklist.counselorType,
-            councelorSchedule: {
-              some: {
-                workDay: dayNames[updateBlacklist.bookingDate.getDay()],
-                workTime: updateBlacklist.bookingTime
-              },
-            },  
-            Booking : {
-              none : {
-                bookingDate: updateBlacklist.bookingDate,
-                bookingTime: updateBlacklist.bookingTime
-              }
-            }
-          }
-        });
-      }
-      console.log(randomizedCouncelor)
-
-
-      return this.db.booking.update({
+      // get seluruh yg standby pada saat itu, remove ketika pas diloop keluar nama dia, repeat, kalo loopnya abis ya duar kasih email
+      allCounselor = await this.db.councelor.findMany({
         where: {
-          id,
-        },
-        data: {
-          councelor: {
-            connect: {
-              id: randomizedCouncelor.id,
+          counselorType: updateBlacklist.counselorType,
+          councelorSchedule : {
+            some : {
+              workDay: dayNames[updateBlacklist.bookingDate.getDay()],
+              workTime: updateBlacklist.bookingTime
             }
           }
         }
       })
     }
     else {
-      randomizedCouncelor = await this.db.councelor.findFirst({
+      allCounselor = await this.db.councelor.findMany({
         where: {
           counselorType: updateBlacklist.counselorType,
-          user : {
-            account:{
+          user: {
+            account: {
               faculty,
             }
           },
-          councelorSchedule: {
-            some: {
+          councelorSchedule : {
+            some : {
               workDay: dayNames[updateBlacklist.bookingDate.getDay()],
-            },
-          },
-          Booking: {
-            none : {
-              blacklist : {
-                has: userId,
-              }
-            }
-          }
-
-        }
-      });
-
-      return this.db.booking.update({
-        where: {
-          id,
-        },
-        data: {
-          councelor: {
-            connect: {
-              id: randomizedCouncelor.id,
+              workTime: updateBlacklist.bookingTime
             }
           }
         }
       })
     }
+
+    allCounselor.forEach((data) => {
+      counselorIdAvailable.push(data.userId)
+    })
+
+  const blacklisted = updateBlacklist.blacklist
+  const availableCounselor = counselorIdAvailable.filter((data) => {
+    return !blacklisted.includes(data)
+  })
+  
+  if(availableCounselor.length != 0){
+    const selectedCounselor = availableCounselor[0]
+    const objSelectedCounselor = await this.db.councelor.findFirst({
+      where: {
+        userId: selectedCounselor,
+      }
+    })
+
+    return this.db.booking.update({
+      where: {
+        id,
+      },
+      data: {
+        councelor: {
+          connect: {
+            id: objSelectedCounselor.id,
+          }
+        }
+      }
+    })
+  }
+    
 
 
   }

@@ -115,6 +115,7 @@ type Mutation {
   removeEvent(id: Int!): Event!
   createBooking(createBookingInput: CreateBookingInput!): Booking
   rejectBooking(rejectBookingInput: RejectBookingDTO!): Booking!
+  accpetBooking(accBookingInput: AcceptBooking!): Booking
   updateBooking(updateBookingInput: UpdateBookingInput!): Booking!
   removeBooking(id: Int!): Booking!
   rescheduleBooking(id: Int!): RescheduleRequest!
@@ -186,6 +187,27 @@ input CreateBookingInput {
 }
 
 input RejectBookingDTO {
+  id: Int!
+}
+
+input AcceptBooking {
+  bookingDate: DateTime
+  bookingTime: String
+  counselorType: CounselorType
+  reasonApply: String
+  closestKnown: Boolean
+  number_1: Int
+  number_2: Int
+  number_3: Int
+  number_4: Int
+  number_5: Int
+  number_6: Int
+  number_7: Int
+  number_8: Int
+  number_9: Int
+  number_10: Int
+  number_11: Int
+  number_12: Int
   id: Int!
 }
 
