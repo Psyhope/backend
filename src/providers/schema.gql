@@ -26,6 +26,7 @@ type Article {
   title: String!
   content: String!
   posterUrl: String!
+  thumbnailUrl: String!
 }
 
 """
@@ -57,12 +58,16 @@ type Event {
 type Booking {
   id: Int!
 
-  """The time of the booking"""
+  """
+  The time of the booking
+  """
   time: DateTime!
   userId: String!
   counselorType: CounselorType!
 
-  """The reason for applying for a counseling session"""
+  """
+  The reason for applying for a counseling session
+  """
   reasonApply: String!
   closestKnown: Boolean!
 
@@ -72,7 +77,9 @@ type Booking {
   answers: [Int!]!
 }
 
-"""The type of counselor, either PSYHOPE or FACULTY"""
+"""
+The type of counselor, either PSYHOPE or FACULTY
+"""
 enum CounselorType {
   PSYHOPE
   FACULTY
@@ -85,11 +92,21 @@ type RescheduleRequest {
 
 type Query {
   user: User!
-  findAll: [Event!]!
-  findByPage(page: Int!): [Event!]!
-  findOne(id: Int!): Event!
-  findById(page: Int!): Event!
-  booking: [Booking!]!
+  findAllArticle: [Article!]!
+  findByPageArticle(page: Int!): [Article!]!
+  findOneArticle(id: Int!): Article!
+  findByLimitArticle(limit: Int!): [Article!]!
+  countArticle: Float!
+  findAllInfografic: [Infografic!]!
+  findByPageInfografic(page: Int!): [Infografic!]!
+  findOneInfografic(id: Int!): Infografic!
+  findByLimitInfografic(limit: Int!): [Infografic!]!
+  countInfografic: Float!
+  findAllEvent: [Event!]!
+  findByPageEvent(page: Int!): [Event!]!
+  findOneEvent(id: Int!): Event!
+  findByLimitEvent(limit: Int!): [Event!]!
+  countEvent: Float!
 }
 
 type Mutation {
@@ -112,12 +129,14 @@ input CreateArticleInput {
   title: String!
   content: String!
   posterUrl: String!
+  thumbnailUrl: String!
 }
 
 input UpdateArticleInput {
   title: String!
   content: String!
   posterUrl: String!
+  thumbnailUrl: String!
   id: Int!
 }
 

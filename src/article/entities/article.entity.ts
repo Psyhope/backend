@@ -19,4 +19,7 @@ export class Article {
 
   @Field(() => String)
   posterUrl: string;
+
+  @Field(() => String)
+  thumbnailUrl: string;
 }

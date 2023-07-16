@@ -49,4 +49,12 @@ export class EventService {
   remove(id: number) {
     return this.eventRepo.delete(id);
   }
+
+  findByLimit(limit: number) {
+    return this.eventRepo.findByLimit(limit);
+  }
+
+  count() {
+    return this.eventRepo.count();
+  }
 }
