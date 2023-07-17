@@ -16,57 +16,10 @@ export class BookingService {
 
   async create(createBookingDto: Prisma.BookingCreateInput, faculty: string) {
 
-    let randomizedCouncelor = null
-    if(createBookingDto.counselorType == "FACULTY"){
-      randomizedCouncelor = await this.db.councelor.findFirst({
-        where: {
-          councelorSchedule: {
-            some: {
-              workDay: dayNames[new Date(createBookingDto.bookingDate.toLocaleString()).getDay()],
-              workTime: createBookingDto.bookingTime
-            },
-          },
-          counselorType: createBookingDto.counselorType,
-          user: {
-            account: {
-              faculty,
-            }
-          },
-          Booking: {
-            none: {
-              bookingTime: createBookingDto.bookingTime,
-              bookingDate: createBookingDto.bookingDate
-            }
-          },
-        }
-      })
-    }
-    else {
-      randomizedCouncelor = await this.db.councelor.findFirst({
-        where: {
-          councelorSchedule: {
-            some: {
-              workDay: dayNames[new Date(createBookingDto.bookingDate.toLocaleString()).getDay()],
-              workTime: createBookingDto.bookingTime
-            },
-          },
-          counselorType: createBookingDto.counselorType,
-          Booking: {
-            none: {
-              bookingTime: createBookingDto.bookingTime,
-              bookingDate: createBookingDto.bookingDate
-            }
-          },
-        }
-      })
-    }
+    
     // kasih pengecualian ketika yg dirandom == null -> kirim email buat batal
     return await this.db.booking.create({
       data: {
-        councelor: { 
-          connect: {
-            id: randomizedCouncelor.id
-        }},
         ...createBookingDto,
       }
     });
@@ -83,6 +36,73 @@ export class BookingService {
       },
       data : {
         isAccepted : true,
+      }
+    })
+  }
+
+  async acceptAdmin(id: number, faculty: string){
+    const bookingAccepted = await this.db.booking.findUnique({
+      where: {
+        id,
+      }
+    })
+
+    let randomizedCouncelor = null;
+    if(bookingAccepted.counselorType == "FACULTY"){
+      randomizedCouncelor = await this.db.councelor.findFirst({
+        where: {
+          councelorSchedule: {
+            some: {
+              workDay: dayNames[new Date(bookingAccepted.bookingDate.toLocaleString()).getDay()],
+              workTime: bookingAccepted.bookingTime
+            },
+          },
+          counselorType: bookingAccepted.counselorType,
+          user: {
+            account: {
+              faculty,
+            }
+          },
+          Booking: {
+            none: {
+              bookingTime: bookingAccepted.bookingTime,
+              bookingDate: bookingAccepted.bookingDate
+            }
+          },
+        }
+      })
+    }
+    else {
+      randomizedCouncelor = await this.db.councelor.findFirst({
+        where: {
+          councelorSchedule: {
+            some: {
+              workDay: dayNames[new Date(bookingAccepted.bookingDate.toLocaleString()).getDay()],
+              workTime: bookingAccepted.bookingTime
+            },
+          },
+          counselorType: bookingAccepted.counselorType,
+          Booking: {
+            none: {
+              bookingTime: bookingAccepted.bookingTime,
+              bookingDate: bookingAccepted.bookingDate
+            }
+          },
+        }
+      })
+    }
+
+    return this.db.booking.update({
+      where: {
+        id,
+      },
+      data : {
+        adminAcc: true,
+        councelor: {
+          connect: {
+            id: randomizedCouncelor.id,
+          }
+        }
       }
     })
   }

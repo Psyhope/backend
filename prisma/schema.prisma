@@ -94,6 +94,8 @@ model Booking {
   reasonApply       String
   closestKnown      Boolean
   isAccepted        Boolean             @default(false)
+  isTerminated        Boolean             @default(false)
+  adminAcc        Boolean             @default(false)
   number_1          Int
   number_2          Int
   number_3          Int

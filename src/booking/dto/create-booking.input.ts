@@ -1,5 +1,5 @@
 import { InputType, Int, Field } from '@nestjs/graphql';
-import { CounselorType } from '../entities/booking.entity';
+import { CounselorType, Topic } from '../entities/booking.entity';
 
 @InputType()
 export class CreateBookingInput {
@@ -7,10 +7,13 @@ export class CreateBookingInput {
   bookingDate: Date;
   
   @Field(() => String)
-  bookingTime: string
+  bookingTime: string;
 
   @Field(() => CounselorType)
-  counselorType: CounselorType
+  counselorType: CounselorType;
+
+  @Field(() => Topic)
+  bookingTopic: Topic;
 
   @Field(() => String)
   reasonApply: string

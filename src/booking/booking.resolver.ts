@@ -17,6 +17,7 @@ import { CouncelorSchedule } from './entities/councelorSchedule.entity';
 import { RejectBookingDTO } from './dto/rejectBooking.input';
 import { use } from 'passport';
 import { AcceptBooking } from './dto/accept-booking.input';
+import { AdminAccBooking } from './dto/admin-acc.input';
 
 @Resolver(() => Booking)
 export class BookingResolver {
@@ -71,11 +72,6 @@ export class BookingResolver {
     return await this.bookingService.getSchedule(getScheduleDTO.day, getScheduleDTO.counselorType, _user.account.faculty, getScheduleDTO.dayTime);
   }
 
-  // @Query(() => Booking, { name: 'booking' })
-  // findOne(@Args('id', { type: () => Int }) id: number) {
-  //   return this.bookingService.findOne(id);
-  // }
-
   @Mutation(() => Booking)
   @UseGuards(LoggedIn)
   async rejectBooking(@Args('rejectBookingInput') rejectBookingInput: RejectBookingDTO, @CurrentUser() user: JwtPayload) {
@@ -85,12 +81,19 @@ export class BookingResolver {
 
   @Mutation(() => Booking, { nullable:true })
   @UseGuards(LoggedIn)
-  async accpetBooking(@Args('accBookingInput') accBookingInput: AcceptBooking, @CurrentUser() user: JwtPayload) {
+  async acceptBooking(@Args('accBookingInput') accBookingInput: AcceptBooking, @CurrentUser() user: JwtPayload) {
     const _user = await this.userRepo.findById(user.sub);
     if(_user.account.role == "CLIENT") return null;
     return this.bookingService.accept(accBookingInput.id);
   }
 
+  @Mutation(() => Booking, { nullable:true })
+  @UseGuards(LoggedIn)
+  async adminAcc(@Args('adminAccInput') adminAccInput: AdminAccBooking, @CurrentUser() user: JwtPayload) {
+    const _user = await this.userRepo.findById(user.sub);
+    if(_user.account.role == "FACULTY_ADMIN" || _user.account.role != "PSYHOPE_ADMIN") return this.bookingService.acceptAdmin(adminAccInput.id, _user.account.faculty)
+    return null;
+  }
 
   @Mutation(() => Booking)
   updateBooking(@Args('updateBookingInput') updateBookingInput: UpdateBookingInput) {
