@@ -54,21 +54,21 @@ model User {
 }
 
 model Councelor {
-  id       Int       @id @default(autoincrement())
-  user     User      @relation(fields: [userId], references: [id])
-  userId   String    @unique
+  id                Int                 @id @default(autoincrement())
+  user              User                @relation(fields: [userId], references: [id])
+  userId            String              @unique
   counselorType     CounselorType
-  isOn     Boolean   @default(true)
-  Booking  Booking[]
+  isOn              Boolean             @default(true)
+  Booking           Booking[]
   councelorSchedule CouncelorSchedule[]
 }
 
-model CouncelorSchedule{
-  id      Int      @id @default(autoincrement())
-  councelor         Councelor?          @relation(fields: [councelorId], references: [id])
-  councelorId       Int?
-  workDay String
-  workTime String
+model CouncelorSchedule {
+  id          Int        @id @default(autoincrement())
+  councelor   Councelor? @relation(fields: [councelorId], references: [id])
+  councelorId Int?
+  workDay     String
+  workTime    String
 }
 
 model Account {
@@ -94,8 +94,8 @@ model Booking {
   reasonApply       String
   closestKnown      Boolean
   isAccepted        Boolean             @default(false)
-  isTerminated        Boolean             @default(false)
-  adminAcc        Boolean             @default(false)
+  isTerminated      Boolean             @default(false)
+  adminAcc          Boolean             @default(false)
   number_1          Int
   number_2          Int
   number_3          Int
@@ -111,6 +111,7 @@ model Booking {
   RescheduleRequest RescheduleRequest[]
   bookingTopic      Topic[]
   blacklist         String[]
+  CounselingLog     CounselingLog[]
 }
 
 model Article {
@@ -151,9 +152,12 @@ model RescheduleRequest {
 }
 
 model CounselingLog {
-  id     Int      @id @default(autoincrement())
-  client User     @relation(fields: [userId], references: [id])
-  userId String
-  time   DateTime
-  detail String   @db.Text
+  id        Int      @id @default(autoincrement())
+  client    User     @relation(fields: [userId], references: [id])
+  userId    String
+  time      DateTime
+  title String @db.Text
+  detail    String   @db.Text
+  booking   Booking  @relation(fields: [bookingId], references: [id])
+  bookingId Int
 }

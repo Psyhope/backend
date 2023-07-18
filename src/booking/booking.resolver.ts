@@ -9,13 +9,9 @@ import { RescheduleRequest } from './entities/rescheduleRequest.entity';
 import { CurrentUser } from 'src/auth/decorator/currentUser.decorator';
 import { JwtPayload } from 'src/auth/interfaces/jwt.payload';
 import { UserRepositories } from 'src/models/user.repo';
-import { PeerCounselor } from 'src/guards/peerCounselor.guard';
-import { PsyhopeCounselor } from 'src/guards/psyhopeCounselor.guard';
-import { Councelor } from './entities/counselor.entity';
 import { GetScheduleDTO } from './dto/getSchedule.input';
 import { CouncelorSchedule } from './entities/councelorSchedule.entity';
 import { RejectBookingDTO } from './dto/rejectBooking.input';
-import { use } from 'passport';
 import { AcceptBooking } from './dto/accept-booking.input';
 import { AdminAccBooking } from './dto/admin-acc.input';
 
@@ -72,7 +68,7 @@ export class BookingResolver {
     return await this.bookingService.getSchedule(getScheduleDTO.day, getScheduleDTO.counselorType, _user.account.faculty, getScheduleDTO.dayTime);
   }
 
-  @Mutation(() => Booking)
+  @Mutation(() => Booking, {nullable: true})
   @UseGuards(LoggedIn)
   async rejectBooking(@Args('rejectBookingInput') rejectBookingInput: RejectBookingDTO, @CurrentUser() user: JwtPayload) {
     const _user = await this.userRepo.findById(user.sub);
@@ -91,7 +87,7 @@ export class BookingResolver {
   @UseGuards(LoggedIn)
   async adminAcc(@Args('adminAccInput') adminAccInput: AdminAccBooking, @CurrentUser() user: JwtPayload) {
     const _user = await this.userRepo.findById(user.sub);
-    if(_user.account.role == "FACULTY_ADMIN" || _user.account.role != "PSYHOPE_ADMIN") return this.bookingService.acceptAdmin(adminAccInput.id, _user.account.faculty)
+    if(_user.account.role == "FACULTY_ADMIN" || _user.account.role == "PSYHOPE_ADMIN") return this.bookingService.acceptAdmin(adminAccInput.id, _user.account.faculty)
     return null;
   }
 

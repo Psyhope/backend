@@ -28,8 +28,8 @@ export class Booking {
   @Field(() => CounselorType, { defaultValue: CounselorType.PSYHOPE, nullable: false })
   counselorType: CounselorType;
 
-  @Field(() => Topic, {nullable:false})
-  bookingTopic: Topic;
+  @Field(() => [Topic], {nullable:false})
+  bookingTopic: Topic[];
 
   @Field(() => String, { description: 'The reason for applying for a counseling session' })
   reasonApply: String;

@@ -13,6 +13,7 @@ import { ArticleModule } from './article/article.module';
 import { InfograficModule } from './infografic/infografic.module';
 import { EventModule } from './event/event.module';
 import { BookingModule } from './booking/booking.module';
+import { CounselingLogModule } from './counseling-log/counseling-log.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { BookingModule } from './booking/booking.module';
     InfograficModule,
     EventModule,
     BookingModule,
+    CounselingLogModule,
   ],
   controllers: [AuthController, AppController],
   providers: [AppService],

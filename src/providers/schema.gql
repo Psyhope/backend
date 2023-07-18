@@ -64,6 +64,7 @@ type Booking {
   bookingDate: DateTime!
   userId: String!
   counselorType: CounselorType!
+  bookingTopic: [bookingTopic!]!
 
   """The reason for applying for a counseling session"""
   reasonApply: String!
@@ -76,6 +77,13 @@ enum CounselorType {
   FACULTY
 }
 
+"""The type of counselor, either PSYHOPE or FACULTY"""
+enum bookingTopic {
+  TOPIC_1
+  TOPIC_2
+  TOPIC_3
+}
+
 type RescheduleRequest {
   booking: Booking!
   time: DateTime!
@@ -85,6 +93,14 @@ type CouncelorSchedule {
   id: Int!
   workDay: String!
   workTime: String!
+}
+
+type CounselingLog {
+  id: Int!
+  userId: String!
+  bookingId: Int!
+  time: DateTime!
+  detail: String!
 }
 
 type Query {
@@ -114,11 +130,13 @@ type Mutation {
   updateEvent(updateEventInput: UpdateEventInput!): Event!
   removeEvent(id: Int!): Event!
   createBooking(createBookingInput: CreateBookingInput!): Booking
-  rejectBooking(rejectBookingInput: RejectBookingDTO!): Booking!
-  accpetBooking(accBookingInput: AcceptBooking!): Booking
+  rejectBooking(rejectBookingInput: RejectBookingDTO!): Booking
+  acceptBooking(accBookingInput: AcceptBooking!): Booking
+  adminAcc(adminAccInput: AdminAccBooking!): Booking
   updateBooking(updateBookingInput: UpdateBookingInput!): Booking!
   removeBooking(id: Int!): Booking!
   rescheduleBooking(id: Int!): RescheduleRequest!
+  createCounselingLog(createCounselingLogInput: CreateCounselingLogInput!): CounselingLog
 }
 
 input CreateArticleInput {
@@ -170,6 +188,7 @@ input CreateBookingInput {
   bookingDate: DateTime!
   bookingTime: String!
   counselorType: CounselorType!
+  bookingTopic: [bookingTopic!]!
   reasonApply: String!
   closestKnown: Boolean!
   number_1: Int!
@@ -194,6 +213,29 @@ input AcceptBooking {
   bookingDate: DateTime
   bookingTime: String
   counselorType: CounselorType
+  bookingTopic: [bookingTopic!]
+  reasonApply: String
+  closestKnown: Boolean
+  number_1: Int
+  number_2: Int
+  number_3: Int
+  number_4: Int
+  number_5: Int
+  number_6: Int
+  number_7: Int
+  number_8: Int
+  number_9: Int
+  number_10: Int
+  number_11: Int
+  number_12: Int
+  id: Int!
+}
+
+input AdminAccBooking {
+  bookingDate: DateTime
+  bookingTime: String
+  counselorType: CounselorType
+  bookingTopic: [bookingTopic!]
   reasonApply: String
   closestKnown: Boolean
   number_1: Int
@@ -215,6 +257,7 @@ input UpdateBookingInput {
   bookingDate: DateTime
   bookingTime: String
   counselorType: CounselorType
+  bookingTopic: [bookingTopic!]
   reasonApply: String
   closestKnown: Boolean
   number_1: Int
@@ -230,4 +273,11 @@ input UpdateBookingInput {
   number_11: Int
   number_12: Int
   id: Int!
+}
+
+input CreateCounselingLogInput {
+  bookingId: Int!
+  detail: String!
+  title: String!
+  time: DateTime!
 }

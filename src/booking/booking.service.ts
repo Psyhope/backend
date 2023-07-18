@@ -48,6 +48,7 @@ export class BookingService {
     })
 
     let randomizedCouncelor = null;
+    // kasih info kalo udh dirandom tp tetep null ya gbs -> send mailer
     if(bookingAccepted.counselorType == "FACULTY"){
       randomizedCouncelor = await this.db.councelor.findFirst({
         where: {
@@ -121,7 +122,7 @@ export class BookingService {
 
     let counselorIdAvailable = []
     let allCounselor = null
-
+    
     if(updateBlacklist.counselorType == "PSYHOPE"){
       // kasih constraint ketika udah lebih dari 4x loop blm dapet juga jadinya cancel
       // get seluruh yg standby pada saat itu, remove ketika pas diloop keluar nama dia, repeat, kalo loopnya abis ya duar kasih email
@@ -160,35 +161,33 @@ export class BookingService {
       counselorIdAvailable.push(data.userId)
     })
 
-  const blacklisted = updateBlacklist.blacklist
-  const availableCounselor = counselorIdAvailable.filter((data) => {
-    return !blacklisted.includes(data)
-  })
-  
-  if(availableCounselor.length != 0){
-    const selectedCounselor = availableCounselor[0]
-    const objSelectedCounselor = await this.db.councelor.findFirst({
-      where: {
-        userId: selectedCounselor,
-      }
+    const blacklisted = updateBlacklist.blacklist
+    const availableCounselor = counselorIdAvailable.filter((data) => {
+      return !blacklisted.includes(data)
     })
+    
+    // kalo gaada yg available ya kirim email
+    if(availableCounselor.length != 0){
+      const selectedCounselor = availableCounselor[0]
+      const objSelectedCounselor = await this.db.councelor.findFirst({
+        where: {
+          userId: selectedCounselor,
+        }
+      })
 
-    return this.db.booking.update({
-      where: {
-        id,
-      },
-      data: {
-        councelor: {
-          connect: {
-            id: objSelectedCounselor.id,
+      return this.db.booking.update({
+        where: {
+          id,
+        },
+        data: {
+          councelor: {
+            connect: {
+              id: objSelectedCounselor.id,
+            }
           }
         }
-      }
-    })
-  }
-    
-
-
+      })
+    }
   }
 
   findOne(id: number) {

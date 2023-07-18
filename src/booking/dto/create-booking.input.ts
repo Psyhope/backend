@@ -12,8 +12,8 @@ export class CreateBookingInput {
   @Field(() => CounselorType)
   counselorType: CounselorType;
 
-  @Field(() => Topic)
-  bookingTopic: Topic;
+  @Field(() => [Topic])
+  bookingTopic: Topic[];
 
   @Field(() => String)
   reasonApply: string
