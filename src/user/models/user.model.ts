@@ -32,9 +32,9 @@ export class User {
   @Field(() => Boolean)
   isOnboarded: Boolean;
 
-  @Field(() => String, {nullable: true})
+  @Field(() => String, { nullable: true })
   lineAcc: String;
 
-  @Field(() => String, {nullable: true})
+  @Field(() => String, { nullable: true })
   igAcc: String;
 }

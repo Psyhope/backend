@@ -3,44 +3,96 @@ import { EventService } from './event.service';
 import { Event } from './entities/event.entity';
 import { CreateEventInput } from './dto/create-event.input';
 import { UpdateEventInput } from './dto/update-event.input';
-import { UseGuards } from '@nestjs/common';
-import { FacultyAdmin } from 'src/guards/facultyAdmin.guard';
-import { PsyhopeAdmin } from 'src/guards/psyhopeAdmin.guard';
+import { UseGuards, HttpException, HttpStatus } from '@nestjs/common';
+import { UserRepositories } from 'src/models/user.repo';
+import { LoggedIn } from 'src/guards/loggedIn.guard';
+import { CurrentUser } from 'src/auth/decorator/currentUser.decorator';
+import { JwtPayload } from 'src/auth/interfaces/jwt.payload';
+import { Role } from '@prisma/client';
 
 @Resolver(() => Event)
 export class EventResolver {
-  constructor(private readonly eventService: EventService) {}
+  constructor(
+    private readonly eventService: EventService,
+    private readonly userRepo: UserRepositories,
+  ) {}
 
   @Mutation(() => Event)
-  @UseGuards(FacultyAdmin, PsyhopeAdmin)
-  createEvent(@Args('createEventInput') createEventInput: CreateEventInput) {
+  @UseGuards(LoggedIn)
+  async createEvent(
+    @Args('createEventInput') createEventInput: CreateEventInput,
+    @CurrentUser() user: JwtPayload,
+  ) {
+    const { account } = await this.userRepo.findById(user.sub);
+
+    if (
+      account.role != Role.PSYHOPE_ADMIN &&
+      account.role != Role.FACULTY_ADMIN
+    )
+      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+
     return this.eventService.create(createEventInput);
   }
 
   @Query(() => [Event])
-  findAll() {
+  findAllEvent() {
     return this.eventService.findAll();
   }
 
   @Query(() => Event)
-  findById(@Args('page', { type: () => Int }) page: number) {
+  findById(@Args('page', { type: () => Int }) page: number) {}
+
+  @Query(() => [Event])
+  findByPageEvent(@Args('page', { type: () => Int }) page: number) {
     return this.eventService.findByPage(page);
   }
 
   @Query(() => Event)
-  findOne(@Args('id', { type: () => Int }) id: number) {
+  findOneEvent(@Args('id', { type: () => Int }) id: number) {
     return this.eventService.findOne(id);
   }
 
   @Mutation(() => Event)
-  @UseGuards(FacultyAdmin, PsyhopeAdmin)
-  updateEvent(@Args('updateEventInput') updateEventInput: UpdateEventInput) {
+  @UseGuards(LoggedIn)
+  async updateEvent(
+    @Args('updateEventInput') updateEventInput: UpdateEventInput,
+    @CurrentUser() user: JwtPayload,
+  ) {
+    const { account } = await this.userRepo.findById(user.sub);
+
+    if (
+      account.role != Role.PSYHOPE_ADMIN &&
+      account.role != Role.FACULTY_ADMIN
+    )
+      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+
     return this.eventService.update(updateEventInput);
   }
 
   @Mutation(() => Event)
-  @UseGuards(FacultyAdmin, PsyhopeAdmin)
-  removeEvent(@Args('id', { type: () => Int }) id: number) {
+  @UseGuards(LoggedIn)
+  async removeEvent(
+    @Args('id', { type: () => Int }) id: number,
+    @CurrentUser() user: JwtPayload,
+  ) {
+    const { account } = await this.userRepo.findById(user.sub);
+
+    if (
+      account.role != Role.PSYHOPE_ADMIN &&
+      account.role != Role.FACULTY_ADMIN
+    )
+      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+
     return this.eventService.remove(id);
+  }
+
+  @Query(() => [Event])
+  findByLimitEvent(@Args('limit', { type: () => Int }) limit: number) {
+    return this.eventService.findByLimit(limit);
+  }
+
+  @Query(() => Number)
+  countEvent() {
+    return this.eventService.count();
   }
 }

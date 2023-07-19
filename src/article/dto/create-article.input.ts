@@ -10,4 +10,7 @@ export class CreateArticleInput {
 
   @Field(() => String)
   posterUrl: string;
+
+  @Field(() => String)
+  thumbnailUrl: string;
 }
