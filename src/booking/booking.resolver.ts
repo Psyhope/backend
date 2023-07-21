@@ -47,6 +47,7 @@ export class BookingResolver {
       case "FACULTY_COUNSELOR" || "FACULTY_ADMIN":
         return await this.bookingService.findAll({
           where: {
+            counselorType: 'FACULTY',
             user: {
               account: {
                 faculty: _user.account.faculty
@@ -55,7 +56,11 @@ export class BookingResolver {
           }
         })
       case "PSYHOPE_COUNSELOR" || "PSYHOPE_ADMIN":
-        return await this.bookingService.findAll({});
+        return await this.bookingService.findAll({
+          where: {
+            counselorType : "PSYHOPE"
+          }
+        });
     }
   }
 
@@ -89,18 +94,21 @@ export class BookingResolver {
     return null;
   }
 
-  @Mutation(() => Booking)
-  updateBooking(@Args('updateBookingInput') updateBookingInput: UpdateBookingInput) {
-    return this.bookingService.update(updateBookingInput.id, updateBookingInput);
-  }
+  // @Mutation(() => Booking)
+  // updateBooking(@Args('updateBookingInput') updateBookingInput: UpdateBookingInput) {
+  //   return this.bookingService.update(updateBookingInput.id, updateBookingInput);
+  // }
 
   @Mutation(() => Booking)
   removeBooking(@Args('id', { type: () => Int }) id: number) {
     return this.bookingService.remove(id);
   }
 
-  @Mutation(() => RescheduleRequest)
-  rescheduleBooking(@CurrentUser() user: JwtPayload, @Args('id', { type: () => Int }) id: number) {
-    const booking = this.bookingService.findOne(id);
+  @Mutation(() => Booking)
+  @UseGuards(LoggedIn)
+  async rescheduleBooking(@CurrentUser() user: JwtPayload, @Args('rescheduleBookingInput') rescheduleBooing: UpdateBookingInput) {
+    const _user = await this.userRepo.findById(user.sub)
+    return this.bookingService.update(rescheduleBooing, _user.account.faculty)
   }
+
 }

@@ -199,8 +199,67 @@ export class BookingService {
     return `This action returns a #${id} booking`;
   }
 
-  update(id: number, updateBookingInput: UpdateBookingInput) {
-    return `This action updates a #${id} booking`;
+  async update(updateBookingInput: UpdateBookingInput, faculty: string) {
+    const rescheduleBookings = await this.db.booking.findUnique({
+      where: {
+        id: updateBookingInput.id
+      }
+    })
+
+    let allCounselor = null
+    
+    if(rescheduleBookings.counselorType == "PSYHOPE"){
+      // kasih constraint ketika udah lebih dari 4x loop blm dapet juga jadinya cancel
+      // get seluruh yg standby pada saat itu, remove ketika pas diloop keluar nama dia, repeat, kalo loopnya abis ya duar kasih email
+      allCounselor = await this.db.councelor.findFirst({
+        where: {
+          counselorType: rescheduleBookings.counselorType,
+          councelorSchedule : {
+            some : {
+              workDay: dayNames[rescheduleBookings.bookingDate.getDay()],
+              workTime: rescheduleBookings.bookingTime
+            }
+          }
+        }
+      })
+    }
+    else {
+      allCounselor = await this.db.councelor.findFirst({
+        where: {
+          counselorType: rescheduleBookings.counselorType,
+          user: {
+            account: {
+              faculty,
+            }
+          },
+          councelorSchedule : {
+            some : {
+              workDay: dayNames[rescheduleBookings.bookingDate.getDay()],
+              workTime: rescheduleBookings.bookingTime
+            }
+          }
+        }
+      })
+    }
+
+    return await this.db.booking.update({
+      where: {
+        id: updateBookingInput.id
+      },
+      data: {
+        bookingDate: updateBookingInput.bookingDate,
+        bookingTime: updateBookingInput.bookingTime,
+        bookingTopic:updateBookingInput.bookingTopic,
+        reasonApply: updateBookingInput.reasonApply,
+        closestKnown: updateBookingInput.closestKnown,
+        councelor: {
+          connect: {
+            id: allCounselor.id
+          }
+        }
+      }
+    })
+    
   }
 
   remove(id: number) {

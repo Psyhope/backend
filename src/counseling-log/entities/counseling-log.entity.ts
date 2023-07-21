@@ -1,4 +1,5 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { User } from 'src/user/models/user.model';
 
 @ObjectType()
 export class CounselingLog {
@@ -7,6 +8,9 @@ export class CounselingLog {
 
   @Field(() => String)
   userId: string
+
+  @Field(() => User)
+  client: User
 
   @Field(() => Int)
   bookingId: number

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateCounselingLogInput } from './dto/create-counseling-log.input';
 import { DbService } from 'src/providers/database/db';
 import { UserRepositories } from 'src/models/user.repo';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class CounselingLogService {
@@ -31,6 +32,15 @@ export class CounselingLogService {
           }
         }
       }
+    })
+  }
+
+  async findAll(args: Prisma.CounselingLogFindManyArgs){
+    return await this.db.counselingLog.findMany({
+      include: {
+       client: {}
+      },
+      ...args
     })
   }
 

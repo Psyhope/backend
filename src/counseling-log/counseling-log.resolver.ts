@@ -22,4 +22,36 @@ export class CounselingLogResolver {
     return null;
   }
 
+
+  @Query(() => [CounselingLog],{name:'counseling-log', nullable:true})
+  @UseGuards(LoggedIn)
+  async counselingLog(@CurrentUser() user: JwtPayload){
+    const _user = await this.userRepo.findById(user.sub)
+    const { role } = user;
+    switch (role) {
+      case "FACULTY_COUNSELOR" || "FACULTY_ADMIN":
+        return await this.counselingLogService.findAll({
+          where : {
+            client : {
+              account : {
+                faculty : _user.account.faculty,
+              }
+            },
+            booking: {
+              counselorType: "FACULTY"
+            }
+          }
+        })
+      case "PSYHOPE_COUNSELOR" || "PSYHOPE_ADMIN":
+        return await this .counselingLogService.findAll({
+          where: {
+            booking: {
+              counselorType : 'PSYHOPE'
+            }
+          }
+        })
+      
+    }
+  }
+
 }
