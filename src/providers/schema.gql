@@ -62,6 +62,7 @@ type Booking {
 
   """The time of the booking"""
   bookingDate: DateTime!
+  user: User
   userId: String!
   counselorType: CounselorType!
   bookingTopic: [bookingTopic!]!
@@ -109,7 +110,7 @@ type Query {
   findByPage(page: Int!): [Event!]!
   findOne(id: Int!): Event!
   findById(page: Int!): Event!
-  booking: [Booking!]!
+  booking: [Booking!]
   schedule(getScheduleDTO: GetScheduleDTO!): [CouncelorSchedule!]
 }
 

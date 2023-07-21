@@ -34,7 +34,7 @@ export class BookingResolver {
     _user.account.faculty );
   }
   
-  @Query(() => [Booking], { name: 'booking' })
+  @Query(() => [Booking], { name: 'booking', nullable: true })
   @UseGuards(LoggedIn)
   async bookings(@CurrentUser() user: JwtPayload) {
     const { role } = user;
@@ -44,8 +44,7 @@ export class BookingResolver {
         return await this.bookingService.findAll({
           where: { userId: user.sub }
         })
-      case "FACULTY_ADMIN":
-      case "FACULTY_COUNSELOR":
+      case "FACULTY_COUNSELOR" || "FACULTY_ADMIN":
         return await this.bookingService.findAll({
           where: {
             user: {
@@ -55,8 +54,7 @@ export class BookingResolver {
             }
           }
         })
-      case "PSYHOPE_ADMIN":
-      case "PSYHOPE_COUNSELOR":
+      case "PSYHOPE_COUNSELOR" || "PSYHOPE_ADMIN":
         return await this.bookingService.findAll({});
     }
   }

@@ -26,7 +26,12 @@ export class BookingService {
   }
 
   async findAll(args: Prisma.BookingFindManyArgs) {
-    return await this.db.booking.findMany(args);
+    return await this.db.booking.findMany({
+      include: {
+        user: {}
+      },
+      ...args
+    });
   }
 
   async accept(id: number){

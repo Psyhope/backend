@@ -1,4 +1,5 @@
 import { ObjectType, Field, Int, registerEnumType } from '@nestjs/graphql';
+import { User } from 'src/user/models/user.model';
 
 export enum CounselorType {
   PSYHOPE = "PSYHOPE",
@@ -21,6 +22,9 @@ export class Booking {
 
   @Field(() => Date, { description: 'The time of the booking' })
   bookingDate: Date;
+
+  @Field(() => User, {nullable: true})
+  user: User;
 
   @Field(() => String)
   userId: string;
