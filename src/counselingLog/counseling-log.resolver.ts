@@ -23,7 +23,7 @@ export class CounselingLogResolver {
   }
 
 
-  @Query(() => [CounselingLog],{name:'counseling-log', nullable:true})
+  @Query(() => [CounselingLog],{name:'counselingLog', nullable:true})
   @UseGuards(LoggedIn)
   async counselingLog(@CurrentUser() user: JwtPayload){
     const _user = await this.userRepo.findById(user.sub)

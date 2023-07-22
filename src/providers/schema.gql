@@ -85,11 +85,6 @@ enum bookingTopic {
   TOPIC_3
 }
 
-type RescheduleRequest {
-  booking: Booking!
-  time: DateTime!
-}
-
 type CouncelorSchedule {
   id: Int!
   workDay: String!
@@ -99,6 +94,7 @@ type CouncelorSchedule {
 type CounselingLog {
   id: Int!
   userId: String!
+  client: User!
   bookingId: Int!
   time: DateTime!
   detail: String!
@@ -112,6 +108,7 @@ type Query {
   findById(page: Int!): Event!
   booking: [Booking!]
   schedule(getScheduleDTO: GetScheduleDTO!): [CouncelorSchedule!]
+  counselingLog: [CounselingLog!]
 }
 
 input GetScheduleDTO {
@@ -134,9 +131,8 @@ type Mutation {
   rejectBooking(rejectBookingInput: RejectBookingDTO!): Booking
   acceptBooking(accBookingInput: AcceptBooking!): Booking
   adminAcc(adminAccInput: AdminAccBooking!): Booking
-  updateBooking(updateBookingInput: UpdateBookingInput!): Booking!
   removeBooking(id: Int!): Booking!
-  rescheduleBooking(id: Int!): RescheduleRequest!
+  rescheduleBooking(rescheduleBookingInput: UpdateBookingInput!): Booking!
   createCounselingLog(createCounselingLogInput: CreateCounselingLogInput!): CounselingLog
 }
 
@@ -255,12 +251,12 @@ input AdminAccBooking {
 }
 
 input UpdateBookingInput {
-  bookingDate: DateTime
-  bookingTime: String
+  bookingDate: DateTime!
+  bookingTime: String!
   counselorType: CounselorType
-  bookingTopic: [bookingTopic!]
-  reasonApply: String
-  closestKnown: Boolean
+  bookingTopic: [bookingTopic!]!
+  reasonApply: String!
+  closestKnown: Boolean!
   number_1: Int
   number_2: Int
   number_3: Int
