@@ -11,8 +11,14 @@ export class Booking {
   @Field(() => String, { description: 'The time of the booking' })
   bookingTime: string;
 
+  @Field(() => String, { description: 'The time of the booking' })
+  bookingTime2: string;
+
   @Field(() => Date, { description: 'The time of the booking' })
   bookingDate: Date;
+
+  @Field(() => String)
+  bookingDay: string
 
   @Field(() => User, {nullable: true})
   user: User;

@@ -9,6 +9,9 @@ export class GetScheduleDTO{
   @Field(() => String)
   dayTime: string;
 
+  @Field(() => String)
+  dayTime2: string
+
   @Field(() => CounselorType)
   counselorType: CounselorType;
 }

@@ -9,6 +9,9 @@ export class CreateBookingInput {
   @Field(() => String)
   bookingTime: string;
 
+  @Field(() => String)
+  bookingTime2: string
+
   @Field(() => CounselorType)
   counselorType: CounselorType;
 

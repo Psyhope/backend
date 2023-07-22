@@ -13,6 +13,9 @@ export class UpdateBookingInput extends PartialType(CreateBookingInput) {
   @Field(() => String)
   bookingTime: string;
 
+  @Field(() => String)
+  bookingTime2: string;
+
   @Field(() => [Topic])
   bookingTopic: Topic[];
 

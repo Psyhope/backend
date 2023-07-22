@@ -15,11 +15,10 @@ export class BookingService {
   constructor(private readonly db: DbService, private readonly userRepo: UserRepositories) { }
 
   async create(createBookingDto: Prisma.BookingCreateInput, faculty: string) {
-
-    
     // kasih pengecualian ketika yg dirandom == null -> kirim email buat batal
     return await this.db.booking.create({
       data: {
+        bookingDay: dayNames[new Date(createBookingDto.bookingDate).getDay()],
         ...createBookingDto,
       }
     });
@@ -75,7 +74,8 @@ export class BookingService {
           councelorSchedule: {
             some: {
               workDay: dayNames[new Date(bookingAccepted.bookingDate.toLocaleString()).getDay()],
-              workTime: bookingAccepted.bookingTime
+              workTime: bookingAccepted.bookingTime,
+              
             },
           },
           counselorType: bookingAccepted.counselorType,
@@ -87,7 +87,11 @@ export class BookingService {
           Booking: {
             none: {
               bookingTime: bookingAccepted.bookingTime,
-              bookingDate: bookingAccepted.bookingDate
+              bookingDay: dayNames[bookingAccepted.bookingDate.getDay()],
+              isTerminated: false,
+              AND: {
+                bookingTime: bookingAccepted.bookingTime2
+              }
             }
           },
         }
@@ -106,13 +110,17 @@ export class BookingService {
           Booking: {
             none: {
               bookingTime: bookingAccepted.bookingTime,
-              bookingDate: bookingAccepted.bookingDate
+              bookingDay: dayNames[bookingAccepted.bookingDate.getDay()],
+              isTerminated: false,
+              AND: {
+                bookingTime: bookingAccepted.bookingTime2
+              }
             }
           },
         }
       })
     }
-    console.log(randomizedCouncelor)
+
     return this.db.booking.update({
       where: {
         id,
@@ -157,8 +165,12 @@ export class BookingService {
           },
           Booking :{
             none : {
-              bookingDate: updateBlacklist.bookingDate,
-              bookingTime: updateBlacklist.bookingTime
+              bookingDay: dayNames[updateBlacklist.bookingDate.getDay()],
+              isTerminated: false,
+              bookingTime: updateBlacklist.bookingTime,
+              AND: {
+                bookingTime: updateBlacklist.bookingTime2
+              }
             }
           }
         }
@@ -181,8 +193,12 @@ export class BookingService {
           },
           Booking :{
             none : {
-              bookingDate: updateBlacklist.bookingDate,
-              bookingTime: updateBlacklist.bookingTime
+              bookingDay: dayNames[updateBlacklist.bookingDate.getDay()],
+              isTerminated: false,
+              bookingTime: updateBlacklist.bookingTime,
+              AND: {
+                bookingTime: updateBlacklist.bookingTime2
+              }
             }
           }
         }
@@ -234,6 +250,7 @@ export class BookingService {
       data: {
         bookingDate: updateBookingInput.bookingDate,
         bookingTime: updateBookingInput.bookingTime,
+        bookingTime2: updateBookingInput.bookingTime2, 
         bookingTopic:updateBookingInput.bookingTopic,
         reasonApply: updateBookingInput.reasonApply,
         closestKnown: updateBookingInput.closestKnown
@@ -246,7 +263,7 @@ export class BookingService {
     return `This action removes a #${id} booking`;
   }
 
-  async getSchedule(bookingDate: Date, counselorType: CounselorType, faculty: string, bookingTime: string){
+  async getSchedule(bookingDate: Date, counselorType: CounselorType, faculty: string, bookingTime: string, bookingTime2: string){
 
     // kalo ada ya ada kalo engga ya berarti valuenya disable
     if (counselorType == "PSYHOPE"){
@@ -257,8 +274,12 @@ export class BookingService {
             counselorType,
             Booking : {
               none : {
+                isTerminated: false,
                 bookingTime,
-                bookingDate,
+                bookingDay : dayNames[bookingDate.getDay()],
+                AND: {
+                  bookingTime: bookingTime2
+                }
               }
             }
           }
@@ -274,8 +295,12 @@ export class BookingService {
           counselorType,
           Booking : {
             none : {
+              isTerminated: false,
               bookingTime,
-              bookingDate,
+              bookingDay : dayNames[bookingDate.getDay()],
+              AND: {
+                bookingTime: bookingTime2
+              }
             }
           },
           user: {

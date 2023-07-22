@@ -173,7 +173,7 @@ export class BookingResolver {
   @UseGuards(LoggedIn)
   async getSchedule(@CurrentUser() user: JwtPayload, @Args('getScheduleDTO') getScheduleDTO: GetScheduleDTO) {
     const _user = await this.userRepo.findById(user.sub);
-    return await this.bookingService.getSchedule(getScheduleDTO.day, getScheduleDTO.counselorType, _user.account.faculty, getScheduleDTO.dayTime);
+    return await this.bookingService.getSchedule(getScheduleDTO.day, getScheduleDTO.counselorType, _user.account.faculty, getScheduleDTO.dayTime, getScheduleDTO.dayTime2);
   }
 
   @Mutation(() => Booking, {nullable: true})
