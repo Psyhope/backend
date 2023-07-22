@@ -139,8 +139,6 @@ export class BookingResolver {
             }
           })
         }
-
-        
       case "PSYHOPE_ADMIN":
         if (getBookingFilter.day == null && getBookingFilter.status != null){
           return await this.bookingService.findAll({
@@ -200,11 +198,6 @@ export class BookingResolver {
     if(_user.account.role == "FACULTY_ADMIN" || _user.account.role == "PSYHOPE_ADMIN") return this.bookingService.acceptAdmin(adminAccInput.id, _user.account.faculty)
     return null;
   }
-
-  // @Mutation(() => Booking)
-  // updateBooking(@Args('updateBookingInput') updateBookingInput: UpdateBookingInput) {
-  //   return this.bookingService.update(updateBookingInput.id, updateBookingInput);
-  // }
 
   @Mutation(() => Booking)
   removeBooking(@Args('id', { type: () => Int }) id: number) {
