@@ -1,5 +1,5 @@
 import { InputType, Int, Field } from '@nestjs/graphql';
-import { CounselorType, Topic } from '../entities/booking.entity';
+import { CounselorType, Topic } from '../entities/const.entity';
 
 @InputType()
 export class CreateBookingInput {

@@ -54,6 +54,20 @@ type Event {
   posterUrl: String!
 }
 
+type Councelor {
+  id: Int!
+  userId: String!
+  isOn: Boolean!
+  counselorType: CounselorType!
+  user: User
+}
+
+"""The type of counselor, either PSYHOPE or FACULTY"""
+enum CounselorType {
+  PSYHOPE
+  FACULTY
+}
+
 type Booking {
   id: Int!
 
@@ -70,12 +84,7 @@ type Booking {
   """The reason for applying for a counseling session"""
   reasonApply: String!
   closestKnown: Boolean!
-}
-
-"""The type of counselor, either PSYHOPE or FACULTY"""
-enum CounselorType {
-  PSYHOPE
-  FACULTY
+  councelor: Councelor
 }
 
 """The type of counselor, either PSYHOPE or FACULTY"""

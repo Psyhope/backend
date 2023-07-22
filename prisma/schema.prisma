@@ -89,7 +89,9 @@ model Booking {
   councelor         Councelor?          @relation(fields: [councelorId], references: [id])
   councelorId       Int?
   bookingDate       DateTime            @db.Date
-  bookingTime       String
+  bookingDay        String              @default("")
+  bookingTime       String              @default("")
+  bookingTime2      String              @default("")
   counselorType     CounselorType       @map("counselor_type")
   reasonApply       String
   closestKnown      Boolean

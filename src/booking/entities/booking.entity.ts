@@ -1,16 +1,7 @@
 import { ObjectType, Field, Int, registerEnumType } from '@nestjs/graphql';
 import { User } from 'src/user/models/user.model';
-
-export enum CounselorType {
-  PSYHOPE = "PSYHOPE",
-  FACULTY = "FACULTY"
-}
-
-export enum Topic {
-  TOPIC_1 = "TOPIC_1",
-  TOPIC_2 = "TOPIC_2",
-  TOPIC_3 = "TOPIC_3"
-}
+import { CounselorType, Topic } from './const.entity';
+import { Councelor } from './counselor.entity';
 
 @ObjectType()
 export class Booking {
@@ -40,14 +31,7 @@ export class Booking {
 
   @Field(() => Boolean)
   closestKnown: Boolean;
+
+  @Field(()=> Councelor, {nullable: true})
+  councelor: Councelor
 }
-
-registerEnumType(CounselorType, {
-  name: 'CounselorType',
-  description: 'The type of counselor, either PSYHOPE or FACULTY',
-})
-
-registerEnumType(Topic, {
-  name: 'bookingTopic',
-  description: 'The type of counselor, either PSYHOPE or FACULTY',
-})

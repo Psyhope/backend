@@ -1,4 +1,4 @@
-import { Topic } from '../entities/booking.entity';
+import { Topic } from '../entities/const.entity';
 import { CreateBookingInput } from './create-booking.input';
 import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
 

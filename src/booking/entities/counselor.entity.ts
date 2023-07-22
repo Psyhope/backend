@@ -1,5 +1,6 @@
 import { ObjectType, Field, Int, registerEnumType } from '@nestjs/graphql';
-import {CounselorType} from './booking.entity'
+import { CounselorType } from './const.entity'
+import { User } from 'src/user/models/user.model';
 
 @ObjectType()
 export class Councelor {
@@ -14,4 +15,7 @@ export class Councelor {
 
   @Field(() => CounselorType, { defaultValue: CounselorType.PSYHOPE, nullable: false })
   counselorType: CounselorType;
+
+  @Field(() => User, {nullable:true})
+  user: User
 }

@@ -6,7 +6,7 @@ import { DbService } from 'src/providers/database/db';
 import { Prisma } from '@prisma/client';
 import { dayNames } from './const';
 import { Councelor } from './entities/counselor.entity';
-import { CounselorType } from './entities/booking.entity';
+import { CounselorType } from './entities/const.entity';
 import { UserRepositories } from 'src/models/user.repo';
 import { all } from 'axios';
 
@@ -28,7 +28,22 @@ export class BookingService {
   async findAll(args: Prisma.BookingFindManyArgs) {
     return await this.db.booking.findMany({
       include: {
-        user: {}
+        user: true,
+        councelor: {
+          include: {user: true}
+        },
+      },
+      ...args
+    });
+  }
+
+  async findByFilter(args: Prisma.BookingFindManyArgs) {
+    return await this.db.booking.findMany({
+      include: {
+        user: true,
+        councelor: {
+          include: {user: true}
+        },
       },
       ...args
     });
@@ -97,7 +112,7 @@ export class BookingService {
         }
       })
     }
-
+    console.log(randomizedCouncelor)
     return this.db.booking.update({
       where: {
         id,
@@ -139,6 +154,12 @@ export class BookingService {
               workDay: dayNames[updateBlacklist.bookingDate.getDay()],
               workTime: updateBlacklist.bookingTime
             }
+          },
+          Booking :{
+            none : {
+              bookingDate: updateBlacklist.bookingDate,
+              bookingTime: updateBlacklist.bookingTime
+            }
           }
         }
       })
@@ -156,6 +177,12 @@ export class BookingService {
             some : {
               workDay: dayNames[updateBlacklist.bookingDate.getDay()],
               workTime: updateBlacklist.bookingTime
+            }
+          },
+          Booking :{
+            none : {
+              bookingDate: updateBlacklist.bookingDate,
+              bookingTime: updateBlacklist.bookingTime
             }
           }
         }
@@ -199,49 +226,7 @@ export class BookingService {
     return `This action returns a #${id} booking`;
   }
 
-  async update(updateBookingInput: UpdateBookingInput, faculty: string) {
-    const rescheduleBookings = await this.db.booking.findUnique({
-      where: {
-        id: updateBookingInput.id
-      }
-    })
-
-    let allCounselor = null
-    
-    if(rescheduleBookings.counselorType == "PSYHOPE"){
-      // kasih constraint ketika udah lebih dari 4x loop blm dapet juga jadinya cancel
-      // get seluruh yg standby pada saat itu, remove ketika pas diloop keluar nama dia, repeat, kalo loopnya abis ya duar kasih email
-      allCounselor = await this.db.councelor.findFirst({
-        where: {
-          counselorType: rescheduleBookings.counselorType,
-          councelorSchedule : {
-            some : {
-              workDay: dayNames[rescheduleBookings.bookingDate.getDay()],
-              workTime: rescheduleBookings.bookingTime
-            }
-          }
-        }
-      })
-    }
-    else {
-      allCounselor = await this.db.councelor.findFirst({
-        where: {
-          counselorType: rescheduleBookings.counselorType,
-          user: {
-            account: {
-              faculty,
-            }
-          },
-          councelorSchedule : {
-            some : {
-              workDay: dayNames[rescheduleBookings.bookingDate.getDay()],
-              workTime: rescheduleBookings.bookingTime
-            }
-          }
-        }
-      })
-    }
-
+  async update(updateBookingInput: UpdateBookingInput) {
     return await this.db.booking.update({
       where: {
         id: updateBookingInput.id
@@ -251,12 +236,7 @@ export class BookingService {
         bookingTime: updateBookingInput.bookingTime,
         bookingTopic:updateBookingInput.bookingTopic,
         reasonApply: updateBookingInput.reasonApply,
-        closestKnown: updateBookingInput.closestKnown,
-        councelor: {
-          connect: {
-            id: allCounselor.id
-          }
-        }
+        closestKnown: updateBookingInput.closestKnown
       }
     })
     

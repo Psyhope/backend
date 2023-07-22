@@ -1,5 +1,5 @@
 import { ObjectType, Field, Int, registerEnumType } from '@nestjs/graphql';
-import {CounselorType} from './booking.entity'
+import {CounselorType} from './const.entity'
 
 @ObjectType()
 export class CouncelorSchedule {
