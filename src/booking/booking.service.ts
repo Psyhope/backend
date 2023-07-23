@@ -93,6 +93,11 @@ export class BookingService {
                 bookingTime: bookingAccepted.bookingTime2,
                 bookingDay: dayNames[bookingAccepted.bookingDate.getDay()],
                 isTerminated: false,
+                AND: {
+                  bookingTime2: bookingAccepted.bookingTime,
+                  bookingDay: dayNames[bookingAccepted.bookingDate.getDay()],
+                  isTerminated: false,
+                }
               }
             }
           },
@@ -118,6 +123,11 @@ export class BookingService {
                 bookingTime: bookingAccepted.bookingTime2,
                 bookingDay: dayNames[bookingAccepted.bookingDate.getDay()],
                 isTerminated: false,
+                AND: {
+                  bookingTime2: bookingAccepted.bookingTime,
+                  bookingDay: dayNames[bookingAccepted.bookingDate.getDay()],
+                  isTerminated: false,
+                }
               }
             }
           },
@@ -176,6 +186,11 @@ export class BookingService {
                 bookingTime: updateBlacklist.bookingTime2,
                 bookingDay: dayNames[updateBlacklist.bookingDate.getDay()],
                 isTerminated: false,
+                AND : {
+                  bookingTime2: updateBlacklist.bookingTime,
+                  bookingDay: dayNames[updateBlacklist.bookingDate.getDay()],
+                  isTerminated: false,
+                }
               }
             }
           }
@@ -205,7 +220,12 @@ export class BookingService {
               AND: {
                 bookingDay: dayNames[updateBlacklist.bookingDate.getDay()],
                 isTerminated: false,
-                bookingTime: updateBlacklist.bookingTime2
+                bookingTime: updateBlacklist.bookingTime2,
+                AND : {
+                  bookingTime2: updateBlacklist.bookingTime,
+                  bookingDay: dayNames[updateBlacklist.bookingDate.getDay()],
+                  isTerminated: false,
+                }
               }
             }
           }
@@ -289,6 +309,11 @@ export class BookingService {
                   bookingTime: bookingTime2,
                   isTerminated: false,
                   bookingDay : dayNames[bookingDate.getDay()],
+                  AND : {
+                    bookingTime2: bookingTime,
+                    isTerminated: false,
+                    bookingDay : dayNames[bookingDate.getDay()],
+                  }
                 }
               }
             }
@@ -312,6 +337,11 @@ export class BookingService {
                   bookingTime: bookingTime2,
                   isTerminated: false,
                   bookingDay : dayNames[bookingDate.getDay()],
+                  AND : {
+                    bookingTime2: bookingTime,
+                    isTerminated: false,
+                    bookingDay : dayNames[bookingDate.getDay()],
+                  }
               }
             }
           },
