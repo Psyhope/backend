@@ -41,7 +41,7 @@ enum CounselorType {
 }
 
 model User {
-  id               String          @id
+  id               String          @id @default(uuid())
   namaRole         String          @map("nama_role")
   username         String          @unique
   fullname         String

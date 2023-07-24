@@ -19,19 +19,26 @@ export class UserRepositories {
   async create(username: string, password: string) {
     const user = await this.sso.validate(username, password);
     const { kode_org } = user;
-    const split = kode_org.split('.');
+    // grab kode org, kode_org will look like this:
+    // 'S1 Reguler Ilmu Komputer (01.00.12.01)'
+    // grab the 01.00.12.01
+    const re = /(\d{2}\.\d{2}\.\d{2}\.\d{2})/;
+    const matches = re.exec(kode_org);
+    if (!matches) {
+      throw new Error('Invalid kode_org');
+    }
+
+    const split = matches[0].split('.');
     const faculty: Faculties =
       FACULTY_MAP[`#.#.${split[2]}.${split[3].split(':')[0]}`];
     const majorList: Majors[FacultiesKey] = MAJOR_MAP[faculty];
     const userMajor = majorList.find(
-      (major) => major.kd_org === kode_org.split(':')[0],
+      (major) => major.kd_org === matches[0].split(':')[0],
     );
     const { educational_program, study_program } = userMajor;
-
     return await this.db.user
       .create({
         data: {
-          id: user.kodeidentitas,
           fullname: user.nama,
           username: user.username,
           namaRole: user.nama_role,
@@ -50,7 +57,7 @@ export class UserRepositories {
       .catch(async (err) => {
         if (err.code === 'P2002') {
           return await this.db.user.findUnique({
-            where: { id: user.kodeidentitas },
+            where: { username: user.username },
           });
         }
       });
@@ -59,7 +66,7 @@ export class UserRepositories {
   async findById(id: string) {
     return await this.db.user.findUnique({
       where: {
-        id: id,
+        id
       },
       include: {
         account: true,

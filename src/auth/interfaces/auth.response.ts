@@ -1,14 +1,10 @@
 export interface AuthResponseSuccess {
-    username: string;
-    nama: string;
-    state: 1;
-    kode_org: string;
-    kodeidentitas: string;
-    nama_role: string;
+    status: 200,
+    message: 'OK',
+    data: {
+        name: string
+        role: string
+        group: string;
+    }
 }
 
-export interface AuthResponseFailed {
-    state: 0;
-}
-
-export type AuthResponse = AuthResponseSuccess | AuthResponseFailed;

@@ -1,0 +1,193 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Booking {
+  id: Int!
+
+  """The time of the booking"""
+  time: DateTime!
+  userId: String!
+  counselorType: CounselorType!
+
+  """The reason for applying for a counseling session"""
+  reasonApply: String!
+  closestKnown: Boolean!
+
+  """
+  Answers for all 12 question on the booking form in order, each number from 1-4 corresponds to the options on the form
+  """
+  answers: [Int!]!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+"""The type of counselor, either PSYHOPE or FACULTY"""
+enum CounselorType {
+  PSYHOPE
+  FACULTY
+}
+
+type Account {
+  faculty: String!
+  role: String!
+  gender: String!
+  major: String!
+}
+
+type User {
+  id: String!
+  username: String!
+  fullname: String!
+  account: Account!
+  isOnboarded: Boolean!
+  bookings: [Booking!]!
+  lineAcc: String
+  igAcc: String
+}
+
+type RescheduleRequest {
+  id: Float!
+  booking: Booking!
+  time: DateTime!
+}
+
+type Article {
+  id: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  title: String!
+  content: String!
+  posterUrl: String!
+  thumbnailUrl: String!
+}
+
+type Infografic {
+  id: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  title: String!
+  description: String!
+  infograficUrl: String!
+}
+
+type Event {
+  id: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  title: String!
+  date: DateTime!
+  location: String!
+  time: String!
+  description: String!
+  posterUrl: String!
+}
+
+type Query {
+  user: User!
+  findAllArticle: [Article!]!
+  findByPageArticle(page: Int!): [Article!]!
+  findOneArticle(id: Int!): Article!
+  findByLimitArticle(limit: Int!): [Article!]!
+  countArticle: Float!
+  findAllInfografic: [Infografic!]!
+  findByPageInfografic(page: Int!): [Infografic!]!
+  findOneInfografic(id: Int!): Infografic!
+  findByLimitInfografic(limit: Int!): [Infografic!]!
+  countInfografic: Float!
+  findAllEvent: [Event!]!
+  findById(page: Int!): Event!
+  findByPageEvent(page: Int!): [Event!]!
+  findOneEvent(id: Int!): Event!
+  findByLimitEvent(limit: Int!): [Event!]!
+  countEvent: Float!
+
+  "\n      Get all bookings based on the user's role,\n      CLIENT: Get all bookings made by the user.\n      FACULTY_ADMIN: Get all bookings made by the user's faculty.\n      FACULTY_COUNSELOR: Get all bookings made by the user's faculty.\n      PSYHOPE_ADMIN: Get all bookings.\n      PSYHOPE_COUNSELOR: Get all bookings.\n      "
+  bookings: [Booking!]!
+}
+
+type Mutation {
+  createArticle(createArticleInput: CreateArticleInput!): Article!
+  updateArticle(updateArticleInput: UpdateArticleInput!): Article!
+  removeArticle(id: Int!): Article!
+  createInfografic(createInfograficInput: CreateInfograficInput!): Infografic!
+  updateInfografic(updateInfograficInput: UpdateInfograficInput!): Infografic!
+  removeInfografic(id: Int!): Infografic!
+  createEvent(createEventInput: CreateEventInput!): Event!
+  updateEvent(updateEventInput: UpdateEventInput!): Event!
+  removeEvent(id: Int!): Event!
+  createBooking(createBookingInput: CreateBookingInput!): Booking!
+  rescheduleBooking(id: Int!, date: String!, time: String!): RescheduleRequest!
+  acceptRescheduleRequest(id: Int!): Booking!
+  terminateBooking(id: String!): Booking!
+}
+
+input CreateArticleInput {
+  title: String!
+  content: String!
+  posterUrl: String!
+  thumbnailUrl: String!
+}
+
+input UpdateArticleInput {
+  title: String!
+  content: String!
+  posterUrl: String!
+  thumbnailUrl: String!
+  id: Int!
+}
+
+input CreateInfograficInput {
+  title: String!
+  description: String!
+  infograficUrl: String!
+}
+
+input UpdateInfograficInput {
+  title: String!
+  description: String!
+  infograficUrl: String!
+  id: Int!
+}
+
+input CreateEventInput {
+  title: String!
+  date: DateTime!
+  location: String!
+  time: String!
+  description: String!
+  posterUrl: String!
+}
+
+input UpdateEventInput {
+  title: String!
+  date: DateTime!
+  location: String!
+  time: String!
+  description: String!
+  posterUrl: String!
+  id: Int!
+}
+
+input CreateBookingInput {
+  time: DateTime!
+  userId: String!
+  counselorType: CounselorType!
+  reasonApply: String!
+  closestKnown: Boolean!
+  number_1: Int!
+  number_2: Int!
+  number_3: Int!
+  number_4: Int!
+  number_5: Int!
+  number_6: Int!
+  number_7: Int!
+  number_8: Int!
+  number_9: Int!
+  number_10: Int!
+  number_11: Int!
+  number_12: Int!
+}

@@ -64,7 +64,7 @@ export class AuthService {
         return tokens;
     }
 
-    async updateLineorIgAcc(userId: string, igAcc: string, lineAcc: string){
+    async updateLineorIgAcc(userId: string, igAcc: string, lineAcc: string) {
         await this.userRepo.update(userId, {
             igAcc,
             lineAcc,
