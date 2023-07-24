@@ -16,7 +16,11 @@ export class InfograficRepositories {
   }
 
   async findByAll() {
-    return await this.db.infografic.findMany();
+    return await this.db.infografic.findMany({
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
   }
 
   async findByPage(page: number) {
@@ -25,6 +29,9 @@ export class InfograficRepositories {
     return await this.db.infografic.findMany({
       skip,
       take,
+      orderBy: {
+        createdAt: 'desc',
+      },
     });
   }
 
@@ -60,5 +67,18 @@ export class InfograficRepositories {
         id,
       },
     });
+  }
+
+  async findByLimit(limit: number) {
+    return await this.db.infografic.findMany({
+      orderBy: {
+        createdAt: 'desc',
+      },
+      take: limit,
+    });
+  }
+
+  async count() {
+    return await this.db.infografic.count();
   }
 }

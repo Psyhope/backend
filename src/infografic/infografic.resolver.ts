@@ -3,48 +3,93 @@ import { InfograficService } from './infografic.service';
 import { Infografic } from './entities/infografic.entity';
 import { CreateInfograficInput } from './dto/create-infografic.input';
 import { UpdateInfograficInput } from './dto/update-infografic.input';
-import { UseGuards } from '@nestjs/common';
-import { FacultyAdmin } from 'src/guards/facultyAdmin.guard';
-import { PsyhopeAdmin } from 'src/guards/psyhopeAdmin.guard';
+import { UseGuards, HttpException, HttpStatus } from '@nestjs/common';
+import { CurrentUser } from 'src/auth/decorator/currentUser.decorator';
+import { JwtPayload } from 'src/auth/interfaces/jwt.payload';
+import { LoggedIn } from 'src/guards/loggedIn.guard';
+import { UserRepositories } from 'src/models/user.repo';
+import { Role } from '@prisma/client';
 
 @Resolver(() => Infografic)
 export class InfograficResolver {
-  constructor(private readonly infograficService: InfograficService) { }
+  constructor(
+    private readonly infograficService: InfograficService,
+    private readonly userRepo: UserRepositories,
+  ) {}
 
   @Mutation(() => Infografic)
-  @UseGuards(FacultyAdmin, PsyhopeAdmin)
-  createInfografic(
+  @UseGuards(LoggedIn)
+  async createInfografic(
     @Args('createInfograficInput') createInfograficInput: CreateInfograficInput,
+    @CurrentUser() user: JwtPayload,
   ) {
+    const { account } = await this.userRepo.findById(user.sub);
+
+    if (
+      account.role != Role.PSYHOPE_ADMIN &&
+      account.role != Role.FACULTY_ADMIN
+    )
+      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+
     return this.infograficService.create(createInfograficInput);
   }
 
   @Query(() => [Infografic])
-  findAll() {
+  findAllInfografic() {
     return this.infograficService.findAll();
   }
 
   @Query(() => [Infografic])
-  findByPage(@Args('page', { type: () => Int }) page: number) {
-    return this.infograficService.findOne(page);
+  findByPageInfografic(@Args('page', { type: () => Int }) page: number) {
+    return this.infograficService.findByPage(page);
   }
 
   @Query(() => Infografic)
-  findOne(@Args('id', { type: () => Int }) id: number) {
+  findOneInfografic(@Args('id', { type: () => Int }) id: number) {
     return this.infograficService.findOne(id);
   }
 
   @Mutation(() => Infografic)
-  @UseGuards(FacultyAdmin, PsyhopeAdmin)
-  updateInfografic(
+  @UseGuards(LoggedIn)
+  async updateInfografic(
     @Args('updateInfograficInput') updateInfograficInput: UpdateInfograficInput,
+    @CurrentUser() user: JwtPayload,
   ) {
+    const { account } = await this.userRepo.findById(user.sub);
+
+    if (
+      account.role != Role.PSYHOPE_ADMIN &&
+      account.role != Role.FACULTY_ADMIN
+    )
+      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+
     return this.infograficService.update(updateInfograficInput);
   }
 
   @Mutation(() => Infografic)
-  @UseGuards(FacultyAdmin, PsyhopeAdmin)
-  removeInfografic(@Args('id', { type: () => Int }) id: number) {
+  @UseGuards(LoggedIn)
+  async removeInfografic(
+    @Args('id', { type: () => Int }) id: number,
+    @CurrentUser() user: JwtPayload,
+  ) {
+    const { account } = await this.userRepo.findById(user.sub);
+
+    if (
+      account.role != Role.PSYHOPE_ADMIN &&
+      account.role != Role.FACULTY_ADMIN
+    )
+      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+
     return this.infograficService.remove(id);
+  }
+
+  @Query(() => [Infografic])
+  findByLimitInfografic(@Args('limit', { type: () => Int }) limit: number) {
+    return this.infograficService.findByLimit(limit);
+  }
+
+  @Query(() => Number)
+  countInfografic() {
+    return this.infograficService.count();
   }
 }

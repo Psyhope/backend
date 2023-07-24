@@ -14,4 +14,7 @@ export class UpdateArticleInput extends PartialType(CreateArticleInput) {
 
   @Field(() => String)
   posterUrl: string;
+
+  @Field(() => String)
+  thumbnailUrl: string;
 }

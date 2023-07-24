@@ -5,18 +5,28 @@ import { DbService } from 'src/providers/database/db';
 export class ArticleRepositories {
   constructor(private readonly db: DbService) {}
 
-  async create(title: string, content: string, posterUrl: string) {
+  async create(
+    title: string,
+    content: string,
+    posterUrl: string,
+    thumbnailUrl: string,
+  ) {
     return await this.db.article.create({
       data: {
         title,
         content,
         posterUrl,
+        thumbnailUrl,
       },
     });
   }
 
   async findAll() {
-    return await this.db.article.findMany();
+    return await this.db.article.findMany({
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
   }
 
   async findByPage(page: number) {
@@ -25,6 +35,9 @@ export class ArticleRepositories {
     return await this.db.article.findMany({
       skip,
       take,
+      orderBy: {
+        createdAt: 'desc',
+      },
     });
   }
 
@@ -36,7 +49,13 @@ export class ArticleRepositories {
     });
   }
 
-  async update(id: number, title: string, content: string, posterUrl: string) {
+  async update(
+    id: number,
+    title: string,
+    content: string,
+    posterUrl: string,
+    thumbnailUrl: string,
+  ) {
     return await this.db.article.update({
       where: {
         id,
@@ -45,6 +64,7 @@ export class ArticleRepositories {
         title,
         content,
         posterUrl,
+        thumbnailUrl,
       },
     });
   }
@@ -55,5 +75,18 @@ export class ArticleRepositories {
         id,
       },
     });
+  }
+
+  async findByLimit(limit: number) {
+    return await this.db.article.findMany({
+      orderBy: {
+        createdAt: 'desc',
+      },
+      take: limit,
+    });
+  }
+
+  async count() {
+    return await this.db.article.count();
   }
 }
