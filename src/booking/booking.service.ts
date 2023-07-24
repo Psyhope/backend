@@ -75,7 +75,7 @@ export class BookingService {
             some: {
               workDay: dayNames[new Date(bookingAccepted.bookingDate.toLocaleString()).getDay()],
               workTime: {
-                in : [bookingAccepted.bookingTime, bookingAccepted.bookingTime2]
+                hasEvery : [bookingAccepted.bookingTime, bookingAccepted.bookingTime2]
               }
             },
           },
@@ -115,7 +115,7 @@ export class BookingService {
             some: {
               workDay: dayNames[new Date(bookingAccepted.bookingDate.toLocaleString()).getDay()],
               workTime: {
-                in : [bookingAccepted.bookingTime, bookingAccepted.bookingTime2]
+                hasEvery : [bookingAccepted.bookingTime, bookingAccepted.bookingTime2]
               }
             },
           },
@@ -160,6 +160,8 @@ export class BookingService {
   }
 
   async reject(id: number, userId: string, faculty: string){
+
+    // handle kalo yg ngereject bkn dia
     const updateBlacklist = await this.db.booking.update({
       where: {
         id,
@@ -184,7 +186,7 @@ export class BookingService {
             some : {
               workDay: dayNames[updateBlacklist.bookingDate.getDay()],
               workTime: {
-                in : [updateBlacklist.bookingTime, updateBlacklist.bookingTime2]
+                hasEvery: [updateBlacklist.bookingTime, updateBlacklist.bookingTime2]
               }
             }
           },
@@ -224,7 +226,7 @@ export class BookingService {
             some : {
               workDay: dayNames[updateBlacklist.bookingDate.getDay()],
               workTime: {
-                in : [updateBlacklist.bookingTime, updateBlacklist.bookingTime2]
+                hasEvery: [updateBlacklist.bookingTime, updateBlacklist.bookingTime2]
               }
             }
           },
@@ -316,9 +318,10 @@ export class BookingService {
     if (counselorType == "PSYHOPE"){
       return await this.db.councelorSchedule.findMany({
         where: {
+          
           workDay: dayNames[new Date(bookingDate.toLocaleString()).getDay()],
           workTime: {
-            in: [bookingTime, bookingTime2]
+            hasEvery : [bookingTime, bookingTime2]
           },
           councelor : {
             counselorType,
@@ -352,7 +355,7 @@ export class BookingService {
       where: {
         workDay: dayNames[new Date(bookingDate.toLocaleString()).getDay()],
         workTime: {
-          in: [bookingTime, bookingTime2]
+          hasEvery : [bookingTime, bookingTime2]
         },
         councelor: {
           counselorType,

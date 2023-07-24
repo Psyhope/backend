@@ -9,6 +9,6 @@ export class CouncelorSchedule {
   @Field(() => String)
   workDay: string;
 
-  @Field(() => String)
-  workTime: string
+  @Field(() => [String])
+  workTime: string[]
 }

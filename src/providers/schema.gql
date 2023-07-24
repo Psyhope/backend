@@ -100,7 +100,7 @@ enum bookingTopic {
 type CouncelorSchedule {
   id: Int!
   workDay: String!
-  workTime: String!
+  workTime: [String!]!
 }
 
 type CounselingLog {

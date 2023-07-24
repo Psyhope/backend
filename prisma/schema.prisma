@@ -68,7 +68,7 @@ model CouncelorSchedule {
   councelor   Councelor? @relation(fields: [councelorId], references: [id])
   councelorId Int?
   workDay     String
-  workTime    String
+  workTime    String[]
 }
 
 model Account {
