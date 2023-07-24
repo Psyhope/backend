@@ -75,7 +75,11 @@ type Booking {
   bookingTime: String!
 
   """The time of the booking"""
+  bookingTime2: String!
+
+  """The time of the booking"""
   bookingDate: DateTime!
+  bookingDay: String!
   user: User
   userId: String!
   counselorType: CounselorType!
@@ -87,7 +91,6 @@ type Booking {
   councelor: Councelor
 }
 
-"""The type of counselor, either PSYHOPE or FACULTY"""
 enum bookingTopic {
   TOPIC_1
   TOPIC_2
@@ -115,14 +118,26 @@ type Query {
   findByPage(page: Int!): [Event!]!
   findOne(id: Int!): Event!
   findById(page: Int!): Event!
-  booking: [Booking!]
+  booking(getBookingFilter: GetBookingFilterDto!): [Booking!]
   schedule(getScheduleDTO: GetScheduleDTO!): [CouncelorSchedule!]
   counselingLog: [CounselingLog!]
+}
+
+input GetBookingFilterDto {
+  day: DateTime
+  dayTime: String
+  status: StatusRequest
+}
+
+enum StatusRequest {
+  ACCEPTED
+  NEED_ACCEPTED
 }
 
 input GetScheduleDTO {
   day: DateTime!
   dayTime: String!
+  dayTime2: String!
   counselorType: CounselorType!
 }
 
@@ -193,6 +208,7 @@ input UpdateEventInput {
 input CreateBookingInput {
   bookingDate: DateTime!
   bookingTime: String!
+  bookingTime2: String!
   counselorType: CounselorType!
   bookingTopic: [bookingTopic!]!
   reasonApply: String!
@@ -218,6 +234,7 @@ input RejectBookingDTO {
 input AcceptBooking {
   bookingDate: DateTime
   bookingTime: String
+  bookingTime2: String
   counselorType: CounselorType
   bookingTopic: [bookingTopic!]
   reasonApply: String
@@ -240,6 +257,7 @@ input AcceptBooking {
 input AdminAccBooking {
   bookingDate: DateTime
   bookingTime: String
+  bookingTime2: String
   counselorType: CounselorType
   bookingTopic: [bookingTopic!]
   reasonApply: String
@@ -262,6 +280,7 @@ input AdminAccBooking {
 input UpdateBookingInput {
   bookingDate: DateTime!
   bookingTime: String!
+  bookingTime2: String!
   counselorType: CounselorType
   bookingTopic: [bookingTopic!]!
   reasonApply: String!
