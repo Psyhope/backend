@@ -309,33 +309,9 @@ export class BookingService {
     if (counselorType == "PSYHOPE") {
       return await this.db.councelorSchedule.findMany({
         where: {
-
           workDay: dayNames[new Date(bookingDate.toLocaleString()).getDay()],
-          workTime: {
-            hasEvery: [bookingTime, bookingTime2]
-          },
           councelor: {
             counselorType,
-            Booking: {
-              none: {
-                isTerminated: false,
-                bookingTime: {
-                  in: [bookingTime, bookingTime2]
-                },
-                bookingDay: dayNames[bookingDate.getDay()],
-              },
-            },
-            AND: {
-              Booking: {
-                none: {
-                  isTerminated: false,
-                  bookingTime2: {
-                    in: [bookingTime]
-                  },
-                  bookingDay: dayNames[bookingDate.getDay()],
-                },
-              },
-            }
           }
         }
       })
@@ -345,31 +321,8 @@ export class BookingService {
       return await this.db.councelorSchedule.findMany({
         where: {
           workDay: dayNames[new Date(bookingDate.toLocaleString()).getDay()],
-          workTime: {
-            hasEvery: [bookingTime, bookingTime2]
-          },
           councelor: {
             counselorType,
-            Booking: {
-              none: {
-                isTerminated: false,
-                bookingTime: {
-                  in: [bookingTime, bookingTime2]
-                },
-                bookingDay: dayNames[bookingDate.getDay()],
-              },
-            },
-            AND: {
-              Booking: {
-                none: {
-                  isTerminated: false,
-                  bookingTime2: {
-                    in: [bookingTime]
-                  },
-                  bookingDay: dayNames[bookingDate.getDay()],
-                },
-              },
-            },
             user: {
               account: {
                 faculty,
@@ -381,5 +334,84 @@ export class BookingService {
       })
     }
   }
+
+  // async getSchedule(bookingDate: Date, counselorType: CounselorType, faculty: string, bookingTime: string, bookingTime2: string) {
+
+  //   // kalo ada ya ada kalo engga ya berarti valuenya disable
+  //   if (counselorType == "PSYHOPE") {
+  //     return await this.db.councelorSchedule.findMany({
+  //       where: {
+
+  //         workDay: dayNames[new Date(bookingDate.toLocaleString()).getDay()],
+  //         workTime: {
+  //           hasEvery: [bookingTime, bookingTime2]
+  //         },
+  //         councelor: {
+  //           counselorType,
+  //           Booking: {
+  //             none: {
+  //               isTerminated: false,
+  //               bookingTime: {
+  //                 in: [bookingTime, bookingTime2]
+  //               },
+  //               bookingDay: dayNames[bookingDate.getDay()],
+  //             },
+  //           },
+  //           AND: {
+  //             Booking: {
+  //               none: {
+  //                 isTerminated: false,
+  //                 bookingTime2: {
+  //                   in: [bookingTime]
+  //                 },
+  //                 bookingDay: dayNames[bookingDate.getDay()],
+  //               },
+  //             },
+  //           }
+  //         }
+  //       }
+  //     })
+  //   }
+
+  //   else if (counselorType == "FACULTY") {
+  //     return await this.db.councelorSchedule.findMany({
+  //       where: {
+  //         workDay: dayNames[new Date(bookingDate.toLocaleString()).getDay()],
+  //         workTime: {
+  //           hasEvery: [bookingTime, bookingTime2]
+  //         },
+  //         councelor: {
+  //           counselorType,
+  //           Booking: {
+  //             none: {
+  //               isTerminated: false,
+  //               bookingTime: {
+  //                 in: [bookingTime, bookingTime2]
+  //               },
+  //               bookingDay: dayNames[bookingDate.getDay()],
+  //             },
+  //           },
+  //           AND: {
+  //             Booking: {
+  //               none: {
+  //                 isTerminated: false,
+  //                 bookingTime2: {
+  //                   in: [bookingTime]
+  //                 },
+  //                 bookingDay: dayNames[bookingDate.getDay()],
+  //               },
+  //             },
+  //           },
+  //           user: {
+  //             account: {
+  //               faculty,
+  //             }
+  //           }
+  //         }
+
+  //       },
+  //     })
+  //   }
+  // }
 }
 

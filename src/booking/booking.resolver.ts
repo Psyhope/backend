@@ -139,7 +139,7 @@ export class BookingResolver {
             }
           })
         }
-      case "PSYHOPE_ADMIN":
+      case "PSYHOPE_COUNSELOR":
         if (getBookingFilter.day == null && getBookingFilter.status != null) {
           return await this.bookingService.findAll({
             where: {
