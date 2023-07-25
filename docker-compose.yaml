@@ -2,6 +2,7 @@ version: '3.8'
 services:
   psyhope-server:
     container_name: psyhope-server
+    network_mode: "host"
     restart: always
     build:
       context: .
