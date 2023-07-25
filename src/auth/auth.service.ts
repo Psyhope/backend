@@ -14,6 +14,7 @@ export class AuthService {
 
     async login(username: string, password: string) {
         const user = await this.userRepo.create(username, password)
+        console.log(user)
         const tokens = await this.getTokens(user.id);
         await this.updateRefreshToken(user.id, tokens.refreshToken);
         return tokens;
