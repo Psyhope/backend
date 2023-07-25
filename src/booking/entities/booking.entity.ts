@@ -1,17 +1,27 @@
 import { ObjectType, Field, Int, registerEnumType } from '@nestjs/graphql';
-
-export enum CounselorType {
-  PSYHOPE = "PSYHOPE",
-  FACULTY = "FACULTY"
-}
+import { User } from 'src/user/models/user.model';
+import { CounselorType, Topic } from './const.entity';
+import { Councelor } from './counselor.entity';
 
 @ObjectType()
 export class Booking {
   @Field(() => Int)
   id: number;
 
+  @Field(() => String, { description: 'The time of the booking' })
+  bookingTime: string;
+
+  @Field(() => String, { description: 'The time of the booking' })
+  bookingTime2: string;
+
   @Field(() => Date, { description: 'The time of the booking' })
-  time: Date;
+  bookingDate: Date;
+
+  @Field(() => String)
+  bookingDay: string
+
+  @Field(() => User, {nullable: true})
+  user: User;
 
   @Field(() => String)
   userId: string;
@@ -19,19 +29,15 @@ export class Booking {
   @Field(() => CounselorType, { defaultValue: CounselorType.PSYHOPE, nullable: false })
   counselorType: CounselorType;
 
+  @Field(() => [Topic], {nullable:false})
+  bookingTopic: Topic[];
+
   @Field(() => String, { description: 'The reason for applying for a counseling session' })
   reasonApply: String;
 
   @Field(() => Boolean)
   closestKnown: Boolean;
 
-  @Field(() => [Int], {
-    description: 'Answers for all 12 question on the booking form in order, each number from 1-4 corresponds to the options on the form'
-  })
-  answers: number;
+  @Field(()=> Councelor, {nullable: true})
+  councelor: Councelor
 }
-
-registerEnumType(CounselorType, {
-  name: 'CounselorType',
-  description: 'The type of counselor, either PSYHOPE or FACULTY',
-})

@@ -1,75 +1,385 @@
+
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
-import { BookingRepositories } from 'src/models/booking.repo';
-import { JwtPayload } from 'src/auth/interfaces/jwt.payload';
-import { ForbiddenError } from '@nestjs/apollo';
+import { dayNames } from './const';
+import { Councelor } from './entities/counselor.entity';
+import { CounselorType } from './entities/const.entity';
+import { UserRepositories } from 'src/models/user.repo';
+import { all } from 'axios';
 import { DbService } from 'src/providers/database/db';
-import { RescheduleRequestRepositories } from 'src/models/requestReschedule.repo';
-import { RescheduleRequest } from './entities/recheduleRequest.entity';
+import { UpdateBookingInput } from './dto/update-booking.input';
 
 @Injectable()
 export class BookingService {
-  constructor(
-    private readonly db: DbService,
-    private readonly bookingRepo: BookingRepositories,
-    private readonly rescheduleRequestRepo: RescheduleRequestRepositories
-  ) { }
+  constructor(private readonly db: DbService, private readonly userRepo: UserRepositories) { }
 
-  async create(user: JwtPayload, createBookingDto: Prisma.BookingCreateInput) {
-    const userBooking = await this.bookingRepo.findMany({
-      where: {
-        userId: user.sub,
+  async create(createBookingDto: Prisma.BookingCreateInput, faculty: string) {
+    // kasih pengecualian ketika yg dirandom == null -> kirim email buat batal
+    return await this.db.booking.create({
+      data: {
+        bookingDay: dayNames[new Date(createBookingDto.bookingDate).getDay()],
+        ...createBookingDto,
       }
     });
-    if (userBooking.length > 0)
-      throw new ForbiddenError("You already have a booking");
-    return await this.bookingRepo.create(createBookingDto);
   }
 
   async findAll(args: Prisma.BookingFindManyArgs) {
-    return await this.bookingRepo.findMany({
+    return await this.db.booking.findMany({
+      include: {
+        user: true,
+        councelor: {
+          include: { user: true }
+        },
+      },
+      ...args
+    });
+  }
+
+  async findByFilter(args: Prisma.BookingFindManyArgs) {
+    return await this.db.booking.findMany({
+      include: {
+        user: true,
+        councelor: {
+          include: { user: true }
+        },
+      },
+      ...args
+    });
+  }
+
+  async accept(id: number) {
+    return this.db.booking.update({
       where: {
-        OR: [
-          { time: { gte: new Date() } },
-          { OR: [{ state: 'FINISHED' }, { state: 'TERMINATED' }] }
-        ],
-        ...args
+        id,
+      },
+      data: {
+        isAccepted: true,
       }
-    });
+    })
   }
 
-  async findById(id: number) {
-    return await this.bookingRepo.findById(id);
+  async acceptAdmin(id: number, faculty: string) {
+    const bookingAccepted = await this.db.booking.findUnique({
+      where: {
+        id,
+      }
+    })
+
+    let randomizedCouncelor = null;
+    // kasih info kalo udh dirandom tp tetep null ya gbs -> send mailer
+    if (bookingAccepted.counselorType == "FACULTY") {
+      randomizedCouncelor = await this.db.councelor.findFirst({
+        where: {
+          councelorSchedule: {
+            some: {
+              workDay: dayNames[new Date(bookingAccepted.bookingDate.toLocaleString()).getDay()],
+              workTime: {
+                hasEvery: [bookingAccepted.bookingTime, bookingAccepted.bookingTime2]
+              }
+            },
+          },
+          counselorType: bookingAccepted.counselorType,
+          user: {
+            account: {
+              faculty,
+            }
+          },
+          Booking: {
+            none: {
+              bookingTime: {
+                in: [bookingAccepted.bookingTime, bookingAccepted.bookingTime2]
+              },
+              bookingDay: dayNames[bookingAccepted.bookingDate.getDay()],
+              isTerminated: false,
+            }
+          },
+          AND: {
+            Booking: {
+              none: {
+                bookingTime2: {
+                  in: [bookingAccepted.bookingTime]
+                },
+                bookingDay: dayNames[bookingAccepted.bookingDate.getDay()],
+                isTerminated: false,
+              }
+            },
+          }
+        }
+      })
+    }
+    else {
+      randomizedCouncelor = await this.db.councelor.findFirst({
+        where: {
+          councelorSchedule: {
+            some: {
+              workDay: dayNames[new Date(bookingAccepted.bookingDate.toLocaleString()).getDay()],
+              workTime: {
+                hasEvery: [bookingAccepted.bookingTime, bookingAccepted.bookingTime2]
+              }
+            },
+          },
+          counselorType: bookingAccepted.counselorType,
+          Booking: {
+            none: {
+              bookingTime: {
+                in: [bookingAccepted.bookingTime, bookingAccepted.bookingTime2]
+              },
+              bookingDay: dayNames[bookingAccepted.bookingDate.getDay()],
+              isTerminated: false,
+            }
+          },
+          AND: {
+            Booking: {
+              none: {
+                bookingTime2: {
+                  in: [bookingAccepted.bookingTime]
+                },
+                bookingDay: dayNames[bookingAccepted.bookingDate.getDay()],
+                isTerminated: false,
+              }
+            },
+          }
+        }
+      })
+    }
+
+    return this.db.booking.update({
+      where: {
+        id,
+      },
+      data: {
+        adminAcc: true,
+        councelor: {
+          connect: {
+            id: randomizedCouncelor.id,
+          }
+        }
+      }
+    })
   }
 
-  async reschedule(id: number, time: Date) {
-    const { state } = await this.findById(id);
-    if (state === "FINISHED" || state === "TERMINATED" || state === "NEED_RESCHEDULE")
-      throw new ForbiddenError("You can't update a finished or terminated booking or a booking that need reschedule");
-    const [rescheduleRequest, _] = await this.db.$transaction([
-      this.rescheduleRequestRepo.create({ booking: { connect: { id } }, time }),
-      this.bookingRepo.update(id, { state: "NEED_RESCHEDULE" })
-    ])
-    return rescheduleRequest
+  async reject(id: number, userId: string, faculty: string) {
+
+    // handle kalo yg ngereject bkn dia
+    const updateBlacklist = await this.db.booking.update({
+      where: {
+        id,
+      },
+      data: {
+        blacklist: {
+          push: userId
+        }
+      }
+    })
+
+    let counselorIdAvailable = []
+    let allCounselor = null
+
+    if (updateBlacklist.counselorType == "PSYHOPE") {
+      // kasih constraint ketika udah lebih dari 4x loop blm dapet juga jadinya cancel
+      // get seluruh yg standby pada saat itu, remove ketika pas diloop keluar nama dia, repeat, kalo loopnya abis ya duar kasih email
+      allCounselor = await this.db.councelor.findMany({
+        where: {
+          counselorType: updateBlacklist.counselorType,
+          councelorSchedule: {
+            some: {
+              workDay: dayNames[updateBlacklist.bookingDate.getDay()],
+              workTime: {
+                hasEvery: [updateBlacklist.bookingTime, updateBlacklist.bookingTime2]
+              }
+            }
+          },
+          Booking: {
+            none: {
+              bookingDay: dayNames[updateBlacklist.bookingDate.getDay()],
+              isTerminated: false,
+              bookingTime: {
+                in: [updateBlacklist.bookingTime, updateBlacklist.bookingTime2]
+              }
+            }
+          },
+          AND: {
+            Booking: {
+              none: {
+                bookingDay: dayNames[updateBlacklist.bookingDate.getDay()],
+                isTerminated: false,
+                bookingTime2: {
+                  in: [updateBlacklist.bookingTime]
+                }
+              }
+            },
+          }
+        }
+      })
+    }
+    else {
+      allCounselor = await this.db.councelor.findMany({
+        where: {
+          counselorType: updateBlacklist.counselorType,
+          user: {
+            account: {
+              faculty,
+            }
+          },
+          councelorSchedule: {
+            some: {
+              workDay: dayNames[updateBlacklist.bookingDate.getDay()],
+              workTime: {
+                hasEvery: [updateBlacklist.bookingTime, updateBlacklist.bookingTime2]
+              }
+            }
+          },
+          Booking: {
+            none: {
+              bookingDay: dayNames[updateBlacklist.bookingDate.getDay()],
+              isTerminated: false,
+              bookingTime: {
+                in: [updateBlacklist.bookingTime, updateBlacklist.bookingTime2]
+              }
+            }
+          },
+          AND: {
+            Booking: {
+              none: {
+                bookingDay: dayNames[updateBlacklist.bookingDate.getDay()],
+                isTerminated: false,
+                bookingTime2: {
+                  in: [updateBlacklist.bookingTime]
+                }
+              }
+            },
+          }
+        }
+      })
+    }
+
+    allCounselor.forEach((data) => {
+      counselorIdAvailable.push(data.userId)
+    })
+
+    const blacklisted = updateBlacklist.blacklist
+    const availableCounselor = counselorIdAvailable.filter((data) => {
+      return !blacklisted.includes(data)
+    })
+
+    // kalo gaada yg available ya kirim email
+    if (availableCounselor.length != 0) {
+      const selectedCounselor = availableCounselor[0]
+      const objSelectedCounselor = await this.db.councelor.findFirst({
+        where: {
+          userId: selectedCounselor,
+        }
+      })
+
+      return this.db.booking.update({
+        where: {
+          id,
+        },
+        data: {
+          councelor: {
+            connect: {
+              id: objSelectedCounselor.id,
+            }
+          }
+        }
+      })
+    }
   }
 
-  async acceptReschedule(id: number) {
-    const { state } = await this.findById(id);
-    if (state !== "NEED_RESCHEDULE")
-      throw new ForbiddenError("You can't accept a booking that doesn't need reschedule");
-    const [_, booking] = await this.db.$transaction([
-      this.rescheduleRequestRepo.delete(id),
-      this.bookingRepo.update(id, { state: "BOOKED" })
-    ])
-    return booking
+  async update(updateBookingInput: UpdateBookingInput) {
+    return await this.db.booking.update({
+      where: {
+        id: updateBookingInput.id
+      },
+      data: {
+        bookingDate: updateBookingInput.bookingDate,
+        bookingTime: updateBookingInput.bookingTime,
+        bookingTime2: updateBookingInput.bookingTime2,
+        bookingTopic: updateBookingInput.bookingTopic,
+        reasonApply: updateBookingInput.reasonApply,
+        closestKnown: updateBookingInput.closestKnown
+      }
+    })
+
   }
 
-  async terminate(id: string) {
-    const { id: bookingId, state } = (await this.findAll({ where: { userId: id } }))[0];
-    if (state === "FINISHED" || state === "TERMINATED")
-      throw new ForbiddenError("You can't terminate a finished or terminated booking");
-    return await this.bookingRepo.update(bookingId, {
-      state: "TERMINATED"
-    });
+  async getSchedule(bookingDate: Date, counselorType: CounselorType, faculty: string, bookingTime: string, bookingTime2: string) {
+
+    // kalo ada ya ada kalo engga ya berarti valuenya disable
+    if (counselorType == "PSYHOPE") {
+      return await this.db.councelorSchedule.findMany({
+        where: {
+
+          workDay: dayNames[new Date(bookingDate.toLocaleString()).getDay()],
+          workTime: {
+            hasEvery: [bookingTime, bookingTime2]
+          },
+          councelor: {
+            counselorType,
+            Booking: {
+              none: {
+                isTerminated: false,
+                bookingTime: {
+                  in: [bookingTime, bookingTime2]
+                },
+                bookingDay: dayNames[bookingDate.getDay()],
+              },
+            },
+            AND: {
+              Booking: {
+                none: {
+                  isTerminated: false,
+                  bookingTime2: {
+                    in: [bookingTime]
+                  },
+                  bookingDay: dayNames[bookingDate.getDay()],
+                },
+              },
+            }
+          }
+        }
+      })
+    }
+
+    else if (counselorType == "FACULTY") {
+      return await this.db.councelorSchedule.findMany({
+        where: {
+          workDay: dayNames[new Date(bookingDate.toLocaleString()).getDay()],
+          workTime: {
+            hasEvery: [bookingTime, bookingTime2]
+          },
+          councelor: {
+            counselorType,
+            Booking: {
+              none: {
+                isTerminated: false,
+                bookingTime: {
+                  in: [bookingTime, bookingTime2]
+                },
+                bookingDay: dayNames[bookingDate.getDay()],
+              },
+            },
+            AND: {
+              Booking: {
+                none: {
+                  isTerminated: false,
+                  bookingTime2: {
+                    in: [bookingTime]
+                  },
+                  bookingDay: dayNames[bookingDate.getDay()],
+                },
+              },
+            },
+            user: {
+              account: {
+                faculty,
+              }
+            }
+          }
+
+        },
+      })
+    }
   }
 }
+

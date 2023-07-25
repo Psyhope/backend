@@ -4,44 +4,41 @@ import { Booking } from './entities/booking.entity';
 import { CreateBookingInput } from './dto/create-booking.input';
 import { UseGuards } from '@nestjs/common';
 import { LoggedIn } from 'src/guards/loggedIn.guard';
-import { RescheduleRequest } from './entities/recheduleRequest.entity';
+import { RescheduleRequest } from './entities/rescheduleRequest.entity';
 import { CurrentUser } from 'src/auth/decorator/currentUser.decorator';
 import { JwtPayload } from 'src/auth/interfaces/jwt.payload';
 import { UserRepositories } from 'src/models/user.repo';
-import { ForbiddenError } from '@nestjs/apollo';
-import { PsyhopeCounselor } from 'src/guards/psyhopeCounselor.guard';
-import { PsyhopeAdmin } from 'src/guards/psyhopeAdmin.guard';
-import { FacultyAdmin } from 'src/guards/facultyAdmin.guard';
-import { PeerCounselor } from 'src/guards/peerCounselor.guard';
+import { GetScheduleDTO } from './dto/getSchedule.input';
+import { CouncelorSchedule } from './entities/councelorSchedule.entity';
+import { RejectBookingDTO } from './dto/rejectBooking.input';
+import { AcceptBooking } from './dto/accept-booking.input';
+import { AdminAccBooking } from './dto/admin-acc.input';
+import { GetBookingFilterDto } from './dto/get-booking-filter.input';
+import { get } from 'http';
+import { StatusRequest } from './entities/const.entity';
+import { dayNames } from './const';
+import { UpdateBookingInput } from './dto/update-booking.input';
 
 @Resolver(() => Booking)
 export class BookingResolver {
   constructor(private readonly bookingService: BookingService, private readonly userRepo: UserRepositories) { }
 
-  @Mutation(() => Booking)
+  @Mutation(() => Booking, { nullable: true })
   @UseGuards(LoggedIn)
-  createBooking(@CurrentUser() user: JwtPayload, @Args('createBookingInput') createBookingInput: CreateBookingInput) {
-    return this.bookingService.create(user, {
+  async createBooking(@CurrentUser() user: JwtPayload, @Args('createBookingInput') createBookingInput: CreateBookingInput) {
+    const _user = await this.userRepo.findById(user.sub);
+    return this.bookingService.create({
       ...createBookingInput,
       user: {
         connect: {
           id: user.sub
         }
       }
-    });
+    },
+      _user.account.faculty);
   }
 
-  @Query(() => [Booking],
-    {
-      description: `
-      Get all bookings based on the user's role,
-      CLIENT: Get all bookings made by the user.
-      FACULTY_ADMIN: Get all bookings made by the user's faculty.
-      FACULTY_COUNSELOR: Get all bookings made by the user's faculty.
-      PSYHOPE_ADMIN: Get all bookings.
-      PSYHOPE_COUNSELOR: Get all bookings.
-      `
-    })
+  @Query(() => [Booking], { name: 'booking', nullable: true })
   @UseGuards(LoggedIn)
   async bookings(@CurrentUser() user: JwtPayload) {
     const { role } = user;
@@ -52,9 +49,9 @@ export class BookingResolver {
           where: { userId: user.sub }
         })
       case "FACULTY_ADMIN":
-      case "FACULTY_COUNSELOR":
         return await this.bookingService.findAll({
           where: {
+            counselorType: 'FACULTY',
             user: {
               account: {
                 faculty: _user.account.faculty
@@ -62,50 +59,150 @@ export class BookingResolver {
             }
           }
         })
-      case "PSYHOPE_ADMIN":
+      case "FACULTY_COUNSELOR":
+        return await this.bookingService.findAll({
+          where: {
+            counselorType: 'FACULTY',
+            user: {
+              account: {
+                faculty: _user.account.faculty
+              }
+            },
+            councelor: {
+              userId: user.sub
+            }
+          }
+        })
       case "PSYHOPE_COUNSELOR":
-        return await this.bookingService.findAll({});
+        return await this.bookingService.findAll({
+          where: {
+            counselorType: "PSYHOPE",
+            councelor: {
+              userId: user.sub
+            }
+          }
+        })
+      case "PSYHOPE_ADMIN":
+        return await this.bookingService.findAll({
+          where: {
+            counselorType: "PSYHOPE"
+          }
+        })
+          ;
     }
   }
 
-  @Mutation(() => RescheduleRequest)
+  @Query(() => [Booking], { name: 'booking', nullable: true })
   @UseGuards(LoggedIn)
-  async rescheduleBooking(
-    @CurrentUser() user: JwtPayload,
-    @Args('id', { type: () => Int }) id: number,
-    @Args('date', { type: () => String }) date: string,
-    @Args('time', { type: () => String }) time: string
-  ) {
-    const [day, month, year] = date.split('-');
-    const isoDate = new Date(`${year}-${month}-${day}T${time}:00.000Z`);
-    const newDate = new Date(isoDate);
-    const booking = await this.bookingService.findById(id);
-    if (user.role !== "CLIENT")
-      throw new ForbiddenError("Only client can reschedule a booking");
-    if (booking.userId !== user.sub)
-      throw new ForbiddenError("You can't reschedule other's booking");
-    return await this.bookingService.reschedule(booking.id, newDate);
+  async filterBooking(@CurrentUser() user: JwtPayload, @Args('getBookingFilter') getBookingFilter: GetBookingFilterDto) {
+    const { role } = user;
+    const _user = await this.userRepo.findById(user.sub);
+    switch (role) {
+      case "FACULTY_ADMIN":
+        if (getBookingFilter.day == null && getBookingFilter.status != null) {
+          return await this.bookingService.findAll({
+            where: {
+              counselorType: 'FACULTY',
+              adminAcc: getBookingFilter.status == StatusRequest.ACCEPTED,
+              user: {
+                account: {
+                  faculty: _user.account.faculty
+                }
+              }
+            }
+          })
+        }
+        else if (getBookingFilter.day != null && getBookingFilter.status == null) {
+          return await this.bookingService.findAll({
+            where: {
+              counselorType: 'FACULTY',
+              bookingDay: dayNames[getBookingFilter.day.getDay()],
+              user: {
+                account: {
+                  faculty: _user.account.faculty
+                }
+              }
+            }
+          })
+        }
+        else {
+          return await this.bookingService.findAll({
+            where: {
+              counselorType: 'FACULTY',
+              adminAcc: getBookingFilter.status == StatusRequest.ACCEPTED,
+              bookingDay: dayNames[getBookingFilter.day.getDay()],
+              user: {
+                account: {
+                  faculty: _user.account.faculty
+                }
+              }
+            }
+          })
+        }
+      case "PSYHOPE_ADMIN":
+        if (getBookingFilter.day == null && getBookingFilter.status != null) {
+          return await this.bookingService.findAll({
+            where: {
+              counselorType: 'PSYHOPE',
+              adminAcc: getBookingFilter.status == StatusRequest.ACCEPTED,
+            }
+          })
+        }
+        else if (getBookingFilter.day != null && getBookingFilter.status == null) {
+          return await this.bookingService.findAll({
+            where: {
+              counselorType: 'PSYHOPE',
+              bookingDay: dayNames[getBookingFilter.day.getDay()],
+            }
+          })
+        }
+        else {
+          return await this.bookingService.findAll({
+            where: {
+              counselorType: 'PSYHOPE',
+              adminAcc: getBookingFilter.status == StatusRequest.ACCEPTED,
+              bookingDay: dayNames[getBookingFilter.day.getDay()],
+            }
+          })
+        }
+        ;
+    }
+  }
+
+  @Query(() => [CouncelorSchedule], { name: 'schedule', nullable: true })
+  @UseGuards(LoggedIn)
+  async getSchedule(@CurrentUser() user: JwtPayload, @Args('getScheduleDTO') getScheduleDTO: GetScheduleDTO) {
+    const _user = await this.userRepo.findById(user.sub);
+    return await this.bookingService.getSchedule(getScheduleDTO.day, getScheduleDTO.counselorType, _user.account.faculty, getScheduleDTO.dayTime, getScheduleDTO.dayTime2);
+  }
+
+  @Mutation(() => Booking, { nullable: true })
+  @UseGuards(LoggedIn)
+  async rejectBooking(@Args('rejectBookingInput') rejectBookingInput: RejectBookingDTO, @CurrentUser() user: JwtPayload) {
+    const _user = await this.userRepo.findById(user.sub);
+    return this.bookingService.reject(rejectBookingInput.id, _user.id, _user.account.faculty);
+  }
+
+  @Mutation(() => Booking, { nullable: true })
+  @UseGuards(LoggedIn)
+  async acceptBooking(@Args('accBookingInput') accBookingInput: AcceptBooking, @CurrentUser() user: JwtPayload) {
+    const _user = await this.userRepo.findById(user.sub);
+    if (_user.account.role == "CLIENT") return null;
+    return this.bookingService.accept(accBookingInput.id);
+  }
+
+  @Mutation(() => Booking, { nullable: true })
+  @UseGuards(LoggedIn)
+  async adminAcc(@Args('adminAccInput') adminAccInput: AdminAccBooking, @CurrentUser() user: JwtPayload) {
+    const _user = await this.userRepo.findById(user.sub);
+    if (_user.account.role == "FACULTY_ADMIN" || _user.account.role == "PSYHOPE_ADMIN") return this.bookingService.acceptAdmin(adminAccInput.id, _user.account.faculty)
+    return null;
   }
 
   @Mutation(() => Booking)
-  @UseGuards(LoggedIn, PsyhopeCounselor, PsyhopeAdmin, FacultyAdmin, PeerCounselor)
-  async acceptRescheduleRequest(
-    @Args('id', { type: () => Int }) id: number
-  ) {
-    const { state } = await this.bookingService.findById(id);
-    if (state !== "NEED_RESCHEDULE")
-      throw new ForbiddenError("Only reschedule request can be accepted");
-    return await this.bookingService.acceptReschedule(id)
-  }
-
-
-  @Mutation(() => Booking)
   @UseGuards(LoggedIn)
-  terminateBooking(@CurrentUser() user: JwtPayload, @Args('id', { type: () => String }) id: string) {
-    if (user.role !== "CLIENT")
-      throw new ForbiddenError("Only client can terminate a booking");
-    if (user.sub !== id)
-      throw new ForbiddenError("You can't terminate other's booking");
-    return this.bookingService.terminate(id);
+  async rescheduleBooking(@Args('rescheduleBookingInput') rescheduleBooing: UpdateBookingInput) {
+    return this.bookingService.update(rescheduleBooing)
   }
+
 }
