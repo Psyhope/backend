@@ -132,7 +132,8 @@ type Query {
   findOneEvent(id: Int!): Event!
   findByLimitEvent(limit: Int!): [Event!]!
   countEvent: Float!
-  booking(getBookingFilter: GetBookingFilterDto!): [Booking!]
+  booking: [Booking!]
+  bookingFilter(getBookingFilter: GetBookingFilterDto!): [Booking!]
   schedule(getScheduleDTO: GetScheduleDTO!): [CouncelorSchedule!]
   counselingLog: [CounselingLog!]
 }

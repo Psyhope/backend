@@ -92,7 +92,7 @@ export class BookingResolver {
     }
   }
 
-  @Query(() => [Booking], { name: 'booking', nullable: true })
+  @Query(() => [Booking], { name: 'bookingFilter', nullable: true })
   @UseGuards(LoggedIn)
   async filterBooking(@CurrentUser() user: JwtPayload, @Args('getBookingFilter') getBookingFilter: GetBookingFilterDto) {
     const { role } = user;
