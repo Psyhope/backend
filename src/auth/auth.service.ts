@@ -14,6 +14,7 @@ export class AuthService {
 
     async login(username: string, password: string) {
         const user = await this.userRepo.create(username, password)
+        console.log(user)
         const tokens = await this.getTokens(user.id);
         await this.updateRefreshToken(user.id, tokens.refreshToken);
         return tokens;
@@ -64,7 +65,7 @@ export class AuthService {
         return tokens;
     }
 
-    async updateLineorIgAcc(userId: string, igAcc: string, lineAcc: string){
+    async updateLineorIgAcc(userId: string, igAcc: string, lineAcc: string) {
         await this.userRepo.update(userId, {
             igAcc,
             lineAcc,

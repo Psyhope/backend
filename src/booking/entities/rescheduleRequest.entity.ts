@@ -3,6 +3,9 @@ import { Booking } from "./booking.entity";
 
 @ObjectType()
 export class RescheduleRequest {
+    @Field(() => Number)
+    id: number;
+
     @Field(() => Booking)
     booking: Booking;
 

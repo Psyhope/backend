@@ -1,16 +1,22 @@
 import { InputType, Int, Field } from '@nestjs/graphql';
-import { CounselorType } from '../entities/booking.entity';
+import { CounselorType, Topic } from '../entities/const.entity';
 
 @InputType()
 export class CreateBookingInput {
   @Field(() => Date)
-  time: Date;
+  bookingDate: Date;
+  
+  @Field(() => String)
+  bookingTime: string;
 
   @Field(() => String)
-  userId: string
+  bookingTime2: string
 
   @Field(() => CounselorType)
-  counselorType: CounselorType
+  counselorType: CounselorType;
+
+  @Field(() => [Topic])
+  bookingTopic: Topic[];
 
   @Field(() => String)
   reasonApply: string

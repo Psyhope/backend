@@ -1,4 +1,5 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
+import { Booking } from 'src/booking/entities/booking.entity';
 
 @ObjectType()
 export class Account {
@@ -31,6 +32,9 @@ export class User {
 
   @Field(() => Boolean)
   isOnboarded: Boolean;
+
+  @Field(() => [Booking])
+  bookings: Booking[];
 
   @Field(() => String, { nullable: true })
   lineAcc: String;

@@ -2,6 +2,54 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Councelor {
+  id: Int!
+  userId: String!
+  isOn: Boolean!
+  counselorType: CounselorType!
+  user: User
+}
+
+"""The type of counselor, either PSYHOPE or FACULTY"""
+enum CounselorType {
+  PSYHOPE
+  FACULTY
+}
+
+type Booking {
+  id: Int!
+
+  """The time of the booking"""
+  bookingTime: String!
+
+  """The time of the booking"""
+  bookingTime2: String!
+
+  """The time of the booking"""
+  bookingDate: DateTime!
+  bookingDay: String!
+  user: User
+  userId: String!
+  counselorType: CounselorType!
+  bookingTopic: [bookingTopic!]!
+
+  """The reason for applying for a counseling session"""
+  reasonApply: String!
+  closestKnown: Boolean!
+  councelor: Councelor
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+enum bookingTopic {
+  TOPIC_1
+  TOPIC_2
+  TOPIC_3
+}
+
 type Account {
   faculty: String!
   role: String!
@@ -15,8 +63,15 @@ type User {
   fullname: String!
   account: Account!
   isOnboarded: Boolean!
+  bookings: [Booking!]!
   lineAcc: String
   igAcc: String
+}
+
+type CouncelorSchedule {
+  id: Int!
+  workDay: String!
+  workTime: [String!]!
 }
 
 type Article {
@@ -28,11 +83,6 @@ type Article {
   posterUrl: String!
   thumbnailUrl: String!
 }
-
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
 
 type Infografic {
   id: Int!
@@ -55,39 +105,13 @@ type Event {
   posterUrl: String!
 }
 
-type Booking {
+type CounselingLog {
   id: Int!
-
-  """
-  The time of the booking
-  """
-  time: DateTime!
   userId: String!
-  counselorType: CounselorType!
-
-  """
-  The reason for applying for a counseling session
-  """
-  reasonApply: String!
-  closestKnown: Boolean!
-
-  """
-  Answers for all 12 question on the booking form in order, each number from 1-4 corresponds to the options on the form
-  """
-  answers: [Int!]!
-}
-
-"""
-The type of counselor, either PSYHOPE or FACULTY
-"""
-enum CounselorType {
-  PSYHOPE
-  FACULTY
-}
-
-type RescheduleRequest {
-  booking: Booking!
+  client: User!
+  bookingId: Int!
   time: DateTime!
+  detail: String!
 }
 
 type Query {
@@ -103,10 +127,32 @@ type Query {
   findByLimitInfografic(limit: Int!): [Infografic!]!
   countInfografic: Float!
   findAllEvent: [Event!]!
+  findById(page: Int!): Event!
   findByPageEvent(page: Int!): [Event!]!
   findOneEvent(id: Int!): Event!
   findByLimitEvent(limit: Int!): [Event!]!
   countEvent: Float!
+  booking(getBookingFilter: GetBookingFilterDto!): [Booking!]
+  schedule(getScheduleDTO: GetScheduleDTO!): [CouncelorSchedule!]
+  counselingLog: [CounselingLog!]
+}
+
+input GetBookingFilterDto {
+  day: DateTime
+  dayTime: String
+  status: StatusRequest
+}
+
+enum StatusRequest {
+  ACCEPTED
+  NEED_ACCEPTED
+}
+
+input GetScheduleDTO {
+  day: DateTime!
+  dayTime: String!
+  dayTime2: String!
+  counselorType: CounselorType!
 }
 
 type Mutation {
@@ -119,10 +165,12 @@ type Mutation {
   createEvent(createEventInput: CreateEventInput!): Event!
   updateEvent(updateEventInput: UpdateEventInput!): Event!
   removeEvent(id: Int!): Event!
-  createBooking(createBookingInput: CreateBookingInput!): Booking!
-  updateBooking(updateBookingInput: UpdateBookingInput!): Booking!
-  removeBooking(id: Int!): Booking!
-  rescheduleBooking(id: Int!): RescheduleRequest!
+  createBooking(createBookingInput: CreateBookingInput!): Booking
+  rejectBooking(rejectBookingInput: RejectBookingDTO!): Booking
+  acceptBooking(accBookingInput: AcceptBooking!): Booking
+  adminAcc(adminAccInput: AdminAccBooking!): Booking
+  rescheduleBooking(rescheduleBookingInput: UpdateBookingInput!): Booking!
+  createCounselingLog(createCounselingLogInput: CreateCounselingLogInput!): CounselingLog
 }
 
 input CreateArticleInput {
@@ -173,9 +221,11 @@ input UpdateEventInput {
 }
 
 input CreateBookingInput {
-  time: DateTime!
-  userId: String!
+  bookingDate: DateTime!
+  bookingTime: String!
+  bookingTime2: String!
   counselorType: CounselorType!
+  bookingTopic: [bookingTopic!]!
   reasonApply: String!
   closestKnown: Boolean!
   number_1: Int!
@@ -192,10 +242,16 @@ input CreateBookingInput {
   number_12: Int!
 }
 
-input UpdateBookingInput {
-  time: DateTime
-  userId: String
+input RejectBookingDTO {
+  id: Int!
+}
+
+input AcceptBooking {
+  bookingDate: DateTime
+  bookingTime: String
+  bookingTime2: String
   counselorType: CounselorType
+  bookingTopic: [bookingTopic!]
   reasonApply: String
   closestKnown: Boolean
   number_1: Int
@@ -211,4 +267,57 @@ input UpdateBookingInput {
   number_11: Int
   number_12: Int
   id: Int!
+}
+
+input AdminAccBooking {
+  bookingDate: DateTime
+  bookingTime: String
+  bookingTime2: String
+  counselorType: CounselorType
+  bookingTopic: [bookingTopic!]
+  reasonApply: String
+  closestKnown: Boolean
+  number_1: Int
+  number_2: Int
+  number_3: Int
+  number_4: Int
+  number_5: Int
+  number_6: Int
+  number_7: Int
+  number_8: Int
+  number_9: Int
+  number_10: Int
+  number_11: Int
+  number_12: Int
+  id: Int!
+}
+
+input UpdateBookingInput {
+  bookingDate: DateTime!
+  bookingTime: String!
+  bookingTime2: String!
+  counselorType: CounselorType
+  bookingTopic: [bookingTopic!]!
+  reasonApply: String!
+  closestKnown: Boolean!
+  number_1: Int
+  number_2: Int
+  number_3: Int
+  number_4: Int
+  number_5: Int
+  number_6: Int
+  number_7: Int
+  number_8: Int
+  number_9: Int
+  number_10: Int
+  number_11: Int
+  number_12: Int
+  id: Int!
+}
+
+input CreateCounselingLogInput {
+  bookingId: Int!
+  detail: String!
+  title: String!
+  time: DateTime!
 }
