@@ -97,6 +97,7 @@ export class BookingResolver {
   async filterBooking(@CurrentUser() user: JwtPayload, @Args('getBookingFilter') getBookingFilter: GetBookingFilterDto) {
     const { role } = user;
     const _user = await this.userRepo.findById(user.sub);
+    if (getBookingFilter.day == null && getBookingFilter.status == null) return null
     switch (role) {
       case "FACULTY_ADMIN":
         if (getBookingFilter.day == null && getBookingFilter.status != null) {
