@@ -181,7 +181,7 @@ export class BookingResolver {
     if (getBookingFilter.counselorType == "PSYHOPE"){
       return await this.bookingService.findAll({
         where: {
-          counselorType: 'FACULTY',
+          counselorType: "PSYHOPE",
           adminAcc: true,
           isAccepted: true,
           isTerminated: false,

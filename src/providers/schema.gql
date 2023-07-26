@@ -134,6 +134,7 @@ type Query {
   countEvent: Float!
   booking: [Booking!]
   bookingFilter(getBookingFilter: GetBookingFilterDto!): [Booking!]
+  bookingFilterGeneral(getBookingFilterGeneral: GetBookingFilterGeneralDto!): [Booking!]
   schedule(getScheduleDTO: GetScheduleDTO!): [CouncelorSchedule!]
   counselingLog: [CounselingLog!]
 }
@@ -147,6 +148,11 @@ input GetBookingFilterDto {
 enum StatusRequest {
   ACCEPTED
   NEED_ACCEPTED
+}
+
+input GetBookingFilterGeneralDto {
+  day: DateTime
+  counselorType: CounselorType
 }
 
 input GetScheduleDTO {
