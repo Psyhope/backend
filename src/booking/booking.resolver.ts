@@ -18,6 +18,7 @@ import { get } from 'http';
 import { StatusRequest } from './entities/const.entity';
 import { dayNames } from './const';
 import { UpdateBookingInput } from './dto/update-booking.input';
+import { GetBookingFilterGeneralDto } from './dto/get-booking-generat.input';
 
 @Resolver(() => Booking)
 export class BookingResolver {
@@ -140,7 +141,7 @@ export class BookingResolver {
             }
           })
         }
-      case "PSYHOPE_COUNSELOR":
+      case "PSYHOPE_ADMIN":
         if (getBookingFilter.day == null && getBookingFilter.status != null) {
           return await this.bookingService.findAll({
             where: {
@@ -169,6 +170,43 @@ export class BookingResolver {
         ;
     }
   }
+
+  @Query(() => [Booking], { name: 'bookingFilterGeneral', nullable: true })
+  @UseGuards(LoggedIn)
+  async filterBookingGeneral(@CurrentUser() user: JwtPayload, @Args('getBookingFilterGeneral') getBookingFilter: GetBookingFilterGeneralDto) {
+    const _user = await this.userRepo.findById(user.sub);
+
+    if(getBookingFilter.counselorType == null || getBookingFilter.day == null) return null
+
+    if (getBookingFilter.counselorType == "PSYHOPE"){
+      return await this.bookingService.findAll({
+        where: {
+          counselorType: 'FACULTY',
+          adminAcc: true,
+          isAccepted: true,
+          isTerminated: false,
+          bookingDay: dayNames[getBookingFilter.day.getDay()],
+        }
+      })
+    }
+    else {
+      return await this.bookingService.findAll({
+        where: {
+          counselorType: 'FACULTY',
+          adminAcc: true,
+          isAccepted: true,
+          isTerminated: false,
+          bookingDay: dayNames[getBookingFilter.day.getDay()],
+          user: {
+            account: {
+              faculty: _user.account.faculty
+            }
+          }
+        }
+      })
+    }
+  }
+  
 
   @Query(() => [CouncelorSchedule], { name: 'schedule', nullable: true })
   @UseGuards(LoggedIn)
