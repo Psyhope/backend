@@ -26,9 +26,18 @@ export class BookingService {
   async findAll(args: Prisma.BookingFindManyArgs) {
     return await this.db.booking.findMany({
       include: {
-        user: true,
+        user: {
+          include: {
+            account: true
+          }
+        },
         councelor: {
-          include: { user: true }
+          include: { 
+            user: {
+              include: {
+                account: true
+              }
+            }, }
         },
       },
       ...args
