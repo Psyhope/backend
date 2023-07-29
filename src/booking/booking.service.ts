@@ -23,6 +23,17 @@ export class BookingService {
     });
   }
 
+  async findClient(userId: string){
+    return await this.db.booking.findFirst({
+      where: {
+        userId,
+      },
+      orderBy:{
+        id: 'desc'
+      }
+    })
+  }
+
   async findAll(args: Prisma.BookingFindManyArgs) {
     return await this.db.booking.findMany({
       include: {

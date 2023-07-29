@@ -19,6 +19,7 @@ import { StatusRequest } from './entities/const.entity';
 import { dayNames } from './const';
 import { UpdateBookingInput } from './dto/update-booking.input';
 import { GetBookingFilterGeneralDto } from './dto/get-booking-generat.input';
+import { log } from 'console';
 
 @Resolver(() => Booking)
 export class BookingResolver {
@@ -37,6 +38,14 @@ export class BookingResolver {
       }
     },
       _user.account.faculty);
+  }
+
+  @Query(() => Booking, {name:'bookingClient', nullable: true})
+  @UseGuards(LoggedIn)
+  async bookingClient(@CurrentUser() user: JwtPayload){
+    const _user = await this.userRepo.findById(user.sub)
+    if (user.role != "CLIENT") return null;
+    return this.bookingService.findClient(_user.id)
   }
 
   @Query(() => [Booking], { name: 'booking', nullable: true })
