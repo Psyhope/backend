@@ -37,6 +37,9 @@ type Booking {
   reasonApply: String!
   closestKnown: Boolean!
   councelor: Councelor
+  isAccepted: Boolean!
+  isTerminated: Boolean!
+  adminAcc: Boolean!
 }
 
 """

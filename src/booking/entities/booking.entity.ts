@@ -48,5 +48,5 @@ export class Booking {
   isTerminated: boolean
 
   @Field(() => Boolean)
-  admincAcc: boolean
+  adminAcc: boolean
 }
