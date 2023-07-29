@@ -137,6 +137,7 @@ type Query {
   bookingFilterGeneral(getBookingFilterGeneral: GetBookingFilterGeneralDto!): [Booking!]
   schedule(getScheduleDTO: GetScheduleDTO!): [CouncelorSchedule!]
   counselingLog: [CounselingLog!]
+  counselorFilter(getCounselorDto: GetCouncelorFilter!): [Councelor!]
 }
 
 input GetBookingFilterDto {
@@ -160,6 +161,11 @@ input GetScheduleDTO {
   dayTime: String!
   dayTime2: String!
   counselorType: CounselorType!
+}
+
+input GetCouncelorFilter {
+  counselorName: String
+  bookingDay: String
 }
 
 type Mutation {
