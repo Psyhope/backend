@@ -13,7 +13,7 @@ export class CounselorResolver {
   constructor(private readonly counselorService: CounselorService,private readonly userRepo: UserRepositories) {}
 
 
-  @Query(() => [Councelor], { name: 'counselorFilter' })
+  @Query(() => [Councelor], { name: 'counselorFilter', nullable: true })
   @UseGuards(LoggedIn)
   async getCounselorFilter(@Args('getCounselorDto') getCounselorDto: GetCouncelorFilter, @CurrentUser() user:JwtPayload) {
     const _user = await this.userRepo.findById(user.sub)
