@@ -40,4 +40,13 @@ export class Booking {
 
   @Field(()=> Councelor, {nullable: true})
   councelor: Councelor
+
+  @Field(() => Boolean)
+  isAccepted: boolean
+
+  @Field(() => Boolean)
+  isTerminated: boolean
+
+  @Field(() => Boolean)
+  admincAcc: boolean
 }
