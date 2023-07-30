@@ -20,6 +20,7 @@ import { dayNames } from './const';
 import { UpdateBookingInput } from './dto/update-booking.input';
 import { GetBookingFilterGeneralDto } from './dto/get-booking-generat.input';
 import { log } from 'console';
+import { GetAdminRundown } from './dto/get-admin-rundown.input';
 
 @Resolver(() => Booking)
 export class BookingResolver {
@@ -100,6 +101,71 @@ export class BookingResolver {
         })
           ;
     }
+  }
+
+  @Query(() => [Booking], { name: 'adminRundown', nullable: true })
+  @UseGuards(LoggedIn)
+  async filterAdminRundown(@CurrentUser() user: JwtPayload, @Args('getBookingFilter') getAdminRundown: GetAdminRundown) {
+    const { role } = user;
+    const _user = await this.userRepo.findById(user.sub);
+    if (getAdminRundown.day == null ) {
+      if(role == "FACULTY_ADMIN"){
+        return await this.bookingService.findAll({
+          where: {
+            counselorType: "FACULTY",
+            adminAcc: true,
+            isAccepted: true,
+            isTerminated: false,
+            user: {
+              account : {
+                faculty: _user.account.faculty,
+              }
+            }
+          }
+        })
+      }
+      else if (role == "PSYHOPE_ADMIN"){
+        return await this.bookingService.findAll({
+          where: {
+            counselorType: "PSYHOPE",
+            adminAcc: true,
+            isAccepted: true,
+            isTerminated: false,
+          }
+        })
+      }
+    }
+    else {
+      if(role == "FACULTY_ADMIN"){
+        return await this.bookingService.findAll({
+          where: {
+            counselorType: "FACULTY",
+            adminAcc: true,
+            isAccepted: true,
+            isTerminated: false,
+            bookingDay: dayNames[getAdminRundown.day.getDay()],
+            user: {
+              account : {
+                faculty: _user.account.faculty,
+              }
+            }
+          }
+        })
+      }
+      else if (role == "PSYHOPE_ADMIN"){
+        return await this.bookingService.findAll({
+          where: {
+            counselorType: "PSYHOPE",
+            adminAcc: true,
+            bookingDay: dayNames[getAdminRundown.day.getDay()],
+            isAccepted: true,
+            isTerminated: false,
+          }
+        })
+      }
+    }
+    
+    
   }
 
   @Query(() => [Booking], { name: 'bookingFilter', nullable: true })
