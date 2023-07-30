@@ -111,6 +111,9 @@ export class BookingResolver {
     if (getAdminRundown.day == null ) {
       if(role == "FACULTY_ADMIN"){
         return await this.bookingService.findAll({
+          orderBy: {
+            bookingDay: "asc"
+          },
           where: {
             counselorType: "FACULTY",
             adminAcc: true,
@@ -126,6 +129,9 @@ export class BookingResolver {
       }
       else if (role == "PSYHOPE_ADMIN"){
         return await this.bookingService.findAll({
+          orderBy: {
+            bookingDay: "asc"
+          },
           where: {
             counselorType: "PSYHOPE",
             adminAcc: true,
@@ -138,6 +144,9 @@ export class BookingResolver {
     else {
       if(role == "FACULTY_ADMIN"){
         return await this.bookingService.findAll({
+          orderBy: {
+            bookingDay: "asc"
+          },
           where: {
             counselorType: "FACULTY",
             adminAcc: true,
@@ -154,6 +163,9 @@ export class BookingResolver {
       }
       else if (role == "PSYHOPE_ADMIN"){
         return await this.bookingService.findAll({
+          orderBy: {
+            bookingDay: "asc"
+          },
           where: {
             counselorType: "PSYHOPE",
             adminAcc: true,
