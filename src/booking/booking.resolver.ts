@@ -18,6 +18,9 @@ import { get } from 'http';
 import { StatusRequest } from './entities/const.entity';
 import { dayNames } from './const';
 import { UpdateBookingInput } from './dto/update-booking.input';
+import { GetBookingFilterGeneralDto } from './dto/get-booking-generat.input';
+import { log } from 'console';
+import { GetAdminRundown } from './dto/get-admin-rundown.input';
 
 @Resolver(() => Booking)
 export class BookingResolver {
@@ -36,6 +39,14 @@ export class BookingResolver {
       }
     },
       _user.account.faculty);
+  }
+
+  @Query(() => Booking, {name:'bookingClient', nullable: true})
+  @UseGuards(LoggedIn)
+  async bookingClient(@CurrentUser() user: JwtPayload){
+    const _user = await this.userRepo.findById(user.sub)
+    if (user.role != "CLIENT") return null;
+    return this.bookingService.findClient(_user.id)
   }
 
   @Query(() => [Booking], { name: 'booking', nullable: true })
@@ -92,11 +103,89 @@ export class BookingResolver {
     }
   }
 
-  @Query(() => [Booking], { name: 'booking', nullable: true })
+  @Query(() => [Booking], { name: 'adminRundown', nullable: true })
+  @UseGuards(LoggedIn)
+  async filterAdminRundown(@CurrentUser() user: JwtPayload, @Args('getBookingFilter') getAdminRundown: GetAdminRundown) {
+    const { role } = user;
+    const _user = await this.userRepo.findById(user.sub);
+    if (getAdminRundown.day == null ) {
+      if(role == "FACULTY_ADMIN"){
+        return await this.bookingService.findAll({
+          orderBy: {
+            bookingDay: "asc"
+          },
+          where: {
+            counselorType: "FACULTY",
+            adminAcc: true,
+            isAccepted: true,
+            isTerminated: false,
+            user: {
+              account : {
+                faculty: _user.account.faculty,
+              }
+            }
+          }
+        })
+      }
+      else if (role == "PSYHOPE_ADMIN"){
+        return await this.bookingService.findAll({
+          orderBy: {
+            bookingDay: "asc"
+          },
+          where: {
+            counselorType: "PSYHOPE",
+            adminAcc: true,
+            isAccepted: true,
+            isTerminated: false,
+          }
+        })
+      }
+    }
+    else {
+      if(role == "FACULTY_ADMIN"){
+        return await this.bookingService.findAll({
+          orderBy: {
+            bookingDay: "asc"
+          },
+          where: {
+            counselorType: "FACULTY",
+            adminAcc: true,
+            isAccepted: true,
+            isTerminated: false,
+            bookingDay: dayNames[getAdminRundown.day.getDay()],
+            user: {
+              account : {
+                faculty: _user.account.faculty,
+              }
+            }
+          }
+        })
+      }
+      else if (role == "PSYHOPE_ADMIN"){
+        return await this.bookingService.findAll({
+          orderBy: {
+            bookingDay: "asc"
+          },
+          where: {
+            counselorType: "PSYHOPE",
+            adminAcc: true,
+            bookingDay: dayNames[getAdminRundown.day.getDay()],
+            isAccepted: true,
+            isTerminated: false,
+          }
+        })
+      }
+    }
+    
+    
+  }
+
+  @Query(() => [Booking], { name: 'bookingFilter', nullable: true })
   @UseGuards(LoggedIn)
   async filterBooking(@CurrentUser() user: JwtPayload, @Args('getBookingFilter') getBookingFilter: GetBookingFilterDto) {
     const { role } = user;
     const _user = await this.userRepo.findById(user.sub);
+    if (getBookingFilter.day == null && getBookingFilter.status == null) return null
     switch (role) {
       case "FACULTY_ADMIN":
         if (getBookingFilter.day == null && getBookingFilter.status != null) {
@@ -168,6 +257,43 @@ export class BookingResolver {
         ;
     }
   }
+
+  @Query(() => [Booking], { name: 'bookingFilterGeneral', nullable: true })
+  @UseGuards(LoggedIn)
+  async filterBookingGeneral(@CurrentUser() user: JwtPayload, @Args('getBookingFilterGeneral') getBookingFilter: GetBookingFilterGeneralDto) {
+    const _user = await this.userRepo.findById(user.sub);
+
+    if(getBookingFilter.counselorType == null || getBookingFilter.day == null) return null
+
+    if (getBookingFilter.counselorType == "PSYHOPE"){
+      return await this.bookingService.findAll({
+        where: {
+          counselorType: "PSYHOPE",
+          adminAcc: true,
+          isAccepted: true,
+          isTerminated: false,
+          bookingDay: dayNames[getBookingFilter.day.getDay()],
+        }
+      })
+    }
+    else {
+      return await this.bookingService.findAll({
+        where: {
+          counselorType: 'FACULTY',
+          adminAcc: true,
+          isAccepted: true,
+          isTerminated: false,
+          bookingDay: dayNames[getBookingFilter.day.getDay()],
+          user: {
+            account: {
+              faculty: _user.account.faculty
+            }
+          }
+        }
+      })
+    }
+  }
+  
 
   @Query(() => [CouncelorSchedule], { name: 'schedule', nullable: true })
   @UseGuards(LoggedIn)

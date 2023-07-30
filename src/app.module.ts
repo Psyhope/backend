@@ -14,6 +14,7 @@ import { InfograficModule } from './infografic/infografic.module';
 import { EventModule } from './event/event.module';
 import { BookingModule } from './booking/booking.module';
 import { CounselingLogModule } from './counselingLog/counseling-log.module';
+import { CounselorModule } from './counselor/counselor.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { CounselingLogModule } from './counselingLog/counseling-log.module';
     EventModule,
     BookingModule,
     CounselingLogModule,
+    CounselorModule,
   ],
   controllers: [AuthController, AppController],
   providers: [AppService],
