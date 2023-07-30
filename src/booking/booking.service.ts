@@ -25,6 +25,18 @@ export class BookingService {
 
   async findClient(userId: string){
     return await this.db.booking.findFirst({
+      include:{
+        user: true,
+        councelor:{
+          include: {
+            user: {
+              include : {
+                account: true
+              }
+            }
+          }
+        }
+      },
       where: {
         userId,
       },
@@ -264,9 +276,9 @@ export class BookingService {
         bookingDate: updateBookingInput.bookingDate,
         bookingTime: updateBookingInput.bookingTime,
         bookingTime2: updateBookingInput.bookingTime2,
-        bookingTopic: updateBookingInput.bookingTopic,
-        reasonApply: updateBookingInput.reasonApply,
-        closestKnown: updateBookingInput.closestKnown
+        isAccepted: false,
+        isTerminated: false,
+        adminAcc: false,
       }
     })
 

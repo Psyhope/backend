@@ -3,7 +3,7 @@ import { CreateBookingInput } from './create-booking.input';
 import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
 
 @InputType()
-export class UpdateBookingInput extends PartialType(CreateBookingInput) {
+export class UpdateBookingInput{
   @Field(() => Int)
   id: number;
 
@@ -15,13 +15,4 @@ export class UpdateBookingInput extends PartialType(CreateBookingInput) {
 
   @Field(() => String)
   bookingTime2: string;
-
-  @Field(() => [Topic])
-  bookingTopic: Topic[];
-
-  @Field(() => String)
-  reasonApply: string
-
-  @Field(() => Boolean)
-  closestKnown: boolean
 }
