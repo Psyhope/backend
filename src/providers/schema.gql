@@ -8,6 +8,7 @@ type Councelor {
   isOn: Boolean!
   counselorType: CounselorType!
   user: User
+  Booking: [Booking!]
 }
 
 """The type of counselor, either PSYHOPE or FACULTY"""
