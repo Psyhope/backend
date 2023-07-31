@@ -1,6 +1,6 @@
 
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
+import { Councelor, Prisma } from '@prisma/client';
 import { dayNames } from './const';
 import { CounselorType } from './entities/const.entity';
 import { UserRepositories } from 'src/models/user.repo';
@@ -80,29 +80,57 @@ export class BookingService {
   }
 
   async accept(id: number) {
-    // kasih email ke client kalo konsulnya udah dapet konselor
-    return this.db.booking.update({
-      where: {
-        id,
-      },
-      data: {
-        isAccepted: true,
-      }
-    })
+    try {
+      const booking = await this.db.booking.update({
+        where: {
+          id,
+        },
+        data: {
+          isAccepted: true,
+        },
+        include: {
+          user: {
+            select: {
+              fullname: true,
+              username: true
+            }
+          },
+        }
+      })
+      await this.mail.sendMail({
+        username: booking.user.username,
+        subject: "Konseling Anda Telah Diterima",
+        html: `
+        <p>Halo ${booking.user.fullname},</p>
+        <p>Konseling Anda telah diterima oleh konselor kami. Silahkan cek jadwal konseling Anda di aplikasi kami.</p>
+        <p>Terima kasih.</p>
+        `
+      })
+      return booking;
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
   async acceptAdmin(id: number, faculty: string) {
     const bookingAccepted = await this.db.booking.findUnique({
       where: {
         id,
+      },
+      include: {
+        user: {
+          select: {
+            fullname: true,
+            username: true
+          }
+        }
       }
     })
 
-    let randomizedCouncelor = null;
     // kasih info kalo udh dirandom tp tetep null ya gbs -> send mailer kalo harus ganti jadwal / gabisa di proses konselingnya
     // kalo dia gak null, kasih email ke counselornya bahwa ada pasien yang mau ke dia 
-    if (bookingAccepted.counselorType == "FACULTY") {
-      randomizedCouncelor = await this.db.councelor.findFirst({
+    const randomizedCouncelor = (bookingAccepted.counselorType == "FACULTY") ? (
+      await this.db.councelor.findFirst({
         where: {
           councelorSchedule: {
             some: {
@@ -125,11 +153,18 @@ export class BookingService {
               isTerminated: false,
             }
           }
+        },
+        include: {
+          user: {
+            select: {
+              username: true,
+              fullname: true,
+            }
+          }
         }
       })
-    }
-    else {
-      randomizedCouncelor = await this.db.councelor.findFirst({
+    ) : (
+      await this.db.councelor.findFirst({
         where: {
           councelorSchedule: {
             some: {
@@ -147,9 +182,48 @@ export class BookingService {
               isTerminated: false,
             }
           },
+        },
+        include: {
+          user: {
+            select: {
+              username: true,
+              fullname: true,
+            }
+          }
         }
       })
+    )
+
+    if (randomizedCouncelor == null) {
+      await this.mail.sendMail({
+        username: bookingAccepted.user.username,
+        subject: "Konseling Anda Telah Diterima",
+        html: `
+        <p>Halo ${bookingAccepted.user.fullname},</p>
+        <p>Permintaan konseling Anda telah diterima oleh kami. Namun, kami belum menemukan konselor yang sesuai dengan jadwal Anda. Silahkan cek jadwal konseling Anda di aplikasi kami.</p>
+        <p>Terima kasih.</p>
+        `
+      })
+      return this.db.booking.update({
+        where: {
+          id,
+        },
+        data: {
+          adminAcc: true,
+        }
+      })
+    } else {
+      await this.mail.sendMail({
+        username: randomizedCouncelor.user.username,
+        subject: "Permintaan Konseling",
+        html: `
+        <p>Halo ${randomizedCouncelor.user.fullname},</p>
+        <p>Ada permintaan konseling dari ${bookingAccepted.user.fullname}. Silahkan cek jadwal konseling Anda di aplikasi kami.</p>
+        <p>Terima kasih.</p>
+        `
+      })
     }
+
 
     return this.db.booking.update({
       where: {
@@ -177,10 +251,18 @@ export class BookingService {
         blacklist: {
           push: userId
         }
+      },
+      include: {
+        user: {
+          select: {
+            fullname: true,
+            username: true
+          }
+        },
       }
     })
 
-    let counselorIdAvailable = []
+    let counselorIdAvailable: string[] = []
     let allCounselor = null
 
     if (updateBlacklist.counselorType == "PSYHOPE") {
@@ -243,7 +325,20 @@ export class BookingService {
     })
 
     // kalo gaada yg available ya kirim email
-    // kalo lenght == 9, kirim email bahwa konsulnya gabisa diproses, silahkah reschedule
+    // kalo lenght == 9, kirim email bahwa konsulnya gabisa diproses, 
+    // silahkah reschedule
+    if (availableCounselor.length == 0) {
+      await this.mail.sendMail({
+        username: updateBlacklist.user.username,
+        subject: "Konseling Anda Tidak Dapat Diproses",
+        html: `
+        <p>Halo ${updateBlacklist.user.fullname},</p>
+        <p>Konseling Anda tidak dapat diproses karena tidak ada konselor yang tersedia. Silahkan lakukan reschedule konseling Anda.</p>
+        <p>Terima kasih.</p>
+        `
+      })
+    }
+
     if (availableCounselor.length != 0) {
       const selectedCounselor = availableCounselor[0]
       const objSelectedCounselor = await this.db.councelor.findFirst({
