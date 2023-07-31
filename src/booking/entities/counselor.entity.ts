@@ -1,6 +1,7 @@
 import { ObjectType, Field, Int, registerEnumType } from '@nestjs/graphql';
 import { CounselorType } from './const.entity'
 import { User } from 'src/user/models/user.model';
+import { Booking } from './booking.entity';
 
 @ObjectType()
 export class Councelor {
@@ -18,4 +19,7 @@ export class Councelor {
 
   @Field(() => User, {nullable:true})
   user: User
+
+  @Field(() => [Booking], { nullable:true})
+  Booking: Booking[]
 }
