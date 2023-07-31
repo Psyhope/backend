@@ -6,9 +6,10 @@ import { UserRepositories } from 'src/models/user.repo';
 import { SSOAuthService } from 'src/auth/providers/sso.service';
 import { BookingRepositories } from 'src/models/booking.repo';
 import { RescheduleRequestRepositories } from 'src/models/requestReschedule.repo';
+import { MailService } from 'src/mail/mail.service';
 
 @Module({
-  providers: [BookingResolver, BookingService, DbService, UserRepositories, SSOAuthService, BookingRepositories, RescheduleRequestRepositories],
+  providers: [BookingResolver, BookingService, DbService, UserRepositories, SSOAuthService, BookingRepositories, MailService, RescheduleRequestRepositories],
   exports: [BookingService, BookingRepositories, BookingResolver, DbService, RescheduleRequestRepositories]
 })
 export class BookingModule { }

@@ -41,9 +41,9 @@ export class BookingResolver {
       _user.account.faculty);
   }
 
-  @Query(() => Booking, {name:'bookingClient', nullable: true})
+  @Query(() => Booking, { name: 'bookingClient', nullable: true })
   @UseGuards(LoggedIn)
-  async bookingClient(@CurrentUser() user: JwtPayload){
+  async bookingClient(@CurrentUser() user: JwtPayload) {
     const _user = await this.userRepo.findById(user.sub)
     if (user.role != "CLIENT") return null;
     return this.bookingService.findClient(_user.id)
@@ -108,8 +108,8 @@ export class BookingResolver {
   async filterAdminRundown(@CurrentUser() user: JwtPayload, @Args('getBookingFilter') getAdminRundown: GetAdminRundown) {
     const { role } = user;
     const _user = await this.userRepo.findById(user.sub);
-    if (getAdminRundown.day == null ) {
-      if(role == "FACULTY_ADMIN"){
+    if (getAdminRundown.day == null) {
+      if (role == "FACULTY_ADMIN") {
         return await this.bookingService.findAll({
           orderBy: {
             bookingDay: "asc"
@@ -120,14 +120,14 @@ export class BookingResolver {
             isAccepted: true,
             isTerminated: false,
             user: {
-              account : {
+              account: {
                 faculty: _user.account.faculty,
               }
             }
           }
         })
       }
-      else if (role == "PSYHOPE_ADMIN"){
+      else if (role == "PSYHOPE_ADMIN") {
         return await this.bookingService.findAll({
           orderBy: {
             bookingDay: "asc"
@@ -142,7 +142,7 @@ export class BookingResolver {
       }
     }
     else {
-      if(role == "FACULTY_ADMIN"){
+      if (role == "FACULTY_ADMIN") {
         return await this.bookingService.findAll({
           orderBy: {
             bookingDay: "asc"
@@ -154,14 +154,14 @@ export class BookingResolver {
             isTerminated: false,
             bookingDay: dayNames[getAdminRundown.day.getDay()],
             user: {
-              account : {
+              account: {
                 faculty: _user.account.faculty,
               }
             }
           }
         })
       }
-      else if (role == "PSYHOPE_ADMIN"){
+      else if (role == "PSYHOPE_ADMIN") {
         return await this.bookingService.findAll({
           orderBy: {
             bookingDay: "asc"
@@ -176,8 +176,8 @@ export class BookingResolver {
         })
       }
     }
-    
-    
+
+
   }
 
   @Query(() => [Booking], { name: 'bookingFilter', nullable: true })
@@ -263,9 +263,9 @@ export class BookingResolver {
   async filterBookingGeneral(@CurrentUser() user: JwtPayload, @Args('getBookingFilterGeneral') getBookingFilter: GetBookingFilterGeneralDto) {
     const _user = await this.userRepo.findById(user.sub);
 
-    if(getBookingFilter.counselorType == null || getBookingFilter.day == null) return null
+    if (getBookingFilter.counselorType == null || getBookingFilter.day == null) return null
 
-    if (getBookingFilter.counselorType == "PSYHOPE"){
+    if (getBookingFilter.counselorType == "PSYHOPE") {
       return await this.bookingService.findAll({
         where: {
           counselorType: "PSYHOPE",
@@ -293,7 +293,7 @@ export class BookingResolver {
       })
     }
   }
-  
+
 
   @Query(() => [CouncelorSchedule], { name: 'schedule', nullable: true })
   @UseGuards(LoggedIn)

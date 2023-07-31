@@ -2,16 +2,15 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { dayNames } from './const';
-import { Councelor } from './entities/counselor.entity';
 import { CounselorType } from './entities/const.entity';
 import { UserRepositories } from 'src/models/user.repo';
-import { all } from 'axios';
 import { DbService } from 'src/providers/database/db';
 import { UpdateBookingInput } from './dto/update-booking.input';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class BookingService {
-  constructor(private readonly db: DbService, private readonly userRepo: UserRepositories) { }
+  constructor(private readonly db: DbService, private readonly mail: MailService) { }
 
   async create(createBookingDto: Prisma.BookingCreateInput, faculty: string) {
     // kasih pengecualian ketika yg dirandom == null -> kirim email buat batal
@@ -23,14 +22,14 @@ export class BookingService {
     });
   }
 
-  async findClient(userId: string){
+  async findClient(userId: string) {
     return await this.db.booking.findFirst({
-      include:{
+      include: {
         user: true,
-        councelor:{
+        councelor: {
           include: {
             user: {
-              include : {
+              include: {
                 account: true
               }
             }
@@ -40,7 +39,7 @@ export class BookingService {
       where: {
         userId,
       },
-      orderBy:{
+      orderBy: {
         id: 'desc'
       }
     })
@@ -55,12 +54,13 @@ export class BookingService {
           }
         },
         councelor: {
-          include: { 
+          include: {
             user: {
               include: {
                 account: true
               }
-            }, }
+            },
+          }
         },
       },
       ...args
@@ -120,7 +120,7 @@ export class BookingService {
           },
           Booking: {
             none: {
-              bookingTime:bookingAccepted.bookingTime,
+              bookingTime: bookingAccepted.bookingTime,
               bookingDay: dayNames[bookingAccepted.bookingDate.getDay()],
               isTerminated: false,
             }
@@ -135,7 +135,7 @@ export class BookingService {
             some: {
               workDay: dayNames[new Date(bookingAccepted.bookingDate.toLocaleString()).getDay()],
               workTime: {
-                has : bookingAccepted.bookingTime
+                has: bookingAccepted.bookingTime
               }
             },
           },

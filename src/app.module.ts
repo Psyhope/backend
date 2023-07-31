@@ -15,6 +15,7 @@ import { EventModule } from './event/event.module';
 import { BookingModule } from './booking/booking.module';
 import { CounselingLogModule } from './counselingLog/counseling-log.module';
 import { CounselorModule } from './counselor/counselor.module';
+import { MailService } from './mail/mail.service';
 
 @Module({
   imports: [
@@ -37,6 +38,6 @@ import { CounselorModule } from './counselor/counselor.module';
     CounselorModule,
   ],
   controllers: [AuthController, AppController],
-  providers: [AppService],
+  providers: [AppService, MailService],
 })
 export class AppModule { }

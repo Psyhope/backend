@@ -6,4 +6,5 @@ export interface JwtPayload {
     role: Role;
     sub: string;
     username: string;
+    isOnboarded: boolean;
 }
