@@ -16,6 +16,7 @@ import { BookingModule } from './booking/booking.module';
 import { CounselingLogModule } from './counselingLog/counseling-log.module';
 import { CounselorModule } from './counselor/counselor.module';
 import { OnboardingModule } from './onboarding/onboarding.module';
+import { MailService } from './mail/mail.service';
 
 @Module({
   imports: [
@@ -39,6 +40,6 @@ import { OnboardingModule } from './onboarding/onboarding.module';
     OnboardingModule,
   ],
   controllers: [AuthController, AppController],
-  providers: [AppService],
+  providers: [AppService, MailService],
 })
 export class AppModule { }
