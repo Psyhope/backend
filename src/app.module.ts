@@ -15,6 +15,7 @@ import { EventModule } from './event/event.module';
 import { BookingModule } from './booking/booking.module';
 import { CounselingLogModule } from './counselingLog/counseling-log.module';
 import { CounselorModule } from './counselor/counselor.module';
+import { OnboardingModule } from './onboarding/onboarding.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { CounselorModule } from './counselor/counselor.module';
     BookingModule,
     CounselingLogModule,
     CounselorModule,
+    OnboardingModule,
   ],
   controllers: [AuthController, AppController],
   providers: [AppService],
