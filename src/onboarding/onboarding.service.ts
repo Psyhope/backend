@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { CreateOnboardingInput } from './dto/create-onboarding.input';
 import { DbService } from 'src/providers/database/db';
-import { UserRepositories } from 'src/models/user.repo';
 
 @Injectable()
 export class OnboardingService {
-  constructor(private readonly db: DbService, private readonly userRepo: UserRepositories) { }
+  constructor(private readonly db: DbService) { }
 
   async create(createOnboardingInput: CreateOnboardingInput, userId: string) {
     if (createOnboardingInput.socmed == "instagram"){
@@ -15,6 +14,16 @@ export class OnboardingService {
         },
         data: {
           channel: "INSTAGRAM"
+        }
+      })
+
+      return await this.db.user.update({
+        where : {
+          id: userId,
+        },
+        data:{
+          igAcc: createOnboardingInput.linkSocmed,
+          isOnboarded: true,
         }
       })
     }
@@ -27,15 +36,18 @@ export class OnboardingService {
           channel: "LINE"
         }
       })
+
+      return await this.db.user.update({
+        where : {
+          id: userId,
+        },
+        data:{
+          lineAcc: createOnboardingInput.linkSocmed,
+          isOnboarded: true,
+        }
+      })
     }
 
-    return await this.db.user.update({
-      where : {
-        id: userId,
-      },
-      data:{
-        igAcc: createOnboardingInput.linkSocmed
-      }
-    })
+    
   }
 }
