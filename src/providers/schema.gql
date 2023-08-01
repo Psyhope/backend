@@ -194,6 +194,7 @@ type Mutation {
   adminAcc(adminAccInput: AdminAccBooking!): Booking
   rescheduleBooking(rescheduleBookingInput: UpdateBookingInput!): Booking!
   createCounselingLog(createCounselingLogInput: CreateCounselingLogInput!): CounselingLog
+  createOnboarding(createOnboardingInput: CreateOnboardingInput!): User!
 }
 
 input CreateArticleInput {
@@ -327,4 +328,9 @@ input CreateCounselingLogInput {
   detail: String!
   title: String!
   time: DateTime!
+}
+
+input CreateOnboardingInput {
+  socmed: String!
+  linkSocmed: String!
 }
