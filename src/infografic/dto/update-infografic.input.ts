@@ -12,6 +12,6 @@ export class UpdateInfograficInput extends PartialType(CreateInfograficInput) {
   @Field(() => String)
   description: string;
 
-  @Field(() => String)
-  infograficUrl: string;
+  @Field(() => [String])
+  infograficUrl: string[];
 }

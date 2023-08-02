@@ -132,7 +132,7 @@ model Event {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   title       String
-  date        DateTime @db.Date
+  date        String   @db.Text
   location    String
   time        String
   description String   @db.Text
@@ -145,7 +145,7 @@ model Infografic {
   updatedAt     DateTime @updatedAt
   title         String
   description   String   @db.Text
-  infograficUrl String
+  infograficUrl String[]
 }
 
 model RescheduleRequest {

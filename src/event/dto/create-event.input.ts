@@ -5,8 +5,8 @@ export class CreateEventInput {
   @Field(() => String)
   title: string;
 
-  @Field(() => Date)
-  date: Date;
+  @Field(() => String)
+  date: string;
 
   @Field(() => String)
   location: string;

@@ -5,7 +5,7 @@ import { DbService } from 'src/providers/database/db';
 export class InfograficRepositories {
   constructor(private readonly db: DbService) {}
 
-  async create(title: string, description: string, infograficUrl: string) {
+  async create(title: string, description: string, infograficUrl: string[]) {
     return await this.db.infografic.create({
       data: {
         title,
@@ -47,7 +47,7 @@ export class InfograficRepositories {
     id: number,
     title: string,
     description: string,
-    infograficUrl: string,
+    infograficUrl: string[],
   ) {
     return await this.db.infografic.update({
       where: {
