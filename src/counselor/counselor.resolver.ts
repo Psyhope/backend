@@ -50,7 +50,7 @@ export class CounselorResolver {
       }
     }
     else if (getCounselorDto.bookingDay != null && getCounselorDto.counselorName == null) {
-      if(user.role.split('_')[0] = "FACULTY"){
+      if(user.role.split('_')[0] == 'FACULTY'){
         return this.counselorService.findAll({
           where: {
             counselorType : "FACULTY",
@@ -74,7 +74,7 @@ export class CounselorResolver {
             counselorType : "PSYHOPE",
             Booking: {
               some: {
-                bookingDate: getCounselorDto.bookingDay,
+                bookingDay: getCounselorDto.bookingDay,
                 isTerminated: false,
                 isAccepted: true
               }

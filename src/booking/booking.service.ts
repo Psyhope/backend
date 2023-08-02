@@ -134,7 +134,7 @@ export class BookingService {
         where: {
           councelorSchedule: {
             some: {
-              workDay: dayNames[new Date(bookingAccepted.bookingDate.toLocaleString()).getDay()],
+              workDay: bookingAccepted.bookingDay,
               workTime: {
                 has: bookingAccepted.bookingTime
               }
@@ -168,28 +168,16 @@ export class BookingService {
         where: {
           councelorSchedule: {
             some: {
-              workDay: dayNames[new Date(bookingAccepted.bookingDate.toLocaleString()).getDay()],
+              workDay: bookingAccepted.bookingDay,
               workTime: {
                 has: bookingAccepted.bookingTime
               }
             },
           },
           counselorType: bookingAccepted.counselorType,
-          Booking: {
-            none: {
-              bookingTime: bookingAccepted.bookingTime,
-              bookingDay: dayNames[bookingAccepted.bookingDate.getDay()],
-              isTerminated: false,
-            }
-          },
         },
         include: {
-          user: {
-            select: {
-              username: true,
-              fullname: true,
-            }
-          }
+          user: true
         }
       })
     )
@@ -204,14 +192,7 @@ export class BookingService {
         <p>Terima kasih.</p>
         `
       })
-      return this.db.booking.update({
-        where: {
-          id,
-        },
-        data: {
-          adminAcc: true,
-        }
-      })
+      return null
     } else {
       await this.mail.sendMail({
         username: randomizedCouncelor.user.username,
@@ -222,22 +203,21 @@ export class BookingService {
         <p>Terima kasih.</p>
         `
       })
-    }
 
-
-    return this.db.booking.update({
-      where: {
-        id,
-      },
-      data: {
-        adminAcc: true,
-        councelor: {
-          connect: {
-            id: randomizedCouncelor.id,
+      return this.db.booking.update({
+        where: {
+          id,
+        },
+        data: {
+          adminAcc: true,
+          councelor: {
+            connect: {
+              id: randomizedCouncelor.id
+            }
           }
         }
-      }
-    })
+      })
+    }
   }
 
   async reject(id: number, userId: string, faculty: string) {
