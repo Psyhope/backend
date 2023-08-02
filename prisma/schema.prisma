@@ -14,12 +14,6 @@ enum Gender {
   ATTACK_HELICOPTER
 }
 
-enum Topic {
-  TOPIC_1
-  TOPIC_2
-  TOPIC_3
-}
-
 enum Role {
   FACULTY_COUNSELOR
   PSYHOPE_COUNSELOR
@@ -98,6 +92,7 @@ model Booking {
   closestKnown      Boolean
   isAccepted        Boolean             @default(false)
   isTerminated      Boolean             @default(false)
+  isSuicidal        Boolean
   adminAcc          Boolean             @default(false)
   number_1          Int
   number_2          Int
@@ -112,7 +107,6 @@ model Booking {
   number_11         Int
   number_12         Int
   RescheduleRequest RescheduleRequest[]
-  bookingTopic      Topic[]
   blacklist         String[]
   CounselingLog     CounselingLog[]
 }

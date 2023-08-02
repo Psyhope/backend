@@ -1,5 +1,5 @@
 import { InputType, Int, Field } from '@nestjs/graphql';
-import { CounselorType, Topic } from '../entities/const.entity';
+import { CounselorType } from '../entities/const.entity';
 
 @InputType()
 export class CreateBookingInput {
@@ -15,8 +15,8 @@ export class CreateBookingInput {
   @Field(() => CounselorType)
   counselorType: CounselorType;
 
-  @Field(() => [Topic])
-  bookingTopic: Topic[];
+  @Field(() => Boolean)
+  isSuicidal: boolean
 
   @Field(() => String)
   reasonApply: string

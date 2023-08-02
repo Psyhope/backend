@@ -1,6 +1,5 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { OnboardingService } from './onboarding.service';
-import { Onboarding } from './entities/onboarding.entity';
 import { CreateOnboardingInput } from './dto/create-onboarding.input';
 
 import { UseGuards } from '@nestjs/common';
