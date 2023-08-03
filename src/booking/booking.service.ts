@@ -85,6 +85,7 @@ export class BookingService {
         id: bookingId,
       },
       include: {
+        CounselingLog: true,
         councelor: {
           include: {
             user: {
