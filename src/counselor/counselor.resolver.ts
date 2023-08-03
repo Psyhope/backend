@@ -8,6 +8,7 @@ import { CurrentUser } from 'src/auth/decorator/currentUser.decorator';
 import { JwtPayload } from 'src/auth/interfaces/jwt.payload';
 import { UserRepositories } from 'src/models/user.repo';
 import { create } from 'domain';
+import { get } from 'http';
 @Resolver(() => Councelor)
 export class CounselorResolver {
   constructor(private readonly counselorService: CounselorService,private readonly userRepo: UserRepositories) {}
@@ -18,7 +19,7 @@ export class CounselorResolver {
   async getCounselorFilter(@Args('getCounselorDto') getCounselorDto: GetCouncelorFilter, @CurrentUser() user:JwtPayload) {
     const _user = await this.userRepo.findById(user.sub)
     if(getCounselorDto.bookingDay==null && getCounselorDto.counselorName == null){
-      if(user.role.split('_')[0] = "FACULTY"){
+      if(user.role.split('_')[0] == "FACULTY"){
         return this.counselorService.findAll({
           where: {
             counselorType : "FACULTY",
@@ -84,14 +85,14 @@ export class CounselorResolver {
       }
     }
     else if (getCounselorDto.counselorName != null && getCounselorDto.bookingDay == null) {
-      if(user.role.split('_')[0] = "FACULTY"){
+      if(user.role.split('_')[0] == "FACULTY"){
         return this.counselorService.findAll({
           where: {
             counselorType : "FACULTY",
             user : {
-              fullname: getCounselorDto.counselorName,
+              username: getCounselorDto.bookingDay,
               account : {
-                faculty :  _user.account.faculty
+                faculty :  _user.account.faculty,
               }
             },
             Booking: {
@@ -120,12 +121,12 @@ export class CounselorResolver {
       }
     }
     else {
-      if(user.role.split('_')[0] = "FACULTY"){
+      if(user.role.split('_')[0] == "FACULTY"){
         return this.counselorService.findAll({
           where: {
             counselorType : "FACULTY",
             user : {
-              fullname: getCounselorDto.counselorName,
+              username: getCounselorDto.counselorName,
               account : {
                 faculty :  _user.account.faculty
               }
@@ -144,7 +145,7 @@ export class CounselorResolver {
           where: {
             counselorType : "PSYHOPE",
             user : {
-              fullname: getCounselorDto.counselorName
+              username: getCounselorDto.counselorName
             },
             Booking: {
               some: {
