@@ -7,7 +7,7 @@ export class EventRepositories {
 
   async create(
     title: string,
-    date: Date,
+    date: string,
     location: string,
     time: string,
     description: string,
@@ -56,7 +56,7 @@ export class EventRepositories {
   async update(
     id: number,
     title: string,
-    date: Date,
+    date: string,
     location: string,
     time: string,
     description: string,

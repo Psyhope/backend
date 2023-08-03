@@ -17,6 +17,6 @@ export class Infografic {
   @Field(() => String)
   description: string;
 
-  @Field(() => String)
-  infograficUrl: string;
+  @Field(() => [String])
+  infograficUrl: string[];
 }

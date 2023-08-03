@@ -87,7 +87,7 @@ type Infografic {
   updatedAt: DateTime!
   title: String!
   description: String!
-  infograficUrl: String!
+  infograficUrl: [String!]!
 }
 
 type Event {
@@ -95,7 +95,7 @@ type Event {
   createdAt: DateTime!
   updatedAt: DateTime!
   title: String!
-  date: DateTime!
+  date: String!
   location: String!
   time: String!
   description: String!
@@ -208,19 +208,19 @@ input UpdateArticleInput {
 input CreateInfograficInput {
   title: String!
   description: String!
-  infograficUrl: String!
+  infograficUrl: [String!]!
 }
 
 input UpdateInfograficInput {
   title: String!
   description: String!
-  infograficUrl: String!
+  infograficUrl: [String!]!
   id: Int!
 }
 
 input CreateEventInput {
   title: String!
-  date: DateTime!
+  date: String!
   location: String!
   time: String!
   description: String!
@@ -229,7 +229,7 @@ input CreateEventInput {
 
 input UpdateEventInput {
   title: String!
-  date: DateTime!
+  date: String!
   location: String!
   time: String!
   description: String!

@@ -8,6 +8,6 @@ export class CreateInfograficInput {
   @Field(() => String)
   description: string;
 
-  @Field(() => String)
-  infograficUrl: string;
+  @Field(() => [String])
+  infograficUrl: string[];
 }
