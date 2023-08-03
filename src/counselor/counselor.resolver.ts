@@ -45,12 +45,6 @@ export class CounselorResolver {
                 faculty :  _user.account.faculty
               }
             },
-            Booking: {
-              some: {
-                isTerminated: false,
-                isAccepted: true
-              },
-            }
           }
         })
       } else {
@@ -77,26 +71,12 @@ export class CounselorResolver {
                 faculty :  _user.account.faculty
               }
             },
-            Booking: {
-              some: {
-                bookingDay: getCounselorDto.bookingDay,
-                isTerminated: false,
-                isAccepted: true
-              }
-            }
           }
         })
       } else {
         return this.counselorService.findAll({
           where: {
             counselorType : "PSYHOPE",
-            Booking: {
-              some: {
-                bookingDay: getCounselorDto.bookingDay,
-                isTerminated: false,
-                isAccepted: true
-              }
-            }
           }
         })
       }
@@ -112,12 +92,6 @@ export class CounselorResolver {
                 faculty :  _user.account.faculty,
               }
             },
-            Booking: {
-              some: {
-                isTerminated: false,
-                isAccepted: true
-              }
-            }
           }
         })
       } else {
@@ -127,12 +101,6 @@ export class CounselorResolver {
             user: {
               fullname : getCounselorDto.counselorName,
             },
-            Booking: {
-              some: {
-                isTerminated: false,
-                isAccepted: true
-              }
-            }
           }
         })
       }
@@ -148,13 +116,6 @@ export class CounselorResolver {
                 faculty :  _user.account.faculty
               }
             },
-            Booking: {
-              some: {
-                bookingDay: getCounselorDto.bookingDay,
-                isTerminated: false,
-                isAccepted: true
-              }
-            }
           }
         })
       } else {
@@ -164,13 +125,6 @@ export class CounselorResolver {
             user : {
               username: getCounselorDto.counselorName
             },
-            Booking: {
-              some: {
-                bookingDay: getCounselorDto.bookingDay,
-                isTerminated: false,
-                isAccepted: true
-              }
-            }
           }
         })
       }
