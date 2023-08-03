@@ -130,13 +130,19 @@ type Query {
   findByLimitEvent(limit: Int!): [Event!]!
   countEvent: Float!
   bookingClient: Booking
+  adminGetBooking(adminGetBooking: AdminGetBooking!): Booking
   booking: [Booking!]
   adminRundown(getBookingFilter: GetAdminRundown!): [Booking!]
   bookingFilter(getBookingFilter: GetBookingFilterDto!): [Booking!]
   bookingFilterGeneral(getBookingFilterGeneral: GetBookingFilterGeneralDto!): [Booking!]
   schedule(getScheduleDTO: GetScheduleDTO!): [CouncelorSchedule!]
   counselingLog: [CounselingLog!]
+  getCounselorByUname(getCounselor: GetCouncelor!): [Councelor!]
   counselorFilter(getCounselorDto: GetCouncelorFilter!): [Councelor!]
+}
+
+input AdminGetBooking {
+  id: Int!
 }
 
 input GetAdminRundown {
@@ -164,6 +170,10 @@ input GetScheduleDTO {
   dayTime: String!
   dayTime2: String!
   counselorType: CounselorType!
+}
+
+input GetCouncelor {
+  username: String
 }
 
 input GetCouncelorFilter {
