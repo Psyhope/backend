@@ -24,6 +24,7 @@ type CounselingLog {
   bookingId: Int!
   time: DateTime!
   detail: String!
+  title: String!
 }
 
 """
@@ -75,6 +76,12 @@ type Account {
   role: String!
   gender: String!
   major: String!
+  channel: Channel!
+}
+
+enum Channel {
+  LINE
+  INSTAGRAM
 }
 
 type User {

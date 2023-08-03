@@ -1,6 +1,15 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { Booking } from 'src/booking/entities/booking.entity';
 
+export enum Channel {
+  LINE = "LINE",
+  INSTAGRAM = "INSTAGRAM"
+}
+
+registerEnumType(Channel, {
+  name: 'Channel'
+})
+
 @ObjectType()
 export class Account {
   @Field(() => String)
@@ -14,6 +23,9 @@ export class Account {
 
   @Field(() => String)
   major: string;
+
+  @Field(() => Channel)
+  channel: Channel
 }
 
 @ObjectType()
