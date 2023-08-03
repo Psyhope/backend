@@ -60,4 +60,17 @@ export class CounselingLogService {
     })
   }
 
+  async findByBookingId(bookingId : number){
+    return await this.db.counselingLog.findMany({
+      include : {
+        booking: true
+      },
+      where: {
+        booking: {
+          id: bookingId,
+        }
+      }
+    })
+  }
+
 }

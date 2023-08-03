@@ -7,6 +7,7 @@ import { UserRepositories } from 'src/models/user.repo';
 import { UseGuards } from '@nestjs/common/decorators';
 import { CurrentUser } from 'src/auth/decorator/currentUser.decorator';
 import { JwtPayload } from 'src/auth/interfaces/jwt.payload';
+import { GetLogById } from './dto/get-log-by-id.input';
 
 @Resolver(() => CounselingLog)
 export class CounselingLogResolver {
@@ -20,6 +21,15 @@ export class CounselingLogResolver {
       return this.counselingLogService.create(createCounselingLogInput);
 
     return null;
+  }
+
+  @Query(() => [CounselingLog], {name: 'getCounselingLogById', nullable: true})
+  @UseGuards(LoggedIn)
+  async getLogByBookingId(@CurrentUser() user: JwtPayload, @Args('getCounselingByBookingId') getLogById: GetLogById ){
+    const {role} = user
+    if (role == "FACULTY_ADMIN" || role =="PSYHOPE_ADMIN"){
+      return await this.counselingLogService.findByBookingId(getLogById.bookingId)
+    }
   }
 
 
