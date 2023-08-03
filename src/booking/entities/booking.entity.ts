@@ -1,6 +1,6 @@
 import { ObjectType, Field, Int, registerEnumType } from '@nestjs/graphql';
 import { User } from 'src/user/models/user.model';
-import { CounselorType, Topic } from './const.entity';
+import { CounselorType } from './const.entity';
 import { Councelor } from './counselor.entity';
 
 @ObjectType()
@@ -28,9 +28,6 @@ export class Booking {
 
   @Field(() => CounselorType, { defaultValue: CounselorType.PSYHOPE, nullable: false })
   counselorType: CounselorType;
-
-  @Field(() => [Topic], {nullable:false})
-  bookingTopic: Topic[];
 
   @Field(() => String, { description: 'The reason for applying for a counseling session' })
   reasonApply: String;

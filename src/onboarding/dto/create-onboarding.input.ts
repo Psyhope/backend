@@ -8,4 +8,7 @@ export class CreateOnboardingInput {
 
   @Field(() => String)
   linkSocmed: string
+
+  @Field(() => String)
+  gender: string
 }

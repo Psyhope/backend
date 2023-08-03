@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateOnboardingInput } from './dto/create-onboarding.input';
 import { DbService } from 'src/providers/database/db';
+import { Gender } from '@prisma/client';
 
 @Injectable()
 export class OnboardingService {
@@ -13,7 +14,8 @@ export class OnboardingService {
           userId,
         },
         data: {
-          channel: "INSTAGRAM"
+          channel: "INSTAGRAM",
+          gender: createOnboardingInput.gender == "Laki-laki" ? Gender.MALE : Gender.FEMALE,
         }
       })
 
@@ -33,7 +35,8 @@ export class OnboardingService {
           userId,
         },
         data: {
-          channel: "LINE"
+          channel: "LINE",
+          gender: createOnboardingInput.gender == "Laki-laki" ? Gender.MALE : Gender.FEMALE,
         }
       })
 
