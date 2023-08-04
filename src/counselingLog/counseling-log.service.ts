@@ -40,7 +40,11 @@ export class CounselingLogService {
       include: {
        client: {
         include: {
-          account: true
+          account: {
+            include: {
+              user : true
+            }
+          }
        }},
        booking: {
         include: {

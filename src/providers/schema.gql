@@ -19,8 +19,8 @@ enum CounselorType {
 
 type CounselingLog {
   id: Int!
-  userId: String!
-  client: User!
+  userId: String
+  client: User
   bookingId: Int!
   time: DateTime!
   detail: String!

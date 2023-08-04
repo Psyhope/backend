@@ -39,7 +39,7 @@ export class CounselingLogResolver {
     const _user = await this.userRepo.findById(user.sub)
     const { role } = user;
     switch (role) {
-      case "FACULTY_COUNSELOR" || "FACULTY_ADMIN":
+      case "FACULTY_ADMIN":
         return await this.counselingLogService.findAll({
           where : {
             client : {
@@ -52,8 +52,8 @@ export class CounselingLogResolver {
             }
           }
         })
-      case "PSYHOPE_COUNSELOR" || "PSYHOPE_ADMIN":
-        return await this .counselingLogService.findAll({
+      case "PSYHOPE_ADMIN":
+        return await this.counselingLogService.findAll({
           where: {
             booking: {
               counselorType : 'PSYHOPE'
