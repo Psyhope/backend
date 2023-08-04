@@ -35,33 +35,68 @@ export class CounselingLogService {
     })
   }
 
-  async findAll(args: Prisma.CounselingLogFindManyArgs){
-    return await this.db.counselingLog.findMany({
-      include: {
-       client: {
+  async findAll(role: string, faculty: string){
+    if (role == "PSYHOPE_ADMIN"){
+      console.log(123123)
+      return await this.db.counselingLog.findMany({
+        where: {
+          booking: {
+            counselorType : "PSYHOPE"
+          }
+        },
         include: {
-          account: {
-            include: {
-              user : true
+          client: {
+           include: {
+             account: true
+          }},
+          booking: {
+           include: {
+             councelor: {
+               include: {
+                 user: {
+                   include: {
+                     account: true
+                   }
+                 }
+               }
+             }
+           }
+          }
+         },
+      })
+    } else {
+      return await this.db.counselingLog.findMany({
+        where: {
+          booking: {
+            counselorType : "FACULTY"
+          },
+          client: {
+            account: {
+              faculty
             }
           }
-       }},
-       booking: {
+        },
         include: {
-          councelor: {
-            include: {
-              user: {
-                include: {
-                  account: true
-                }
-              }
-            }
+          client: {
+           include: {
+             account: true
+          }},
+          booking: {
+           include: {
+             councelor: {
+               include: {
+                 user: {
+                   include: {
+                     account: true
+                   }
+                 }
+               }
+             }
+           }
           }
-        }
-       }
-      },
-      ...args
-    })
+         },
+      })
+    }
   }
 
   async findByBookingId(bookingId : number){

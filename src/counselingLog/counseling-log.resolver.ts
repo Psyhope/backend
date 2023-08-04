@@ -38,30 +38,8 @@ export class CounselingLogResolver {
   async counselingLog(@CurrentUser() user: JwtPayload){
     const _user = await this.userRepo.findById(user.sub)
     const { role } = user;
-    switch (role) {
-      case "FACULTY_ADMIN":
-        return await this.counselingLogService.findAll({
-          where : {
-            client : {
-              account : {
-                faculty : _user.account.faculty,
-              }
-            },
-            booking: {
-              counselorType: "FACULTY"
-            }
-          }
-        })
-      case "PSYHOPE_ADMIN":
-        return await this.counselingLogService.findAll({
-          where: {
-            booking: {
-              counselorType : 'PSYHOPE'
-            }
-          }
-        })
-      
-    }
+    console.log(_user)
+    return await this.counselingLogService.findAll(role, _user.account.faculty)
   }
-
+  
 }

@@ -19,7 +19,7 @@ export class CounselorResolver {
   @UseGuards(LoggedIn)
   async getCounselorByUname(@Args('getCounselor') getCounselor: GetCouncelor, @CurrentUser() user:JwtPayload){
     const {role} = user
-    if(role == "FACULTY_ADMIN" || role == "PSYHOPE_ADMIN"){
+    if(role != "CLIENT"){
       return await this.counselorService.findAll({
         where: {
           user :{
@@ -77,6 +77,12 @@ export class CounselorResolver {
         return this.counselorService.findAll({
           where: {
             counselorType : "PSYHOPE",
+            Booking: {
+              some:{
+                bookingDay: getCounselorDto.bookingDay,
+                isTerminated: false
+              }
+            }
           }
         })
       }
