@@ -6,10 +6,10 @@ export class CounselingLog {
   @Field(() => Int)
   id: number;
 
-  @Field(() => String)
+  @Field(() => String, {nullable: true})
   userId: string
 
-  @Field(() => User)
+  @Field(() => User, {nullable : true})
   client: User
 
   @Field(() => Int)

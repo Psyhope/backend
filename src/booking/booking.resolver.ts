@@ -31,6 +31,7 @@ export class BookingResolver {
   @UseGuards(LoggedIn)
   async createBooking(@CurrentUser() user: JwtPayload, @Args('createBookingInput') createBookingInput: CreateBookingInput) {
     const _user = await this.userRepo.findById(user.sub);
+    console.log(createBookingInput.bookingDate.toLocaleDateString())
     return this.bookingService.create({
       ...createBookingInput,
       user: {
