@@ -20,4 +20,7 @@ export class CounselingLog {
 
   @Field(() => String)
   detail: string
+
+  @Field(() => String)
+  title: string
 }

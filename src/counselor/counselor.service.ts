@@ -22,7 +22,8 @@ export class CounselorService {
               include :{
                 account : true
               }
-            }
+            },
+            CounselingLog: true,
           }
         }
       },

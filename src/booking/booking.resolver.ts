@@ -21,6 +21,7 @@ import { UpdateBookingInput } from './dto/update-booking.input';
 import { GetBookingFilterGeneralDto } from './dto/get-booking-generat.input';
 import { log } from 'console';
 import { GetAdminRundown } from './dto/get-admin-rundown.input';
+import { AdminGetBooking } from './dto/admin-get-booking';
 
 @Resolver(() => Booking)
 export class BookingResolver {
@@ -47,6 +48,16 @@ export class BookingResolver {
     const _user = await this.userRepo.findById(user.sub)
     if (user.role != "CLIENT") return null;
     return this.bookingService.findClient(_user.id)
+  }
+
+  @Query(() => Booking, { name: 'adminGetBooking', nullable: true })
+  @UseGuards(LoggedIn)
+  async adminGetBooking(@CurrentUser() user: JwtPayload, @Args('adminGetBooking') adminGetBooking: AdminGetBooking) {
+    const _user = await this.userRepo.findById(user.sub)
+    if (user.role == "FACULTY_ADMIN" || user.role == "PSYHOPE_ADMIN"){
+      return this.bookingService.adminGetBookingService(adminGetBooking.id)
+    }
+    return null
   }
 
   @Query(() => [Booking], { name: 'booking', nullable: true })

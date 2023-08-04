@@ -17,6 +17,21 @@ enum CounselorType {
   FACULTY
 }
 
+type CounselingLog {
+  id: Int!
+  userId: String!
+  client: User!
+  bookingId: Int!
+  time: DateTime!
+  detail: String!
+  title: String!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
 type Booking {
   id: Int!
 
@@ -40,18 +55,33 @@ type Booking {
   isAccepted: Boolean!
   isTerminated: Boolean!
   adminAcc: Boolean!
+  CounselingLog: [CounselingLog!]
+  number_1: Int!
+  number_2: Int!
+  number_3: Int!
+  number_4: Int!
+  number_5: Int!
+  number_6: Int!
+  number_7: Int!
+  number_8: Int!
+  number_9: Int!
+  number_10: Int!
+  number_11: Int!
+  number_12: Int!
+  isSuicidal: Boolean!
 }
-
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
 
 type Account {
   faculty: String!
   role: String!
   gender: String!
   major: String!
+  channel: Channel!
+}
+
+enum Channel {
+  LINE
+  INSTAGRAM
 }
 
 type User {
@@ -102,15 +132,6 @@ type Event {
   posterUrl: String!
 }
 
-type CounselingLog {
-  id: Int!
-  userId: String!
-  client: User!
-  bookingId: Int!
-  time: DateTime!
-  detail: String!
-}
-
 type Query {
   user: User!
   findAllArticle: [Article!]!
@@ -130,13 +151,20 @@ type Query {
   findByLimitEvent(limit: Int!): [Event!]!
   countEvent: Float!
   bookingClient: Booking
+  adminGetBooking(adminGetBooking: AdminGetBooking!): Booking
   booking: [Booking!]
   adminRundown(getBookingFilter: GetAdminRundown!): [Booking!]
   bookingFilter(getBookingFilter: GetBookingFilterDto!): [Booking!]
   bookingFilterGeneral(getBookingFilterGeneral: GetBookingFilterGeneralDto!): [Booking!]
   schedule(getScheduleDTO: GetScheduleDTO!): [CouncelorSchedule!]
+  getCounselingLogById(getCounselingByBookingId: GetLogById!): [CounselingLog!]
   counselingLog: [CounselingLog!]
+  getCounselorByUname(getCounselor: GetCouncelor!): [Councelor!]
   counselorFilter(getCounselorDto: GetCouncelorFilter!): [Councelor!]
+}
+
+input AdminGetBooking {
+  id: Int!
 }
 
 input GetAdminRundown {
@@ -164,6 +192,14 @@ input GetScheduleDTO {
   dayTime: String!
   dayTime2: String!
   counselorType: CounselorType!
+}
+
+input GetLogById {
+  bookingId: Int!
+}
+
+input GetCouncelor {
+  username: String
 }
 
 input GetCouncelorFilter {

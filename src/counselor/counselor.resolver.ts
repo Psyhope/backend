@@ -9,10 +9,27 @@ import { JwtPayload } from 'src/auth/interfaces/jwt.payload';
 import { UserRepositories } from 'src/models/user.repo';
 import { create } from 'domain';
 import { get } from 'http';
+import { GetCouncelor } from './dto/getCounselorByUsername';
 @Resolver(() => Councelor)
 export class CounselorResolver {
   constructor(private readonly counselorService: CounselorService,private readonly userRepo: UserRepositories) {}
 
+
+  @Query(() => [Councelor], {name: 'getCounselorByUname', nullable: true})
+  @UseGuards(LoggedIn)
+  async getCounselorByUname(@Args('getCounselor') getCounselor: GetCouncelor, @CurrentUser() user:JwtPayload){
+    const {role} = user
+    if(role == "FACULTY_ADMIN" || role == "PSYHOPE_ADMIN"){
+      return await this.counselorService.findAll({
+        where: {
+          user :{
+            username: getCounselor.username,
+          }
+        }
+      })
+    }
+    return null
+  }
 
   @Query(() => [Councelor], { name: 'counselorFilter', nullable: true })
   @UseGuards(LoggedIn)
@@ -28,12 +45,6 @@ export class CounselorResolver {
                 faculty :  _user.account.faculty
               }
             },
-            Booking: {
-              some: {
-                isTerminated: false,
-                isAccepted: true
-              },
-            }
           }
         })
       } else {
@@ -60,26 +71,12 @@ export class CounselorResolver {
                 faculty :  _user.account.faculty
               }
             },
-            Booking: {
-              some: {
-                bookingDay: getCounselorDto.bookingDay,
-                isTerminated: false,
-                isAccepted: true
-              }
-            }
           }
         })
       } else {
         return this.counselorService.findAll({
           where: {
             counselorType : "PSYHOPE",
-            Booking: {
-              some: {
-                bookingDay: getCounselorDto.bookingDay,
-                isTerminated: false,
-                isAccepted: true
-              }
-            }
           }
         })
       }
@@ -95,12 +92,6 @@ export class CounselorResolver {
                 faculty :  _user.account.faculty,
               }
             },
-            Booking: {
-              some: {
-                isTerminated: false,
-                isAccepted: true
-              }
-            }
           }
         })
       } else {
@@ -110,12 +101,6 @@ export class CounselorResolver {
             user: {
               fullname : getCounselorDto.counselorName,
             },
-            Booking: {
-              some: {
-                isTerminated: false,
-                isAccepted: true
-              }
-            }
           }
         })
       }
@@ -131,13 +116,6 @@ export class CounselorResolver {
                 faculty :  _user.account.faculty
               }
             },
-            Booking: {
-              some: {
-                bookingDay: getCounselorDto.bookingDay,
-                isTerminated: false,
-                isAccepted: true
-              }
-            }
           }
         })
       } else {
@@ -147,13 +125,6 @@ export class CounselorResolver {
             user : {
               username: getCounselorDto.counselorName
             },
-            Booking: {
-              some: {
-                bookingDay: getCounselorDto.bookingDay,
-                isTerminated: false,
-                isAccepted: true
-              }
-            }
           }
         })
       }

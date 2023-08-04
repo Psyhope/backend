@@ -78,7 +78,31 @@ export class BookingService {
       ...args
     });
   }
-
+  
+  async adminGetBookingService(bookingId : number){
+    return await this.db.booking.findUnique({
+      where: {
+        id: bookingId,
+      },
+      include: {
+        CounselingLog: true,
+        councelor: {
+          include: {
+            user: {
+              include:{
+                account: true
+              }
+            }
+          }
+        },
+        user:{
+          include: {
+            account: true
+          }
+        }
+      }
+    })
+  }
   async accept(id: number) {
     try {
       const booking = await this.db.booking.update({
