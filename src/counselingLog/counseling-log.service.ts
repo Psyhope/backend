@@ -10,6 +10,8 @@ export class CounselingLogService {
   constructor(private readonly db: DbService, private readonly userRepo: UserRepositories) { }
   
   async create(createCounselingLogInput: CreateCounselingLogInput) {
+    const temp = createCounselingLogInput.time
+    temp.setHours(temp.getHours() + 7)
     const booking = await this.db.booking.findUnique({
       where: {
         id : createCounselingLogInput.bookingId,
