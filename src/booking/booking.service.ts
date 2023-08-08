@@ -103,6 +103,7 @@ export class BookingService {
       }
     })
   }
+
   async accept(id: number) {
     try {
       const booking = await this.db.booking.update({
@@ -150,6 +151,7 @@ export class BookingService {
         }
       }
     })
+    
 
     // kasih info kalo udh dirandom tp tetep null ya gbs -> send mailer kalo harus ganti jadwal / gabisa di proses konselingnya
     // kalo dia gak null, kasih email ke counselornya bahwa ada pasien yang mau ke dia 
@@ -381,6 +383,17 @@ export class BookingService {
       }
     })
 
+  }
+
+  async terminateAdmin(bookingId: number){
+    return await this.db.booking.update({
+      where: {
+        id: bookingId,
+      },
+      data: {
+        isTerminated: true
+      }
+    })
   }
 
   async getSchedule(bookingDate: Date, counselorType: CounselorType, faculty: string, bookingTime: string, bookingTime2: string) {

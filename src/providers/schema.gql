@@ -19,8 +19,8 @@ enum CounselorType {
 
 type CounselingLog {
   id: Int!
-  userId: String!
-  client: User!
+  userId: String
+  client: User
   bookingId: Int!
   time: DateTime!
   detail: String!
@@ -221,6 +221,7 @@ type Mutation {
   rejectBooking(rejectBookingInput: RejectBookingDTO!): Booking
   acceptBooking(accBookingInput: AcceptBooking!): Booking
   adminAcc(adminAccInput: AdminAccBooking!): Booking
+  adminTerminate(adminTerminate: AdminTermiate!): Booking
   rescheduleBooking(rescheduleBookingInput: UpdateBookingInput!): Booking!
   createCounselingLog(createCounselingLogInput: CreateCounselingLogInput!): CounselingLog
   createOnboarding(createOnboardingInput: CreateOnboardingInput!): User!
@@ -323,25 +324,10 @@ input AcceptBooking {
 }
 
 input AdminAccBooking {
-  bookingDate: DateTime
-  bookingTime: String
-  bookingTime2: String
-  counselorType: CounselorType
-  isSuicidal: Boolean
-  reasonApply: String
-  closestKnown: Boolean
-  number_1: Int
-  number_2: Int
-  number_3: Int
-  number_4: Int
-  number_5: Int
-  number_6: Int
-  number_7: Int
-  number_8: Int
-  number_9: Int
-  number_10: Int
-  number_11: Int
-  number_12: Int
+  id: Int!
+}
+
+input AdminTermiate {
   id: Int!
 }
 

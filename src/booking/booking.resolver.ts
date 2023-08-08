@@ -22,6 +22,7 @@ import { GetBookingFilterGeneralDto } from './dto/get-booking-generat.input';
 import { log } from 'console';
 import { GetAdminRundown } from './dto/get-admin-rundown.input';
 import { AdminGetBooking } from './dto/admin-get-booking';
+import { AdminTermiate } from './dto/admin-terminate.input';
 
 @Resolver(() => Booking)
 export class BookingResolver {
@@ -31,6 +32,7 @@ export class BookingResolver {
   @UseGuards(LoggedIn)
   async createBooking(@CurrentUser() user: JwtPayload, @Args('createBookingInput') createBookingInput: CreateBookingInput) {
     const _user = await this.userRepo.findById(user.sub);
+    console.log(createBookingInput.bookingDate)
     return this.bookingService.create({
       ...createBookingInput,
       user: {
@@ -54,7 +56,7 @@ export class BookingResolver {
   @UseGuards(LoggedIn)
   async adminGetBooking(@CurrentUser() user: JwtPayload, @Args('adminGetBooking') adminGetBooking: AdminGetBooking) {
     const _user = await this.userRepo.findById(user.sub)
-    if (user.role == "FACULTY_ADMIN" || user.role == "PSYHOPE_ADMIN"){
+    if (user.role != "CLIENT"){
       return this.bookingService.adminGetBookingService(adminGetBooking.id)
     }
     return null
@@ -253,6 +255,7 @@ export class BookingResolver {
             where: {
               counselorType: 'PSYHOPE',
               bookingDay: dayNames[getBookingFilter.day.getDay()],
+              isTerminated: false
             }
           })
         }
@@ -333,6 +336,14 @@ export class BookingResolver {
   async adminAcc(@Args('adminAccInput') adminAccInput: AdminAccBooking, @CurrentUser() user: JwtPayload) {
     const _user = await this.userRepo.findById(user.sub);
     if (_user.account.role == "FACULTY_ADMIN" || _user.account.role == "PSYHOPE_ADMIN") return this.bookingService.acceptAdmin(adminAccInput.id, _user.account.faculty)
+    return null;
+  }
+
+  @Mutation(() => Booking, { nullable: true })
+  @UseGuards(LoggedIn)
+  async adminTerminate(@Args('adminTerminate') adminTerminate: AdminTermiate, @CurrentUser() user: JwtPayload) {
+    const _user = await this.userRepo.findById(user.sub);
+    if (_user.account.role == "FACULTY_ADMIN" || _user.account.role == "PSYHOPE_ADMIN") return this.bookingService.terminateAdmin(adminTerminate.id)
     return null;
   }
 

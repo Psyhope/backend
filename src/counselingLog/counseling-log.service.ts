@@ -10,6 +10,8 @@ export class CounselingLogService {
   constructor(private readonly db: DbService, private readonly userRepo: UserRepositories) { }
   
   async create(createCounselingLogInput: CreateCounselingLogInput) {
+    const temp = createCounselingLogInput.time
+    temp.setHours(temp.getHours() + 7)
     const booking = await this.db.booking.findUnique({
       where: {
         id : createCounselingLogInput.bookingId,
@@ -35,36 +37,91 @@ export class CounselingLogService {
     })
   }
 
-  async findAll(args: Prisma.CounselingLogFindManyArgs){
-    return await this.db.counselingLog.findMany({
-      include: {
-       client: {
+  async findAll(role: string, faculty: string){
+    if (role == "PSYHOPE_ADMIN"){
+      console.log(123123)
+      return await this.db.counselingLog.findMany({
+        where: {
+          booking: {
+            counselorType : "PSYHOPE"
+          }
+        },
         include: {
-          account: true
-       }},
-       booking: {
-        include: {
-          councelor: {
-            include: {
-              user: {
-                include: {
-                  account: true
-                }
-              }
+          client: {
+           include: {
+             account: true
+          }},
+          booking: {
+           include: {
+             councelor: {
+               include: {
+                 user: {
+                   include: {
+                     account: true
+                   }
+                 }
+               }
+             }
+           }
+          }
+         },
+      })
+    } else {
+      return await this.db.counselingLog.findMany({
+        where: {
+          booking: {
+            counselorType : "FACULTY"
+          },
+          client: {
+            account: {
+              faculty
             }
           }
-        }
-       }
-      },
-      ...args
-    })
+        },
+        include: {
+          client: {
+           include: {
+             account: true
+          }},
+          booking: {
+           include: {
+             councelor: {
+               include: {
+                 user: {
+                   include: {
+                     account: true
+                   }
+                 }
+               }
+             }
+           }
+          }
+         },
+      })
+    }
   }
 
   async findByBookingId(bookingId : number){
     return await this.db.counselingLog.findMany({
-      include : {
-        booking: true
-      },
+      include: {
+        client: {
+         include: {
+           account: true
+        }},
+        booking: {
+         include: {
+           councelor: {
+             include: {
+               user: {
+                 include: {
+                   account: true
+                 }
+               }
+             }
+           }
+         }
+        }
+       },
       where: {
         booking: {
           id: bookingId,
