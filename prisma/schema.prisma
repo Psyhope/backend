@@ -69,6 +69,7 @@ model CouncelorSchedule {
 model Account {
   id      Int      @id @default(autoincrement())
   role    Role     @default(CLIENT)
+  secondRole    Role     @default(CLIENT)
   user    User     @relation(fields: [userId], references: [id])
   userId  String   @unique
   gender  Gender

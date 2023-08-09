@@ -25,7 +25,7 @@ export class ArticleResolver {
   ) {
     const { account } = await this.userRepo.findById(user.sub);
 
-    if (account.role != Role.PSYHOPE_ADMIN)
+    if (account.role != Role.PSYHOPE_ADMIN && account.secondRole != Role.PSYHOPE_ADMIN)
       throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
 
     return this.articleService.create(createArticleInput);
@@ -54,7 +54,7 @@ export class ArticleResolver {
   ) {
     const { account } = await this.userRepo.findById(user.sub);
 
-    if (account.role != Role.PSYHOPE_ADMIN)
+    if (account.role != Role.PSYHOPE_ADMIN && account.secondRole != Role.PSYHOPE_ADMIN)
       throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
 
     return this.articleService.update(updateArticleInput);
@@ -68,7 +68,7 @@ export class ArticleResolver {
   ) {
     const { account } = await this.userRepo.findById(user.sub);
 
-    if (account.role != Role.PSYHOPE_ADMIN)
+    if (account.role != Role.PSYHOPE_ADMIN && account.secondRole != Role.PSYHOPE_ADMIN)
       throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
 
     return this.articleService.remove(id);

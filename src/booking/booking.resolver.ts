@@ -41,7 +41,7 @@ export class BookingResolver {
         }
       }
     },
-      _user.account.faculty);
+      _user.account.channel, _user.username);
   }
 
   @Query(() => Booking, { name: 'bookingClient', nullable: true })
@@ -65,64 +65,68 @@ export class BookingResolver {
   @Query(() => [Booking], { name: 'booking', nullable: true })
   @UseGuards(LoggedIn)
   async bookings(@CurrentUser() user: JwtPayload) {
-    const { role } = user;
     const _user = await this.userRepo.findById(user.sub);
-    switch (role) {
-      case "CLIENT":
+
+    if(_user.account.role == "CLIENT"){
         return await this.bookingService.findAll({
           where: { userId: user.sub }
         })
-      case "FACULTY_ADMIN":
-        return await this.bookingService.findAll({
-          where: {
-            counselorType: 'FACULTY',
-            user: {
-              account: {
-                faculty: _user.account.faculty
-              }
+    }
+    else if (_user.account.role == "FACULTY_ADMIN" || _user.account.secondRole == "FACULTY_ADMIN"){
+      return await this.bookingService.findAll({
+        where: {
+          counselorType: 'FACULTY',
+          user: {
+            account: {
+              faculty: _user.account.faculty
             }
           }
-        })
-      case "FACULTY_COUNSELOR":
-        return await this.bookingService.findAll({
-          where: {
-            counselorType: 'FACULTY',
-            user: {
-              account: {
-                faculty: _user.account.faculty
-              }
-            },
-            councelor: {
-              userId: user.sub
+        }
+      })
+    }
+    else if (_user.account.role == "PSYHOPE_ADMIN"  || _user.account.secondRole == "PSYHOPE_ADMIN"){
+      return await this.bookingService.findAll({
+        where: {
+          counselorType: "PSYHOPE"
+        }
+      })
+    }
+    else if ( _user.account.role == "FACULTY_COUNSELOR"){
+      return await this.bookingService.findAll({
+        where: {
+          counselorType: 'FACULTY',
+          user: {
+            account: {
+              faculty: _user.account.faculty
             }
+          },
+          councelor: {
+            userId: user.sub
           }
-        })
-      case "PSYHOPE_COUNSELOR":
-        return await this.bookingService.findAll({
-          where: {
-            counselorType: "PSYHOPE",
-            councelor: {
-              userId: user.sub
-            }
+        }
+      })
+    }
+    else if (_user.account.role == 'PSYHOPE_COUNSELOR'){
+      return await this.bookingService.findAll({
+        where: {
+          counselorType: "PSYHOPE",
+          councelor: {
+            userId: user.sub
           }
-        })
-      case "PSYHOPE_ADMIN":
-        return await this.bookingService.findAll({
-          where: {
-            counselorType: "PSYHOPE"
-          }
-        })
-          ;
+        }
+      })
     }
   }
 
   @Query(() => [Booking], { name: 'adminRundown', nullable: true })
   @UseGuards(LoggedIn)
   async filterAdminRundown(@CurrentUser() user: JwtPayload, @Args('getBookingFilter') getAdminRundown: GetAdminRundown) {
-    const { role } = user;
     const _user = await this.userRepo.findById(user.sub);
+    const  role  = _user.account.role;
+    const  secondRole  = _user.account.secondRole;
+    
     if (getAdminRundown.day == null) {
-      if (role == "FACULTY_ADMIN") {
+      if (role == "FACULTY_ADMIN" || secondRole == "FACULTY_ADMIN") {
         return await this.bookingService.findAll({
           orderBy: {
             bookingDay: "asc"
@@ -140,7 +144,7 @@ export class BookingResolver {
           }
         })
       }
-      else if (role == "PSYHOPE_ADMIN") {
+      else if (role == "PSYHOPE_ADMIN" || secondRole == "PSYHOPE_ADMIN") {
         return await this.bookingService.findAll({
           orderBy: {
             bookingDay: "asc"
@@ -155,7 +159,7 @@ export class BookingResolver {
       }
     }
     else {
-      if (role == "FACULTY_ADMIN") {
+      if (role == "FACULTY_ADMIN" || secondRole == "FACULTY_ADMIN") {
         return await this.bookingService.findAll({
           orderBy: {
             bookingDay: "asc"
@@ -174,7 +178,7 @@ export class BookingResolver {
           }
         })
       }
-      else if (role == "PSYHOPE_ADMIN") {
+      else if (role == "PSYHOPE_ADMIN" || secondRole == "PSYHOPE_ADMIN")  {
         return await this.bookingService.findAll({
           orderBy: {
             bookingDay: "asc"
@@ -196,11 +200,11 @@ export class BookingResolver {
   @Query(() => [Booking], { name: 'bookingFilter', nullable: true })
   @UseGuards(LoggedIn)
   async filterBooking(@CurrentUser() user: JwtPayload, @Args('getBookingFilter') getBookingFilter: GetBookingFilterDto) {
-    const { role } = user;
     const _user = await this.userRepo.findById(user.sub);
+    const role = _user.account.role;
+    const secondRole = _user.account.secondRole;
     if (getBookingFilter.day == null && getBookingFilter.status == null) return null
-    switch (role) {
-      case "FACULTY_ADMIN":
+    if (role == "FACULTY_ADMIN" || secondRole == "FACULTY_ADMIN"){
         if (getBookingFilter.day == null && getBookingFilter.status != null) {
           return await this.bookingService.findAll({
             where: {
@@ -241,34 +245,34 @@ export class BookingResolver {
             }
           })
         }
-      case "PSYHOPE_ADMIN":
-        if (getBookingFilter.day == null && getBookingFilter.status != null) {
-          return await this.bookingService.findAll({
-            where: {
-              counselorType: 'PSYHOPE',
-              adminAcc: getBookingFilter.status == StatusRequest.ACCEPTED,
-            }
-          })
-        }
-        else if (getBookingFilter.day != null && getBookingFilter.status == null) {
-          return await this.bookingService.findAll({
-            where: {
-              counselorType: 'PSYHOPE',
-              bookingDay: getBookingFilter.day,
-              isTerminated: false
-            }
-          })
-        }
-        else {
-          return await this.bookingService.findAll({
-            where: {
-              counselorType: 'PSYHOPE',
-              adminAcc: getBookingFilter.status == StatusRequest.ACCEPTED,
-              bookingDay:getBookingFilter.day,
-            }
-          })
-        }
-        ;
+    }
+    else if (role == "PSYHOPE_ADMIN" || secondRole == "PSYHOPE_ADMIN"){
+      if (getBookingFilter.day == null && getBookingFilter.status != null) {
+        return await this.bookingService.findAll({
+          where: {
+            counselorType: 'PSYHOPE',
+            adminAcc: getBookingFilter.status == StatusRequest.ACCEPTED,
+          }
+        })
+      }
+      else if (getBookingFilter.day != null && getBookingFilter.status == null) {
+        return await this.bookingService.findAll({
+          where: {
+            counselorType: 'PSYHOPE',
+            bookingDay: getBookingFilter.day,
+            isTerminated: false
+          }
+        })
+      }
+      else {
+        return await this.bookingService.findAll({
+          where: {
+            counselorType: 'PSYHOPE',
+            adminAcc: getBookingFilter.status == StatusRequest.ACCEPTED,
+            bookingDay:getBookingFilter.day,
+          }
+        })
+      }
     }
   }
 
@@ -335,7 +339,8 @@ export class BookingResolver {
   @UseGuards(LoggedIn)
   async adminAcc(@Args('adminAccInput') adminAccInput: AdminAccBooking, @CurrentUser() user: JwtPayload) {
     const _user = await this.userRepo.findById(user.sub);
-    if (_user.account.role == "FACULTY_ADMIN" || _user.account.role == "PSYHOPE_ADMIN") return this.bookingService.acceptAdmin(adminAccInput.id, _user.account.faculty)
+    if (_user.account.role == "FACULTY_ADMIN" || _user.account.role == "PSYHOPE_ADMIN"
+    || _user.account.secondRole == "PSYHOPE_ADMIN" || _user.account.secondRole == "FACULTY_ADMIN") return this.bookingService.acceptAdmin(adminAccInput.id, _user.account.faculty)
     return null;
   }
 
@@ -343,7 +348,8 @@ export class BookingResolver {
   @UseGuards(LoggedIn)
   async adminTerminate(@Args('adminTerminate') adminTerminate: AdminTermiate, @CurrentUser() user: JwtPayload) {
     const _user = await this.userRepo.findById(user.sub);
-    if (_user.account.role == "FACULTY_ADMIN" || _user.account.role == "PSYHOPE_ADMIN") return this.bookingService.terminateAdmin(adminTerminate.id)
+    if (_user.account.role == "FACULTY_ADMIN" || _user.account.role == "PSYHOPE_ADMIN"
+    || _user.account.secondRole == "PSYHOPE_ADMIN" || _user.account.secondRole == "FACULTY_ADMIN") return this.bookingService.terminateAdmin(adminTerminate.id)
     return null;
   }
 

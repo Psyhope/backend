@@ -25,7 +25,7 @@ export class EventResolver {
   ) {
     const { account } = await this.userRepo.findById(user.sub);
 
-    if (account.role != Role.PSYHOPE_ADMIN)
+    if (account.role != Role.PSYHOPE_ADMIN && account.secondRole != Role.PSYHOPE_ADMIN)
       throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
 
     return this.eventService.create(createEventInput);
@@ -57,7 +57,7 @@ export class EventResolver {
   ) {
     const { account } = await this.userRepo.findById(user.sub);
 
-    if (account.role != Role.PSYHOPE_ADMIN)
+    if (account.role != Role.PSYHOPE_ADMIN && account.secondRole != Role.PSYHOPE_ADMIN) 
       throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
 
     return this.eventService.update(updateEventInput);
@@ -71,7 +71,7 @@ export class EventResolver {
   ) {
     const { account } = await this.userRepo.findById(user.sub);
 
-    if (account.role != Role.PSYHOPE_ADMIN)
+    if (account.role != Role.PSYHOPE_ADMIN && account.secondRole != Role.PSYHOPE_ADMIN)
       throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
 
     return this.eventService.remove(id);
