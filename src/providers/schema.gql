@@ -172,7 +172,7 @@ input GetAdminRundown {
 }
 
 input GetBookingFilterDto {
-  day: DateTime
+  day: String
   dayTime: String
   status: StatusRequest
 }

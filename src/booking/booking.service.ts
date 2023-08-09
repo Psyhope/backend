@@ -218,7 +218,16 @@ export class BookingService {
         <p>Terima kasih.</p>
         `
       })
-      return null
+      return await this.db.booking.update({
+        where: {
+          id,
+        },
+        data: {
+          adminAcc: false,
+          isAccepted: false,
+          isTerminated: true,
+        }
+      })
     } else {
       await this.mail.sendMail({
         username: randomizedCouncelor.user.username,
@@ -342,6 +351,17 @@ export class BookingService {
         <p>Konseling Anda tidak dapat diproses karena tidak ada konselor yang tersedia. Silahkan lakukan reschedule konseling Anda.</p>
         <p>Terima kasih.</p>
         `
+      })
+
+      return this.db.booking.update({
+        where: {
+          id,
+        },
+        data: {
+          adminAcc: false,
+          isTerminated: true,
+          isAccepted: false,
+        }
       })
     }
 
