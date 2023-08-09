@@ -4,8 +4,8 @@ import { StatusRequest } from '../entities/const.entity';
 @InputType()
 export class GetBookingFilterDto{
 
-  @Field(() => Date, { nullable : true })
-  day: Date;
+  @Field(() => String, { nullable : true })
+  day: string;
 
   @Field(() => String, { nullable : true })
   dayTime: string;

@@ -218,7 +218,7 @@ export class BookingResolver {
           return await this.bookingService.findAll({
             where: {
               counselorType: 'FACULTY',
-              bookingDay: dayNames[getBookingFilter.day.getDay()],
+              bookingDay: getBookingFilter.day,
               user: {
                 account: {
                   faculty: _user.account.faculty
@@ -232,7 +232,7 @@ export class BookingResolver {
             where: {
               counselorType: 'FACULTY',
               adminAcc: getBookingFilter.status == StatusRequest.ACCEPTED,
-              bookingDay: dayNames[getBookingFilter.day.getDay()],
+              bookingDay: getBookingFilter.day,
               user: {
                 account: {
                   faculty: _user.account.faculty
@@ -254,7 +254,7 @@ export class BookingResolver {
           return await this.bookingService.findAll({
             where: {
               counselorType: 'PSYHOPE',
-              bookingDay: dayNames[getBookingFilter.day.getDay()],
+              bookingDay: getBookingFilter.day,
               isTerminated: false
             }
           })
@@ -264,7 +264,7 @@ export class BookingResolver {
             where: {
               counselorType: 'PSYHOPE',
               adminAcc: getBookingFilter.status == StatusRequest.ACCEPTED,
-              bookingDay: dayNames[getBookingFilter.day.getDay()],
+              bookingDay:getBookingFilter.day,
             }
           })
         }
