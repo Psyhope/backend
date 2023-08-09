@@ -7,19 +7,21 @@ import { UserRepositories } from 'src/models/user.repo';
 import { DbService } from 'src/providers/database/db';
 import { UpdateBookingInput } from './dto/update-booking.input';
 import { MailService } from 'src/mail/mail.service';
+import { Channel } from 'src/user/models/user.model';
 
 @Injectable()
 export class BookingService {
   constructor(private readonly db: DbService, private readonly mail: MailService) { }
 
-  async create(createBookingDto: Prisma.BookingCreateInput, faculty: string) {
-    // kasih pengecualian ketika yg dirandom == null -> kirim email buat batal
+  async create(createBookingDto: Prisma.BookingCreateInput, channel: string, username: string) {
+    // kasih pengecualian ketika yg dirandom == null -> kirim email buat batal    
     return await this.db.booking.create({
       data: {
         bookingDay: dayNames[new Date(createBookingDto.bookingDate).getDay()],
         ...createBookingDto,
       }
     });
+    
   }
 
   async findClient(userId: string) {
@@ -115,19 +117,33 @@ export class BookingService {
         },
         include: {
           user: {
-            select: {
-              fullname: true,
-              username: true
+            include: {
+              account: true
             }
           },
         }
       })
       await this.mail.sendMail({
-        username: booking.user.username,
-        subject: "Konseling Anda Telah Diterima",
+        username : booking.user.username,
+        subject: "Pendaftaran Konseling Sebaya Telah Diterima!",
         html: `
-        <p>Halo ${booking.user.fullname},</p>
-        <p>Konseling Anda telah diterima oleh konselor kami. Silahkan cek jadwal konseling Anda di aplikasi kami.</p>
+        <p>Halo ${booking.user.username},</p>
+        <p>Terima kasih telah mempercayakan layanan peer counselor Psyhope UI 2023. Kami telah menerima pendaftaran konselingmu. Tenang saja, kerahasiaan data kamu akan kami jaga.</p>
+        <p></p>
+        <p>Berikut adalah detail jadwal konseling yang telah dipilih:</p>
+        <p>Hari : ${booking.bookingDay}</p>
+        <p>Jam : ${booking.bookingTime} -- ${booking.bookingTime2}</p>
+        <p>Platform Konseling: ${booking.user.account.channel}</p>
+        <p></p>
+        <p>Dimohon untuk menghadiri sesi konseling sebaya secara tepat waktu sesuai dengan jadwal yang telah dipilih.</p>
+        <p></p>
+        <p>Sampai bertemu di sesi konseling sebaya Psyhope 😊</p>
+        <p></p>
+        <p>Email ini merupakan pesan otomatis, dimohon untuk tidak membalas email ini. Silahkan hubungi OA LINE Psyhope UI (@907acnot) atau Instagram (psyhope.ui) untuk informasi lebih lanjut sesuai dengan platform konseling yang dipilih.</p>
+        <p></p>
+        <p>Psyhope UI 2023</p>
+        <p></p>
+        <p>#HopeIsOnYourSide</p>
         <p>Terima kasih.</p>
         `
       })
@@ -138,6 +154,20 @@ export class BookingService {
   }
 
   async acceptAdmin(id: number, faculty: string) {
+
+    const booking = await this.db.booking.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        user: {
+          include : {
+            account :true
+          }
+        }
+      }
+    })
+
     const bookingAccepted = await this.db.booking.findUnique({
       where: {
         id,
@@ -229,15 +259,6 @@ export class BookingService {
         }
       })
     } else {
-      await this.mail.sendMail({
-        username: randomizedCouncelor.user.username,
-        subject: "Permintaan Konseling",
-        html: `
-        <p>Halo ${randomizedCouncelor.user.fullname},</p>
-        <p>Ada permintaan konseling dari ${bookingAccepted.user.fullname}. Silahkan cek jadwal konseling Anda di aplikasi kami.</p>
-        <p>Terima kasih.</p>
-        `
-      })
 
       return this.db.booking.update({
         where: {
@@ -400,6 +421,9 @@ export class BookingService {
         isAccepted: false,
         isTerminated: false,
         adminAcc: false,
+        councelor: {
+          disconnect: true,
+        },
       }
     })
 

@@ -34,14 +34,14 @@ export class AuthService {
 
     async getTokens(userId: string) {
         const { username, account, isOnboarded } = await this.userRepo.findById(userId);
-        const { role, faculty } = account;
+        const { role, faculty, secondRole } = account;
         const [accessToken, refreshToken] = await Promise.all([
             this.jwtService.signAsync(
-                { sub: userId, username, role, isOnboarded, faculty },
+                { sub: userId, username, role, isOnboarded, faculty, secondRole },
                 { secret: this.configService.get<string>('JWT_ACCESS_SECRET'), expiresIn: '15m' },
             ),
             this.jwtService.signAsync(
-                { sub: userId, username, role, isOnboarded, faculty },
+                { sub: userId, username, role, isOnboarded, faculty, secondRole },
                 { secret: this.configService.get<string>('JWT_REFRESH_SECRET'), expiresIn: '3d' },
             ),
         ]);
