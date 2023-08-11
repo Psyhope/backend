@@ -253,7 +253,7 @@ export class BookingService {
           id,
         },
         data: {
-          adminAcc: false,
+          adminAcc: true,
           isAccepted: false,
           isTerminated: true,
         }
@@ -379,7 +379,7 @@ export class BookingService {
           id,
         },
         data: {
-          adminAcc: false,
+          adminAcc: true,
           isTerminated: true,
           isAccepted: false,
         }
@@ -436,7 +436,8 @@ export class BookingService {
         id: bookingId,
       },
       data: {
-        isTerminated: true
+        isTerminated: true,
+        adminAcc: false,
       }
     })
   }
