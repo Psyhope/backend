@@ -418,6 +418,7 @@ export class BookingService {
         bookingDate: updateBookingInput.bookingDate,
         bookingTime: updateBookingInput.bookingTime,
         bookingTime2: updateBookingInput.bookingTime2,
+        bookingDay: dayNames[new Date(updateBookingInput.bookingDate).getDay()],
         isAccepted: false,
         isTerminated: false,
         adminAcc: false,
