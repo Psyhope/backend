@@ -1,10 +1,9 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { BookingService } from './booking.service';
 import { Booking } from './entities/booking.entity';
 import { CreateBookingInput } from './dto/create-booking.input';
 import { UseGuards } from '@nestjs/common';
 import { LoggedIn } from 'src/guards/loggedIn.guard';
-import { RescheduleRequest } from './entities/rescheduleRequest.entity';
 import { CurrentUser } from 'src/auth/decorator/currentUser.decorator';
 import { JwtPayload } from 'src/auth/interfaces/jwt.payload';
 import { UserRepositories } from 'src/models/user.repo';
@@ -14,12 +13,10 @@ import { RejectBookingDTO } from './dto/rejectBooking.input';
 import { AcceptBooking } from './dto/accept-booking.input';
 import { AdminAccBooking } from './dto/admin-acc.input';
 import { GetBookingFilterDto } from './dto/get-booking-filter.input';
-import { get } from 'http';
 import { StatusRequest } from './entities/const.entity';
 import { dayNames } from './const';
 import { UpdateBookingInput } from './dto/update-booking.input';
 import { GetBookingFilterGeneralDto } from './dto/get-booking-generat.input';
-import { log } from 'console';
 import { GetAdminRundown } from './dto/get-admin-rundown.input';
 import { AdminGetBooking } from './dto/admin-get-booking';
 import { AdminTermiate } from './dto/admin-terminate.input';
@@ -38,8 +35,7 @@ export class BookingResolver {
     @Args('createBookingInput') createBookingInput: CreateBookingInput,
   ) {
     const _user = await this.userRepo.findById(user.sub);
-    console.log(createBookingInput.bookingDate);
-    console.log(createBookingInput);
+    console.log('>>> created booking: ', createBookingInput);
     return this.bookingService.create(
       {
         ...createBookingInput,
@@ -58,7 +54,7 @@ export class BookingResolver {
   @UseGuards(LoggedIn)
   async bookingClient(@CurrentUser() user: JwtPayload) {
     const _user = await this.userRepo.findById(user.sub);
-    if (user.role != 'CLIENT') return null;
+    if (_user.account.role != 'CLIENT') return null;
     return this.bookingService.findClient(_user.id);
   }
 
@@ -69,7 +65,7 @@ export class BookingResolver {
     @Args('adminGetBooking') adminGetBooking: AdminGetBooking,
   ) {
     const _user = await this.userRepo.findById(user.sub);
-    if (user.role != 'CLIENT') {
+    if (_user.account.role != 'CLIENT') {
       return this.bookingService.adminGetBookingService(adminGetBooking.id);
     }
     return null;
